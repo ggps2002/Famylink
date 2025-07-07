@@ -1,0 +1,1797 @@
+import { CloseOutlined } from "@ant-design/icons";
+import { useEffect, useRef, useState } from "react";
+import { Button, Form } from "antd";
+import { useNavigate } from "react-router-dom";
+import HireStep4 from "../subComponents/Hire/step4";
+import HireStep3 from "../subComponents/Hire/step3";
+import { fireToastMessage } from "../../toastContainer";
+import NannyNoStep2 from "../subComponents/Hire/NannyShareNo/step2";
+import { setAddSer } from "../Redux/setAddtional";
+import { useDispatch, useSelector } from "react-redux";
+import FamilyExperienceForm from "../subComponents/Hire/familyExpForm";
+import { clearFamilyExp, updateFamilyExp } from "../Redux/setFamilyExp";
+import HireStep1 from "../subComponents/Hire/step1";
+import { InputDa, InputTextArea } from "../subComponents/input";
+import Step5 from "../subComponents/Hire/step5";
+import { cleanFormData1 } from "../subComponents/toCamelStr";
+import { addOrUpdateAdditionalInfo, updateForm } from "../Redux/formValue";
+import { registerThunk, userCheckThunk } from "../Redux/authSlice";
+import { api } from "../../Config/api";
+
+export default function Job() {
+  const [step, setStep] = useState(0);
+  const [bool, setBool] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const jobStepFormRef = useRef(null);
+  const { familyExp } = useSelector((s) => s.familyExp);
+  const val = useSelector((s) => s.form);
+  const v = useSelector((s) => s.additionalSer);
+
+  // Access the inner object using v.value
+  const innerObject = v.value;
+  const hasNannyOrBabysitter = innerObject.nanny || innerObject.babysitter;
+
+  // Count other true values (excluding nanny and babysitter)
+  let trueCount = Object.entries(innerObject).reduce((count, [key, value]) => {
+    if (key !== "nanny" && key !== "babysitter" && value === true) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  // Add +1 if at least nanny or babysitter is selected
+  if (hasNannyOrBabysitter) {
+    trueCount += 1;
+  }
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  // Initialize the state in the parent component
+  const [daysState, setDaysState] = useState(
+    daysOfWeek.reduce((acc, day) => {
+      acc[day] = { checked: false, start: null, end: null };
+      return acc;
+    }, {})
+  );
+
+  // This function will update the state when passed down to HireStep3
+  const updateDaysState = (updatedDaysState) => {
+    setDaysState(updatedDaysState);
+  };
+  const handleGoBack = () => {
+    navigate("/joinNow"); // Navigate back in history
+  };
+  const handleBack = () => {
+    if (step == 18 && bool) {
+      setStep(0);
+    } else if (step == 0) {
+      navigate("/joinNow");
+    } else if (step > 0) {
+      // Move to the previous step
+      setStep((prevStep) => prevStep - 1);
+    }
+  };
+  const Register = async (textAreaValue) => {
+    const beforeAddInfo = val.additionalInfo;
+    const updatedAddInfo = [...beforeAddInfo];
+    updatedAddInfo.push({ key: "jobDescription", value: textAreaValue });
+
+    const result = await dispatch(
+      registerThunk({ ...val, additionalInfo: updatedAddInfo, type: "Nanny" })
+    );
+
+    if (result.payload.status === 200) {
+      fireToastMessage({
+        success: true,
+        message: "Your account was created successfully",
+      });
+      navigate("/login");
+      window.location.reload();
+    } else {
+      fireToastMessage({ type: "error", message: result.payload.message });
+    }
+  };
+  const step1Data = [
+    {
+      name: "Nanny",
+    },
+    {
+      name: "Babysitter",
+    },
+    {
+      name: "Private Educator/Tutor",
+      val: "privateEducator",
+    },
+    {
+      name: "Specialized Caregiver",
+    },
+    {
+      name: "Sports Coach",
+      val: "sportsCoaches",
+    },
+    {
+      name: "Music Instructor",
+    },
+    {
+      name: "Swim Instructor",
+    },
+    {
+      name: "House Manager",
+    },
+  ];
+  const step2Data = [
+    {
+      name: "Full-time nanny",
+    },
+    {
+      name: "Part-time nanny",
+    },
+    {
+      name: "Occasional nanny",
+    },
+    {
+      name: "Live-in nanny",
+    },
+  ];
+  const step3Data = [
+    {
+      name: "Immediate",
+    },
+    {
+      name: "Start within 1 month",
+    },
+    {
+      name: "Flexible start date",
+    },
+  ];
+  const step4Data = [
+    {
+      name: "Yes, I can prepare meals from scratch.",
+    },
+    {
+      name: "Yes, but only simple or pre-prepared meals.",
+    },
+    {
+      name: "No, I am not comfortable cooking.",
+    },
+  ];
+  const step5Data = [
+    {
+      name: "Children only",
+    },
+    {
+      name: "Children and parents",
+    },
+    {
+      name: "Neither",
+    },
+  ];
+  const step6Data = [
+    {
+      name: "Yes, I can handle all housekeeping related to the children.",
+    },
+    {
+      name: "Yes, I can manage light housekeeping tasks",
+    },
+    {
+      name: "No, I prefer to focus solely on childcare.",
+    },
+  ];
+  const step7Data = [
+    {
+      name: "Children only",
+    },
+    {
+      name: "Children and parents",
+    },
+    {
+      name: "Neither",
+    },
+  ];
+  const step8Data = [
+    {
+      name: "Yes, I have a childcare certification",
+    },
+    {
+      name: "Yes, I have first aid and CPR certifications.",
+    },
+    {
+      name: "No formal training, but I have hands-on experience.",
+    },
+  ];
+  const step9Data = [
+    {
+      name: "Yes, I can use my own car for transportation.",
+    },
+    {
+      name: "Yes, but I prefer to use the family's car.",
+    },
+    {
+      name: "No, I prefer not to handle transportation",
+    },
+  ];
+  const step10Data = [
+    {
+      name: "Yes, I am comfortable caring for sick children.",
+    },
+    {
+      name: "No, I prefer not to care for sick children.",
+    },
+  ];
+  const step11Data = [
+    {
+      name: "Yes",
+    },
+    {
+      name: "No",
+    },
+  ];
+  const step12Data = [
+    {
+      name: "Yes",
+    },
+    {
+      name: "No",
+    },
+  ];
+  const data1 = [
+    {
+      name: "Set Clear Rules and Expectations",
+      subHead:
+        "I believe in setting clear rules and consistently enforcing them to maintain discipline.",
+    },
+    {
+      name: "Logical Consequences",
+      subHead:
+        "I apply consequences that are logically related to the behavior to teach responsibility.",
+    },
+    {
+      name: "Time-Out Method",
+      subHead:
+        "I use time-out as a method to help children reflect on their behavior and learn from it.",
+    },
+    {
+      name: "Redirecting",
+      subHead:
+        "I redirect the child's attention to more appropriate behaviors or activities as a way to manage misbehavior.",
+    },
+    {
+      name: "Discussion and Problem Solving",
+      subHead:
+        "I encourage discussing the issue to understand the child's perspective and jointly develop a solution.",
+    },
+    {
+      name: "Flexible Approach for Every Child",
+      subHead:
+        "I am flexible and adapt my methods to each child's individual needs and circumstances.",
+    },
+  ];
+  const step13Data = [
+    {
+      name: "Full-time",
+    },
+    {
+      name: "Part-time",
+    },
+    {
+      name: "Occasional",
+    },
+    {
+      name: "Weekends only",
+    },
+    {
+      name: "Nights only",
+    },
+    {
+      name: "Flexible",
+    },
+  ];
+  const step14Data = [
+    {
+      name: "Less than 1 year",
+    },
+    {
+      name: "1-3 years",
+    },
+    {
+      name: "3-5 years",
+    },
+    {
+      name: "Over 5 years",
+    },
+  ];
+  const step15Data = [
+    {
+      name: "English",
+    },
+    {
+      name: "Spanish",
+    },
+    {
+      name: "French",
+    },
+    {
+      name: "Mandarin",
+    },
+    {
+      name: "Bilingual",
+    },
+  ];
+  const step16Data = [
+    {
+      name: "Pets in the home",
+    },
+    {
+      name: "Smoker/non-smoker household",
+    },
+    {
+      name: "Number of children",
+    },
+    {
+      name: "Age of children",
+    },
+    {
+      name: "Special needs care",
+    },
+  ];
+  const step17Data = [
+    {
+      name: "Own vehicle",
+    },
+    {
+      name: "Public transportation",
+    },
+    {
+      name: "Walking/Biking",
+    },
+  ];
+  const step18Data = [
+    {
+      name: "Newborns (0-12 months)",
+      val: "Newborns (0-12 months)",
+    },
+    {
+      name: "Toddlers (1-3 years)",
+      val: "Toddlers (1-3 years)",
+    },
+    {
+      name: "Preschoolers (3-5 years)",
+      val: "Preschoolers (3-5 years)",
+    },
+    {
+      name: "School-age (5-12 years)",
+      val: "School-age (5-12 years)",
+    },
+    {
+      name: "Teenagers (12+ years)",
+      val: "Teenagers (12+ years)",
+    },
+  ];
+
+  const handleNext = async () => {
+    if (step === 0) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the 'option' field has at least one selection
+          if (Array.isArray(values.option) && values.option.length > 0) {
+            // If form is valid, submit it and move to the next step
+            const allOptions = [
+              "nanny",
+              "privateEducator",
+              "specializedCaregiver",
+              "sportsCoaches",
+              "musicInstructor",
+              "swimInstructor",
+              "houseManager",
+              "babysitter",
+            ];
+
+            // Initialize all values to false
+            const optionsObject = allOptions.reduce((acc, option) => {
+              acc[option] = false;
+              return acc;
+            }, {});
+
+            // Set the values from values.option to true
+            values.option.forEach((option) => {
+              if (option in optionsObject) {
+                optionsObject[option] = true; // Set the selected options to true
+              }
+            });
+
+            // Ensure nanny is always set to true
+
+            dispatch(setAddSer(optionsObject));
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "interestedPosi",
+                value: cleanData,
+              })
+            );
+            const trueData = cleanData?.option?.filter(
+              (v) => v == "nanny" || v == "babysitter"
+            );
+
+            if (trueData.length == 0) {
+              setBool(true);
+              setStep((prevStep) => prevStep + 18);
+            } else {
+              setStep((prevStep) => prevStep + 1);
+            }
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+
+      // setStep(prevStep => prevStep + 1);
+    } else if (step == 1) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "interestedChildcare",
+                value: cleanData,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 2) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "availability", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 3) {
+      const selectedDays = Object.entries(daysState).filter(
+        ([day, { checked }]) => checked
+      );
+
+      if (selectedDays.length === 0) {
+        fireToastMessage({
+          type: "error",
+          message: "At least one day must be selected.",
+        });
+        return;
+      }
+
+      let allValid = true; // Flag to check if all selected days have valid start and end times
+      let invalidDays = [];
+
+      // Loop through selected days to ensure each has a valid start and end time
+      selectedDays.forEach(([day, { start, end }]) => {
+        if (!start || !end) {
+          allValid = false;
+          invalidDays.push(day); // Collect days with missing start or end times
+        } else if (start.isSame(end)) {
+          allValid = false;
+          invalidDays.push(day); // Collect days where start and end are the same
+        } else if (end.isBefore(start)) {
+          // Error if end time is before start time
+          allValid = false;
+          invalidDays.push(day); // Collect days where end is before start
+        }
+      });
+
+      if (!allValid) {
+        fireToastMessage({
+          type: "error",
+          message: `The following selected days have invalid start or end times: ${invalidDays.join(
+            ", "
+          )}`,
+        });
+        return;
+      }
+
+      // Additional checks for overlapping times (uncomment if needed)
+      // if (selectedDays.length >= 2) {
+      //     let overlapping = false;
+
+      //     // Compare each selected day's start and end times
+      //     for (let i = 0; i < selectedDays.length; i++) {
+      //         const [day1, { start: start1, end: end1 }] = selectedDays[i];
+
+      //         for (let j = i + 1; j < selectedDays.length; j++) {
+      //             const [day2, { start: start2, end: end2 }] = selectedDays[j];
+
+      //             // Ensure no overlapping times
+      //             if (
+      //                 (start1.isBefore(end2) && end1.isAfter(start2)) || // Check overlap between two days
+      //                 (start1.isSame(end2) || start2.isSame(end1))
+      //             ) {
+      //                 // console.log(`Error: Time overlap between ${day1} and ${day2}`);
+      //                 overlapping = true;
+      //                 break;
+      //             }
+      //         }
+      //         if (overlapping) break;
+      //     }
+
+      //     if (overlapping) {
+      //         return;
+      //     }
+      // }
+
+      // If all checks pass, proceed with submission
+      const checkedDays = Object.entries(daysState)
+        .filter(([day, data]) => data.checked) // Keep only those with checked: true
+        .reduce((acc, [day, data]) => {
+          // Convert start and end times to string (ISO format or any preferred format)
+          const start = data.start.toISOString(); // Assuming start is a date object
+          const end = data.end.toISOString(); // Assuming end is a date object
+
+          acc[day] = {
+            ...data,
+            start, // Replace the start time with a string
+            end, // Replace the end time with a string
+          };
+          return acc;
+        }, {});
+      dispatch(
+        addOrUpdateAdditionalInfo({
+          key: "specificDaysAndTime",
+          value: checkedDays,
+        })
+      );
+      setStep((prevStep) => prevStep + 1);
+    } else if (step == 4) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "ageGroupsExp", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 5) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "ableToCook", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 6) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "cookFor", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 7) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "helpWithHousekeeping",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 8) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "helpWithHousekeepingFor",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 9) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "certification",
+                value: cleanData,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 10) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          const hasAtLeastOneTrue = Object.values(values).some(
+            (value) => value === true
+          );
+          if (hasAtLeastOneTrue) {
+            // If form is valid, submit it and move to the next step
+
+            const keyMapping = {
+              nanny: "Positive Reinforcement",
+              setClearRulesAndExpectations: "Set Clear Rules And Expectations",
+              discussionAndProblemSolving: "Discussion And Problem Solving",
+              flexibleApproachForEveryChild:
+                "Flexible Approach For Every Child",
+              logicalConsequences: "Logical Consequences",
+              redirecting: "Redirecting",
+              timeoutMethod: "Timeout Method",
+              pleaseSpecify: "Please Specify",
+            };
+
+            // Filter keys where the value is true and map them to their human-readable equivalents
+            const trueKeys = Object.keys(values)
+              .filter((key) => values[key] === true)
+              .map((key) => keyMapping[key]);
+
+            const va = {
+              option: trueKeys,
+              pleaseSpecify: values.pleaseSpecify,
+            };
+
+            const cleanData = cleanFormData1(va, "pleaseSpecify");
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "approachToDisciplineAndChildBehavior",
+                value: cleanData,
+              })
+            );
+            setStep((prevStep) => prevStep + 1); // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 11) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "usePerTransport",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 12) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "watchChildWhenTheyAreSick",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 13) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "references", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 14) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "backgroundCheck",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 15) {
+      dispatch(clearFamilyExp());
+      setStep((prevStep) => prevStep + 1);
+    } else if (step == 16) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.ageGroupsOfChildren.length == 0) {
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option from age groups of Children",
+            });
+          } else if (values.keyResponsibilities.length === 0) {
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option from key responsibilities",
+            });
+          } else {
+            dispatch(updateFamilyExp({ values }));
+            setStep((prevStep) => prevStep + 1);
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          const { errorFields } = errorInfo;
+
+          // Extract field names from errorFields
+          const fieldNamesWithErrors = errorFields.map(
+            (field) => field.name[0]
+          );
+
+          // Concatenate the field names into a single message
+          const errorMessage = `Please fill out the required fields: ${fieldNamesWithErrors.join(
+            ", "
+          )}`;
+
+          // Fire the toast message with the custom error message
+          fireToastMessage({
+            type: "error",
+            message: errorMessage,
+          });
+        });
+    } else if (step == 17) {
+      dispatch(
+        addOrUpdateAdditionalInfo({ key: "FamilyExp", value: familyExp })
+      );
+      setStep((prevStep) => prevStep + 1);
+    } else if (step == 18) {
+      jobStepFormRef.current
+        .validateFields()
+        .then(async (values) => {
+          const dob = `${values.month} ${values.date} ${values.year}`;
+
+          if (!values.zipCode) {
+            fireToastMessage({
+              type: "error",
+              message: "Please fill zip code field",
+            });
+            return;
+          }
+
+          if (!values.remember) {
+            fireToastMessage({
+              type: "error",
+              message: "Please check Terms & Condition",
+            });
+            setLoading(false);
+            return;
+          }
+
+          dispatch(
+            updateForm({
+              name: values.name,
+              email: values.email,
+              password: values.password,
+              zipCode: values.zipCode,
+              dob: dob,
+            })
+          );
+
+          try {
+            setLoading(true);
+            await dispatch(userCheckThunk({ email: values.email })).unwrap();
+            setLoading(false);
+            setStep((prevStep) => prevStep + 1);
+          } catch (err) {
+            setLoading(false);
+            fireToastMessage({
+              type: "error",
+              message: err.message,
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          try {
+            const fieldName = errorInfo?.errorFields?.[0]?.name?.[0];
+            if (fieldName === "remember") {
+              fireToastMessage({
+                type: "error",
+                message: "Please check Terms & Condition",
+              });
+            } else if (
+              ["email", "name", "password", "confirm"].includes(fieldName)
+            ) {
+              // Do nothing for these
+            } else if (["month", "date", "year"].includes(fieldName)) {
+              fireToastMessage({
+                type: "error",
+                message: `Please set ${fieldName}`,
+              });
+            } else if (fieldName === "zipCode") {
+              fireToastMessage({
+                type: "error",
+                message: "Please fill zip code field",
+              });
+            } else {
+              fireToastMessage({
+                type: "error",
+                message: "Please set correct zip code field",
+              });
+            }
+          } catch (err) {
+            fireToastMessage({
+              type: "error",
+              message: "Please set correct zip code field",
+            });
+          }
+        });
+    } else if (step == 19) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "avaiForWorking",
+                value: cleanData,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 20) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "experience", value: values })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 21) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({ key: "language", value: cleanData })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 22) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "resOrPreAboutWorkEnv",
+                value: cleanData,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 23) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+
+          const numericValues = Object.values(values).map(Number);
+          const range = {
+            min: Math.min(...numericValues),
+            max: Math.max(...numericValues),
+          };
+
+          dispatch(
+            addOrUpdateAdditionalInfo({ key: "salaryExp", value: values })
+          );
+          dispatch(
+            addOrUpdateAdditionalInfo({ key: "salaryRange", value: range })
+          );
+          setStep((prevStep) => prevStep + 1);
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+        });
+    } else if (step == 24) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "referencesPastEmp",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 25) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (values.option) {
+            // If form is valid, submit it and move to the next step
+
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "backgroundCheck",
+                value: values,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 26) {
+      jobStepFormRef.current
+        .validateFields()
+        .then((values) => {
+          // Check if the preferredLocation (or whatever your field is) has been set
+          if (Array.isArray(values.option) && values.option?.length > 0) {
+            // If form is valid, submit it and move to the next step
+
+            const cleanData = cleanFormData1(values);
+            dispatch(
+              addOrUpdateAdditionalInfo({
+                key: "preferredMetOfTran",
+                value: cleanData,
+              })
+            );
+            jobStepFormRef.current.resetFields();
+            setStep((prevStep) => prevStep + 1);
+            // Move to the next step
+          } else {
+            // Show an error message if no option is selected
+            fireToastMessage({
+              type: "error",
+              message: "Select at least one option",
+            });
+          }
+        })
+        .catch((errorInfo) => {
+          // Handle validation failure
+          fireToastMessage({ type: "error", message: errorInfo });
+        });
+    } else if (step == 27) {
+      if (form.getFieldValue(["describeSkills"])?.length > 0) {
+        if (bool || trueCount > 1) {
+          await dispatch(
+            addOrUpdateAdditionalInfo({
+              key: "jobDescription",
+              value: form.getFieldValue(["describeSkills"]),
+            })
+          );
+          setStep((prevStep) => prevStep + 1);
+        } else {
+          Register(form.getFieldValue(["describeSkills"]));
+        }
+      } else {
+        fireToastMessage({
+          type: "error",
+          message: "Please write the job description",
+        });
+      }
+    }
+  };
+  const renderStepContent = () => {
+    switch (step) {
+      case 0:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"What type of position are you interested in?"}
+            data={step1Data}
+            checkBox={true}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+          />
+        );
+      case 1:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step2Data}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+            subHead1={"What type of childcare are you interested in providing?"}
+          />
+        );
+      case 2:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step3Data}
+            inputNot={true}
+            subHead1={"What is your availability?"}
+          />
+        );
+      case 3:
+        return (
+          <HireStep3
+            daysState={daysState}
+            setDaysState={updateDaysState}
+            head={"Nanny/Babysitter"}
+            subHead={"Specific availability"}
+          />
+        );
+      case 4:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step18Data}
+            checkBox={true}
+            inputNot={true}
+            subHead1={"What age groups are you most experienced with?"}
+          />
+        );
+      case 5:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step4Data}
+            inputNot={true}
+            subHead1={"Are you willing and able to cook?"}
+          />
+        );
+      case 6:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step5Data}
+            inputNot={true}
+            subHead1={"Will you cook for:"}
+          />
+        );
+      case 7:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step6Data}
+            inputNot={true}
+            subHead1={"Can you help with housekeeping?"}
+          />
+        );
+      case 8:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step7Data}
+            inputNot={true}
+            subHead1={"Are you willing to help with housekeeping for"}
+          />
+        );
+      case 9:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step8Data}
+            checkBox={true}
+            subHead1={
+              "Do you have any formal training or certifications in childcare?"
+            }
+            inputName={"Type here..."}
+            textAreaHead={"Please Specify"}
+          />
+        );
+      case 10:
+        return (
+          <NannyNoStep2
+            formRef={jobStepFormRef}
+            data={data1}
+            defaultValue={"Positive Reinforcement"}
+            defaultSubValue={
+              "I use positive reinforcement to encourage good behavior by recognizing and rewarding it."
+            }
+            inputText={true}
+            inputName={"Type here..."}
+            textAreaHead={"Please Specify"}
+            head={"Nanny/Babysitter"}
+            subHead={
+              "What is your approach to discipline and child behavior management?"
+            }
+          />
+        );
+      case 11:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step9Data}
+            checkBox={true}
+            subHead1={
+              "Are you willing to use your personal car to transport the children if needed?"
+            }
+            inputNot={true}
+          />
+        );
+      case 12:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step10Data}
+            checkBox={true}
+            subHead1={
+              "Are you comfortable watching children when they are sick?"
+            }
+            inputNot={true}
+          />
+        );
+      case 13:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step11Data}
+            subHead1={
+              "Can you provide references from previous childcare positions?"
+            }
+            inputNot={true}
+          />
+        );
+      case 14:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Nanny/Babysitter"}
+            data={step12Data}
+            subHead1={"Are you willing to undergo a background check?"}
+            inputNot={true}
+          />
+        );
+      case 15:
+        return (
+          <div>
+            <p className="mt-5 mb-10 px-3 font-normal text-center leading-6 Classico offer-font">
+              Experience Entry for Nanny and Babysitter
+            </p>
+            <div className="flex justify-center">
+              <p className="w-96 text-xl Classico">
+                Your experience helps families trust and choose the right nanny
+                for their children. Please add details of your previous roles,
+                responsibilities, and the skills you've gained. This will help
+                you stand out and find the best opportunities!
+              </p>
+            </div>
+          </div>
+        );
+
+      case 16:
+        return <FamilyExperienceForm formRef={jobStepFormRef} />;
+      case 17:
+        return (
+          <div>
+            <p className="mt-5 mb-10 px-3 font-normal text-center leading-6 Classico offer-font">
+              Experience Entry for Nanny and Babysitter
+            </p>
+            {familyExp?.map((d, i) => (
+              <div key={i} className="bg-white mb-4 p-4 rounded-3xl">
+                <p className="mb-4 font-bold text-2xl Classico">
+                  Family {i + 1}
+                </p>
+                <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                  {d?.typeOfCareProvided && (
+                    <div>
+                      <p className="text-xl">Type of Care Provided</p>
+                      <p>{d.typeOfCareProvided}</p>
+                    </div>
+                  )}
+                  {d?.durationOfEmployment && (
+                    <div>
+                      <p className="text-xl">Duration of Employment</p>
+                      <p>{d.durationOfEmployment}</p>
+                    </div>
+                  )}
+
+                  {d?.numberOfChildren && (
+                    <div>
+                      <p className="text-xl">Number of Children</p>
+                      <p>{d.numberOfChildren}</p>
+                    </div>
+                  )}
+                  {d?.ageGroupsOfChildren && (
+                    <div>
+                      <p className="text-xl">Age Group(s) of Children</p>
+                      {d.ageGroupsOfChildren.map((a) => (
+                        <p key={a}>{a}</p>
+                      ))}
+                      {d.specify && <p>Specify: {d.specify}</p>}
+                    </div>
+                  )}
+
+                  {d?.keyResponsibilities && (
+                    <div>
+                      <p className="text-xl">Key Responsibilities</p>
+                      {d.keyResponsibilities.map((a) => (
+                        <p key={a}>{a}</p>
+                      ))}
+                      {d.specify1 && <p>Specify: {d.specify1}</p>}
+                    </div>
+                  )}
+                  {d?.locationOfWork && (
+                    <div>
+                      <p className="text-xl">Location of Work</p>
+                      <p>{d.locationOfWork}</p>
+                    </div>
+                  )}
+                  {d?.reasonForLeavingOptional && (
+                    <div>
+                      <p className="text-xl">Reason for Leaving</p>
+                      <p>
+                        {d.reasonForLeavingOptional
+                          ? d.reasonForLeavingOptional
+                          : "No defined"}
+                      </p>
+                    </div>
+                  )}
+                  {d?.referencesAvailable && (
+                    <div>
+                      <p className="text-xl">References Available</p>
+                      <p>{d.referencesAvailable}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case 18:
+        return <HireStep1 formRef={jobStepFormRef} head={"Welcome Nanny"} />;
+      case 19:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"What is your availability?"}
+            data={step13Data}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+          />
+        );
+      case 20:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"How many years of relevant experience do you have?"}
+            data={step14Data}
+            inputNot={true}
+          />
+        );
+      case 21:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"What languages do you speak fluently?"}
+            data={step15Data}
+            checkBox={true}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+          />
+        );
+      case 22:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={
+              "Do you have any restrictions or preferences regarding your work environment?"
+            }
+            data={step16Data}
+            checkBox={true}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+          />
+        );
+      case 23:
+        return (
+          <div>
+            <p className="px-3 width-form font-normal text-center Classico offer-font">
+              What are your salary expectations?
+            </p>
+            <Step5 formRef={jobStepFormRef} />
+          </div>
+        );
+      case 24:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Can you provide references from past employment if needed?"}
+            data={step11Data}
+            inputNot={true}
+          />
+        );
+      case 25:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={"Are you willing to undergo a background check?"}
+            data={step11Data}
+            inputNot={true}
+          />
+        );
+      case 26:
+        return (
+          <HireStep4
+            formRef={jobStepFormRef}
+            head={
+              "What is your preferred method of transportation to and from work?"
+            }
+            data={step17Data}
+            checkBox={true}
+            inputName={"Type here..."}
+            textAreaHead={"Other Preferences"}
+          />
+        );
+      case 27:
+        return (
+          <div>
+            <p className="px-3 width-form font-normal text-center Classico offer-font">
+              Please describe any additional skills or hobbies that might be
+              relevant to your job application.
+            </p>
+            <div
+              style={{ marginBottom: "-40px" }}
+              className="flex justify-center mt-10"
+            >
+              <Form form={form} name="validateOnly" autoComplete="off">
+                <InputTextArea
+                  rows={8}
+                  head={"Describe Skills"}
+                  placeholder={
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                  }
+                />
+              </Form>
+            </div>
+          </div>
+        );
+      case 28:
+        return (
+          <>
+            {(() => {
+              if (v.value.privateEducator) {
+                return navigate("/tutorJob");
+              } else if (v.value.specializedCaregiver) {
+                return navigate("/specialCaregiverJob");
+              } else if (v.value.sportsCoaches) {
+                return navigate("/sportCoachJob");
+              } else if (v.value.musicInstructor) {
+                return navigate("/musicJob");
+              } else if (v.value.swimInstructor) {
+                return navigate("/swimJob");
+              } else if (v.value.houseManager) {
+                return navigate("/houseManagerJob");
+              }
+              return null; // If none of the conditions are true, return null or some default component
+            })()}
+          </>
+        );
+    }
+  };
+  return (
+    <div className="padd-res">
+      <div
+        className="px-4 py-4 rounded-3xl"
+        style={{
+          background:
+            "linear-gradient(174.22deg, #FFCADA 0%, rgba(246, 238, 233, 0.4) 69.71%, #FFF1F5 100%)",
+        }}
+      >
+        <div className="flex justify-end gap-4">
+          {/* <p>Skip for now</p> */}
+          <button onClick={handleGoBack}>
+            <CloseOutlined style={{ fontSize: "24px" }} />
+          </button>
+        </div>
+        <div className="flex justify-center">
+          <div>
+            {renderStepContent()}
+
+            <div className="my-10 text-center">
+              {/* {
+                                step === 11 && nannyShare === 'no' ? (
+                                    <button
+                                        style={{ border: "1px solid #38AEE3" }}
+                                        className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal margin-2'
+                                        onClick={toggleButton} // Toggles between enabling and disabling the button
+                                    >
+                                        Write by Myself
+                                    </button>
+                                ) : (nannyShare == 'no' && step < 12) && (
+                                    <button
+                                        style={{ border: "1px solid #38AEE3" }}
+                                        className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base'
+                                        onClick={handleBack}
+                                    >
+                                        Back
+                                    </button>
+                                )
+                            } */}
+              {step != 15 && step != 16 && step != 17 && (
+                <button
+                  style={{ border: "1px solid #38AEE3" }}
+                  className="bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base"
+                  onClick={handleBack}
+                >
+                  Back
+                </button>
+              )}
+              {step == 17 && (
+                <button
+                  style={{
+                    background: "white",
+                    color: "#38AEE3",
+                    border: "1px solid #38AEE3",
+                  }}
+                  className="bg-white mx-6 my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
+                  onClick={handleBack}
+                >
+                  Add Family Experience
+                </button>
+              )}
+
+              {step != 15 && step != 16 && (
+                <Button
+                  style={{ background: "#85D1F1" }}
+                  loading={loading}
+                  className="mx-auto my-0 px-6 py-5 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
+                  onClick={handleNext}
+                >
+                  Continue
+                </Button>
+              )}
+              {(step == 15 || step == 16) && (
+                <button
+                  style={{ background: "#85D1F1" }}
+                  className="mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
+                  onClick={handleNext}
+                >
+                  Add Family Experience
+                </button>
+              )}
+              {step != 0 &&
+                step != 4 &&
+                step != 18 &&
+                step != 19 &&
+                step != 27 && (
+                  <p
+                    onClick={() => setStep((prevStep) => prevStep + 1)}
+                    className="pt-2 text-blue-400 cursor-pointer transition-colors duration-300 hover:text-blue-600"
+                  >
+                    Skip for now
+                  </p>
+                )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

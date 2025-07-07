@@ -1,0 +1,1036 @@
+import express from 'express'
+import Community from '../Schema/community.js'
+import User from '../Schema/user.js' // Path to your Community model
+import { authMiddleware } from '../Services/utils/middlewareAuth.js'
+import Notification from '../Schema/notificaion.js'
+
+const router = express.Router()
+
+// Create Community API
+router.post('', authMiddleware, async (req, res) => {
+  const { name, description } = req.body
+  const id = req.userId
+  const user = await User.findById(id)
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
+
+  // Check if the user is an admin
+  if (user.type !== 'Admin') {
+    return res
+      .status(403)
+      .json({ message: 'Access denied. Only Admins can create blogs.' })
+  }
+
+  // Validate the required fields
+  if (!name || !description) {
+    return res
+      .status(400)
+      .json({ message: 'Name and description are required fields' })
+  }
+
+  try {
+    // Create a new community instance
+    const community = new Community({
+      name,
+      createdBy: id,
+      description,
+      topics: [] // Initially empty topics
+    })
+    // Save the new community
+    await community.save()
+    return res.status(201).json({
+      message: 'Community created successfully'
+    })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+})
+
+router.post('/:commId/topic', authMiddleware, async (req, res) => {
+  const { commId } = req.params // Community ID from the URL
+  const { name, description } = req.body // Topic details from the request body
+
+  const id = req.userId
+  const user = await User.findById(id)
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
+
+  // Check if the user is an admin
+  if (user.type !== 'Admin') {
+    return res
+      .status(403)
+      .json({ message: 'Access denied. Only Admins can create blogs.' })
+  }
+
+  // Validate the required fields
+  if (!name || !description) {
+    return res
+      .status(400)
+      .json({ message: 'Name and description are required fields' })
+  }
+
+  // Validate the required fields
+  if (!name || !description) {
+    return res
+      .status(400)
+      .json({ message: 'Name and description are required for the topic' })
+  }
+
+  try {
+    // Find the community by ID
+    const community = await Community.findById(commId)
+
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' })
+    }
+
+    const topicExists = community.topics.some(
+      topic => topic.name.toLowerCase() === name.toLowerCase()
+    )
+
+    if (topicExists) {
+      return res.status(400).json({
+        message: `A topic with the name '${name}' already exists in this community.`
+      })
+    }
+
+    // Add the new topic to the beginning of the topics array
+    const newTopic = { name, description, createdBy: id }
+    community.topics.unshift(newTopic)
+
+    // Save the updated community
+    await community.save()
+
+    return res.status(200).json({
+      message: 'Topic added successfully to the community',
+      community
+    })
+  } catch (error) {
+    console.error('Error adding topic:', error)
+    return res.status(500).json({ message: error.message })
+  }
+})
+
+router.post(
+  '/:commId/topic/:topicId/post',
+  authMiddleware,
+  async (req, res) => {
+    const { commId, topicId } = req.params // Community and Topic IDs from the URL
+    const { description } = req.body // Post details from the request body
+    const userId = req.userId // Extract user ID from the authenticated token
+
+    try {
+      // Validate the description
+      if (!description) {
+        return res
+          .status(400)
+          .json({ message: 'Description is required for the post' })
+      }
+
+      // Fetch the user to check their role
+      const user = await User.findById(userId)
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      }
+
+      // Check if the user is an admin
+      if (user.type !== 'Admin') {
+        return res
+          .status(403)
+          .json({ message: 'Access denied. Only admins can create posts.' })
+      }
+
+      // Find the community by ID
+      const community = await Community.findById(commId)
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' })
+      }
+
+      // Find the topic within the community
+      const topic = community.topics.id(topicId)
+      if (!topic) {
+        return res.status(404).json({ message: 'Topic not found' })
+      }
+
+      // Create a new post object
+      const newPost = {
+        description,
+        createdBy: userId // Store the admin's ID as the creator
+      }
+
+      // Add the new post to the beginning of the posts array
+      topic.posts.unshift(newPost)
+
+      // Save the updated community document
+      await community.save()
+
+      res.status(201).json({
+        message: 'Post added successfully to the topic',
+        post: newPost,
+        topic
+      })
+    } catch (error) {
+      console.error('Error adding post to topic:', error)
+      res.status(500).json({ message: error.message })
+    }
+  }
+)
+
+router.put('/:postId', authMiddleware, async (req, res) => {
+  const { postId } = req.params // Only Post ID from the URL
+  const { description } = req.body
+  const userId = req.userId // Extract user ID from the authenticated token
+
+  try {
+    // Find the post across all communities and topics
+    const community = await Community.findOne({ 'topics.posts._id': postId })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t => t.posts.id(postId))
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Check if the logged-in user is an admin
+    if (user.type !== 'Admin') {
+      return res
+        .status(403)
+        .json({ message: 'Access denied. Only Admins can edit posts.' })
+    }
+
+    // Update the post description
+    post.description = description
+
+    // Save the updated community
+    await community.save()
+
+    res.status(200).json({
+      message: 'Post updated successfully',
+      post
+    })
+  } catch (error) {
+    console.error('Error updating post:', error)
+    res
+      .status(500)
+      .json({ message: 'Error updating post', error: error.message })
+  }
+})
+
+router.delete('/:postId', authMiddleware, async (req, res) => {
+  const { postId } = req.params // Only Post ID from the URL
+  const userId = req.userId // Extract user ID from the authenticated token
+
+  try {
+    // Find the post across all communities and topics
+    const community = await Community.findOne({ 'topics.posts._id': postId })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t => t.posts.id(postId))
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Check if the logged-in user is an admin
+    if (user.type !== 'Admin') {
+      return res
+        .status(403)
+        .json({ message: 'Access denied. Only Admins can delete posts.' })
+    }
+
+    // Remove the post from the topic
+    topic.posts.pull(postId)
+
+    // Save the updated community
+    await community.save()
+
+    res.status(200).json({
+      message: 'Post deleted successfully'
+    })
+  } catch (error) {
+    console.error('Error deleting post:', error)
+    res
+      .status(500)
+      .json({ message: 'Error deleting post', error: error.message })
+  }
+})
+
+router.post('/:postId/like', authMiddleware, async (req, res) => {
+  const { postId } = req.params
+  const userId = req.userId // Extract user ID from the authentication middleware
+
+  try {
+    // Find the community containing the post
+    const community = await Community.findOne({
+      'topics.posts._id': postId // Match postId in nested structure
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    )
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+    let notificationMessage = null;
+    // Remove user ID from dislikes if present
+    if (post.dislikes.includes(userId)) {
+      post.dislikes.pull(userId)
+      const noti = await Notification.findOneAndDelete({
+        senderId: userId,
+        postId: postId,
+        content: 'dislike',
+      });
+      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
+
+      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+    }
+
+    // Toggle like: Add user to likes if not present; otherwise, remove
+    if (post.likes.includes(userId)) {
+      post.likes.pull(userId) // Remove user from likes
+      const noti = await Notification.findOneAndDelete({
+        senderId: userId,
+        postId: postId,
+        content: 'like',
+      });
+      notificationMessage = 'You removed your like on this post.';
+      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
+
+      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+    } else {
+      post.likes.unshift(userId) // Add user to likes
+      notificationMessage = 'You liked this post';
+    }
+
+    // Save changes
+    await community.save()
+
+    res.status(200).json({
+      message: notificationMessage,
+    })
+  } catch (error) {
+    console.error('Error updating like status:', error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
+router.post('/:postId/dislike', authMiddleware, async (req, res) => {
+  const { postId } = req.params
+  const userId = req.userId // Extract user ID from the authentication middleware
+
+  try {
+    // Find the community containing the post
+    const community = await Community.findOne({
+      'topics.posts._id': postId // Match postId in nested structure
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    )
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+    let notificationMessage = null;
+    // Remove user ID from likes if present
+    if (post.likes.includes(userId)) {
+      post.likes.pull(userId)
+      const noti = await Notification.findOneAndDelete({
+        senderId: userId,
+        postId: postId,
+        content: 'like',
+      });
+      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
+
+      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+    }
+
+    // Toggle dislike: Add user to dislikes if not present; otherwise, remove
+    if (post.dislikes.includes(userId)) {
+      post.dislikes.pull(userId) // Remove user from dislikes
+      const noti =  await Notification.findOneAndDelete({
+        senderId: userId,
+        postId: postId,
+        content: 'dislike',
+      });
+
+      notificationMessage = 'You removed your dislike on this post';
+      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
+
+      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+    } else {
+      post.dislikes.unshift(userId) // Add user to dislikes
+      notificationMessage = 'You dislike this post';
+    }
+
+    // Save changes
+    await community.save()
+
+    res.status(200).json({
+      message: notificationMessage,
+    })
+  } catch (error) {
+    console.error('Error updating dislike status:', error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
+router.post('/:postId/comment', authMiddleware, async (req, res) => {
+  const { postId } = req.params // Post ID from the URL
+  const { comment } = req.body // Comment details from the request body
+  const userId = req.userId // Extract user ID from the authenticated token
+
+  // Validate input
+  if (!comment || typeof comment !== 'string') {
+    return res
+      .status(400)
+      .json({ message: 'Comment is required and must be a string' })
+  }
+
+  try {
+    // Find the community containing the post
+    const community = await Community.findOne({
+      'topics.posts._id': postId // Match postId in nested structure
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    )
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Add the new comment
+    const newComment = {
+      user: userId, // Associate the comment with the logged-in user
+      comment,
+      createdAt: new Date()
+    }
+     post.comments.unshift(newComment) // Add comment to the post's comments array
+
+    // Save changes
+    await community.save()
+
+    const latestCommentId = post.comments[0]._id;
+
+    res.status(200).json({
+      message: 'Comment added successfully',
+      comment: {
+        _id: latestCommentId,
+        ...newComment,
+      },
+    });
+  } catch (error) {
+    console.error('Error adding comment:', error)
+    res
+      .status(500)
+      .json({ message: 'Internal server error', error: error.message })
+  }
+})
+
+router.put('/:postId/comment/:commentId', authMiddleware, async (req, res) => {
+  const { postId, commentId } = req.params // Post ID and Comment ID from the URL
+  const { comment } = req.body // New comment text from the request body
+  const userId = req.userId // Extract user ID from the authenticated token
+  // Validate input
+  if (!comment || typeof comment !== 'string') {
+    return res
+      .status(400)
+      .json({ message: 'Comment is required and must be a string' })
+  }
+
+  try {
+    // Find the community containing the post
+    const community = await Community.findOne({
+      'topics.posts._id': postId // Match postId in nested structure
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    )
+
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' })
+    }
+
+    // Find the post by ID
+    const post = topic.posts.id(postId)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    // Find the comment by ID
+    const commentToEdit = post.comments.id(commentId)
+
+    if (!commentToEdit) {
+      return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Check if the logged-in user is the owner of the comment
+    if (commentToEdit.user.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: 'You are not authorized to edit this comment' })
+    }
+
+    // Update the comment
+    commentToEdit.comment = comment
+
+    // Save changes
+    await community.save()
+
+    res.status(200).json({
+      message: 'Comment updated successfully',
+      updatedComment: commentToEdit
+    })
+  } catch (error) {
+    console.error('Error editing comment:', error)
+    res
+      .status(500)
+      .json({ message: 'Internal server error', error: error.message })
+  }
+})
+
+router.delete(
+  '/:postId/comment/:commentId',
+  authMiddleware,
+  async (req, res) => {
+    const { postId, commentId } = req.params // Post ID and Comment ID from the URL
+    const userId = req.userId // Extract user ID from the authenticated token
+
+    try {
+      // Find the community containing the post
+      const community = await Community.findOne({
+        'topics.posts._id': postId // Match postId in nested structure
+      })
+
+      if (!community) {
+        return res.status(404).json({ message: 'Post not found' })
+      }
+
+      // Find the topic containing the post
+      const topic = community.topics.find(t =>
+        t.posts.some(p => p._id.toString() === postId)
+      )
+
+      if (!topic) {
+        return res.status(404).json({ message: 'Topic not found' })
+      }
+
+      // Find the post by ID
+      const post = topic.posts.id(postId)
+
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' })
+      }
+
+      // Find the comment by ID
+      const commentToDelete = post.comments.id(commentId)
+
+      if (!commentToDelete) {
+        return res.status(404).json({ message: 'Comment not found' })
+      }
+
+      const user = await User.findById(userId)
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      }
+
+      // Check if the logged-in user is the owner of the comment or an admin
+      if (commentToDelete.user.toString() !== userId && user.type !== 'Admin') {
+        return res
+          .status(403)
+          .json({ message: 'You are not authorized to delete this comment' })
+      }
+      // Remove the comment
+      post.comments.pull(commentId)
+
+      // Save the changes to the community document
+      await community.save()
+
+      const noti = await Notification.findOneAndDelete({
+        senderId: userId,
+        commentId,
+        content: 'comment',
+      });
+      console.log(noti)
+      res.status(200).json({
+        message: 'Comment deleted successfully'
+      })
+    } catch (error) {
+      console.error('Error deleting comment:', error)
+      res
+        .status(500)
+        .json({ message: 'Internal server error', error: error.message })
+    }
+  }
+)
+
+router.post('/:commentId/commLike', authMiddleware, async (req, res) => {
+  const { commentId } = req.params // Get comment ID from URL
+  const userId = req.userId // Extract user ID from the authenticated token
+
+  try {
+    // Find the post containing the comment
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const community = await Community.findOne({
+      'topics.posts.comments._id': commentId
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Locate the comment
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p.comments.id(commentId))
+    )
+    const post = topic.posts.find(p => p.comments.id(commentId))
+    const comment = post.comments.id(commentId)
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Check if the user has already liked the comment
+    if (comment.likes.includes(userId)) {
+      // Remove like
+      comment.likes.pull(userId)
+    } else {
+      // Add like and remove from dislikes if present
+      comment.likes.unshift(userId)
+      comment.dislikes.pull(userId)
+    }
+
+    // Save changes
+    await community.save()
+
+    res.status(200).json({
+      message: 'Comment liked successfully',
+      likes: comment.likes.length,
+      dislikes: comment.dislikes.length
+    })
+  } catch (error) {
+    console.error('Error liking comment:', error)
+    res
+      .status(500)
+      .json({ message: 'Error liking comment', error: error.message })
+  }
+})
+
+router.post('/:commentId/commDislike', authMiddleware, async (req, res) => {
+  const { commentId } = req.params // Get comment ID from URL
+  const userId = req.userId // Extract user ID from the authenticated token
+
+  try {
+    // Find the post containing the comment
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const community = await Community.findOne({
+      'topics.posts.comments._id': commentId
+    })
+
+    if (!community) {
+      return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Locate the comment
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p.comments.id(commentId))
+    )
+    const post = topic.posts.find(p => p.comments.id(commentId))
+    const comment = post.comments.id(commentId)
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Check if the user has already disliked the comment
+    if (comment.dislikes.includes(userId)) {
+      // Remove dislike
+      comment.dislikes.pull(userId)
+    } else {
+      // Add dislike and remove from likes if present
+      comment.dislikes.unshift(userId)
+      comment.likes.pull(userId)
+    }
+
+    // Save changes
+    await community.save()
+
+    res.status(200).json({
+      message: 'Comment disliked successfully',
+      likes: comment.likes.length,
+      dislikes: comment.dislikes.length
+    })
+  } catch (error) {
+    console.error('Error disliking comment:', error)
+    res
+      .status(500)
+      .json({ message: 'Error disliking comment', error: error.message })
+  }
+})
+
+router.get('', async (req, res) => {
+  try {
+    const { category, limit, page } = req.query
+    // Default pagination values
+    const pageSize = parseInt(limit) || 10 // Number of blogs per page
+    const currentPage = parseInt(page) || 1 // Current page
+    const skip = (currentPage - 1) * pageSize // Calculate items to skip
+
+    // Build the query filter
+    const filter = {}
+    if (category) {
+      filter.name = category // Filter by category if provided
+    }
+
+    // Fetch blogs with pagination and filter
+    const community = await Community.find(filter)
+      .populate({
+        path: 'topics.posts.comments.user', // Populate user details
+        select: 'name email imageUrl' // Fetch specific fields
+      })
+      .skip(skip)
+      .limit(pageSize)
+      .sort({ _id: -1 })
+    // Exclude internal Mongoose fields like `__v`
+
+    // Fetch total count of blogs for pagination metadata
+    const totalCount = await Community.countDocuments(filter)
+    const totalPages = Math.ceil(totalCount / pageSize)
+
+    res.status(200).json({
+      status: 200,
+      data: community,
+      pagination: {
+        totalRecords: totalCount,
+        totalPages,
+        currentPage,
+        limit: pageSize
+      }
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      error: err.message
+    })
+  }
+})
+
+router.get('/allComm', async (req, res) => {
+  try {
+    const { category } = req.query
+    // Default pagination values
+
+    // Build the query filter
+    const filter = {}
+    if (category) {
+      filter.name = category // Filter by category if provided
+    }
+
+    // Fetch blogs with pagination and filter
+    const community = await Community.find(filter)
+      .populate({
+        path: 'topics.posts.comments.user', // Populate user details
+        select: 'name email imageUrl' // Fetch specific fields
+      })
+      .sort({ _id: -1 })
+    // Exclude internal Mongoose fields like `__v`
+
+    // Fetch total count of blogs for pagination metadata
+    const totalCount = await Community.countDocuments(filter)
+
+    res.status(200).json({
+      status: 200,
+      data: community
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      error: err.message
+    })
+  }
+})
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    // Fetch the community by its ID
+    const community = await Community.findById(id).populate({
+      path: 'topics.posts.comments.user', // Populate user details
+      select: 'name email imageUrl' // Fetch specific fields
+    })
+
+    if (!community) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Community not found'
+      })
+    }
+
+    res.status(200).json({
+      status: 200,
+      data: community
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      error: err.message
+    })
+  }
+})
+
+router.get('/:communityId/topics/:topicId', async (req, res) => {
+  try {
+    const { communityId, topicId } = req.params
+
+    // Find the community by ID
+    const community = await Community.findById(communityId).populate({
+      path: 'topics.posts.comments.user', // Populate user details
+      select: 'name email imageUrl' // Fetch specific fields
+    })
+
+    if (!community) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Community not found'
+      })
+    }
+
+    // Find the specific topic within the community's topics
+    const topic = community.topics.id(topicId)
+
+    if (!topic) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Topic not found in the specified community'
+      })
+    }
+
+    res.status(200).json({
+      status: 200,
+      data: topic
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      error: err.message
+    })
+  }
+})
+
+router.get('/:postId/getPost', async (req, res) => {
+  try {
+    const { postId } = req.params
+
+    // Find the community and get only the matching post
+    const community = await Community.findOne({
+      'topics.posts._id': postId // Match postId in nested structure
+    }).populate({
+      path: 'topics.posts.comments.user', // Populate user details for comments
+      select: 'name email imageUrl' // Fetch specific fields
+    })
+
+    if (!community) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Community not found'
+      })
+    }
+
+    // Find the specific post within the community's topics
+    const post = community.topics
+      .flatMap(topic => topic.posts) // Flatten all posts from all topics
+      .find(post => post._id.toString() === postId) // Find the specific post
+
+    if (!post) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Post not found'
+      })
+    }
+
+    res.status(200).json({
+      status: 200,
+      data: post // Return only the post
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      error: err.message
+    })
+  }
+})
+
+// router.post('/:commentId/addReply', authMiddleware, async (req, res) => {
+//   const { commentId } = req.params; // Parent comment or reply ID
+//   const userId = req.userId; // Authenticated user's ID
+//   const { replyText } = req.body; // Reply content
+//   const maxDepth = 20
+//   try {
+//     // Find the user
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Find the community containing the comment or reply
+//     let orConditions = [];
+//     for (let i = 0; i < maxDepth; i++) {
+//       let path = 'topics.posts.comments';
+//       for (let j = 0; j < i; j++) {
+//         path += '.replies';
+//       }
+//       path += '._id';
+
+//       orConditions.push({ [path]: commentId });
+//     }
+
+//     // Find the community containing the comment or reply
+//     const community = await Community.findOne({ $or: orConditions });
+
+//     if (!community) {
+//       return res.status(404).json({ message: 'Comment or reply not found' });
+//     }
+
+//     // Recursive function to find parent comment or reply
+//     const findParent = (comments, id) => {
+//       for (const comment of comments) {
+//         if (comment._id.toString() === id) {
+//           return comment;
+//         }
+//         if (comment.replies?.length) {
+//           const nestedParent = findParent(comment.replies, id); // Recurse through replies
+//           if (nestedParent) {
+//             return nestedParent;
+//           }
+//         }
+//       }
+//       return null;
+//     };
+
+//     // Locate the topic, post, and parent comment or reply
+//     const topic = community.topics.find(t =>
+//       t.posts.some(p => findParent(p.comments, commentId))
+//     );
+//     const post = topic.posts.find(p => findParent(p.comments, commentId));
+
+//     const parentComment = findParent(post.comments, commentId);
+
+//     if (!parentComment) {
+//       return res.status(404).json({ message: 'Parent comment or reply not found' });
+//     }
+
+//     // Ensure the parent comment or reply has a 'replies' array
+//     if (!parentComment.replies) {
+//       parentComment.replies = []; // Initialize the replies array if not already present
+//     }
+
+//     // Create a new reply object
+//     const newReply = {
+//       user: userId,
+//       comment: replyText,
+//       createdAt: new Date(),
+//       replies: [], // Start with an empty array of replies for further nesting
+//     };
+
+//     // Add the new reply to the parent comment/reply
+//     parentComment.replies.unshift(newReply);
+
+//     // Save the community document with the updated replies
+//     await community.save();
+
+//     res.status(201).json({
+//       message: 'Reply added successfully',
+//       replies: parentComment.replies,
+//     });
+//   } catch (error) {
+//     console.error('Error adding reply:', error);
+//     res.status(500).json({ message: 'Error adding reply', error: error.message });
+//   }
+// });
+
+export default router

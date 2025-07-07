@@ -1,0 +1,1 @@
+export const BACKEND_API_URL = import.meta.env.MODE === 'production' ? "https://api.famylink.us/" : "http://localhost:3000"
