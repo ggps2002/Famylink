@@ -29,29 +29,34 @@ export const requestThunk = createAsyncThunk(
 );
 
 export const statusThunk = createAsyncThunk(
-    "book-hire/status",
-    async (id, { getState, rejectWithValue }) => {
-        try {
-            const state = getState();
-            const { accessToken } = state.auth; 
-            // Construct the query parameters
-            const params = new URLSearchParams();
-            console.log("Id:", id);
+  "book-hire/status",
+  async (input, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const { accessToken } = state.auth;
 
-            // Make a GET request to the API
-            const { data, status } = await api.get(`/book-hire/status?jobId=${id}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // Send the token for authentication
-                },
-            });
+      // input could be a string (jobId) or object (with nannyId or jobId)
+      let params = new URLSearchParams();
+      if (typeof input === "string") {
+        params.append("jobId", input);
+      } else if (typeof input === "object") {
+        if (input.jobId) params.append("jobId", input.jobId);
+        if (input.nannyId) params.append("nannyId", input.nannyId);
+      }
 
-            return { data, status }; // Return the response data directly
-        } catch (error) {
-            
-            return rejectWithValue(error.response?.data || 'An error occurred'); // Handle error
-        }
+      const { data, status } = await api.get(`/book-hire/status?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      return { data, status };
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "An error occurred");
     }
+  }
 );
+
 
 export const withDrawThunk = createAsyncThunk(
     "book-hire/withDraw",

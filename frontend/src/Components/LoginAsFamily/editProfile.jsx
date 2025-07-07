@@ -174,40 +174,46 @@ export default function EditProfile() {
     }
   };
 
-    const handleZipValidation = async (zip) => {
-      if (!zip) return;
-  
-      setLoading(true);
-      try {
-        const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
-        if (!res.ok) throw new Error("Invalid ZIP");
-  
-        const data = await res.json();
-        const finalZip = data["post code"];
-        if (finalZip) {
-          setZipCode(finalZip);
-          form.setFieldsValue({
-            zipCode: finalZip,
-          });
-        } else {
-          throw new Error("Invalid structure");
-        }
-      } catch (err) {
-        setZipCode("");
-        form.setFieldsValue({ zipCode: "" });
-        fireToastMessage({
-          type: "error",
-          message: "Invalid ZIP code. Please enter a valid U.S. ZIP.",
+  const handleZipValidation = async (zip) => {
+    if (!zip) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      if (!res.ok) throw new Error("Invalid ZIP");
+
+      const data = await res.json();
+      const finalZip = data["post code"];
+      if (finalZip) {
+        setZipCode(finalZip);
+        form.setFieldsValue({
+          zipCode: finalZip,
         });
-      } finally {
-        setLoading(false);
+      } else {
+        throw new Error("Invalid structure");
       }
-    };
+    } catch (err) {
+      setZipCode("");
+      form.setFieldsValue({ zipCode: "" });
+      fireToastMessage({
+        type: "error",
+        message: "Invalid ZIP code. Please enter a valid U.S. ZIP.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setLocation(user?.location?.format_location || "");
     setZipCode(user?.zipCode || "");
   }, [user]);
+
+  useEffect(() => {
+    if (zipCode) {
+      form.setFieldsValue({ zipCode });
+    }
+  }, [zipCode, form]);
   return (
     <div className="padding-navbar1 Quicksand">
       <div className="shadow border-[1px] border-[#D6DDEB] bg-white my-10 rounded-xl">

@@ -19,7 +19,7 @@ export default function ProfileList({
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
   const { data, pagination, isLoading } = useSelector((state) => state.jobPost);
-  console.log(data)
+  console.log(data);
   const pageSize = 4;
   useEffect(() => {
     const filters = {
@@ -27,7 +27,7 @@ export default function ProfileList({
       limit: pageSize,
     };
     if (location > 0) {
-      filters.location = location
+      filters.location = location;
     }
     if (careOptions.length > 0) {
       const { min, max } = convertAgeRanges(careOptions);

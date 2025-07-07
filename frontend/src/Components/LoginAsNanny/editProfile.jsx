@@ -220,7 +220,7 @@ export default function EditProfileNanny() {
   };
 
   const handleZipValidation = async (zip) => {
-    if (!zip) return;
+    if (!zip || zip === zipCode) return; // Don't revalidate if unchanged
 
     setLoading(true);
     try {
@@ -231,9 +231,7 @@ export default function EditProfileNanny() {
       const finalZip = data["post code"];
       if (finalZip) {
         setZipCode(finalZip);
-        form.setFieldsValue({
-          zipCode: finalZip,
-        });
+        form.setFieldsValue({ zipCode: finalZip });
       } else {
         throw new Error("Invalid structure");
       }
@@ -337,8 +335,7 @@ export default function EditProfileNanny() {
       if (!zipCode) {
         return fireToastMessage({
           type: "error",
-          message:
-            "Zip code is missing. Please enter a Zip Code.",
+          message: "Zip code is missing. Please enter a Zip Code.",
         });
       }
 
@@ -394,6 +391,12 @@ export default function EditProfileNanny() {
     setLocation(user?.location?.format_location || "");
     setZipCode(user?.zipCode || "");
   }, [user]);
+
+  useEffect(() => {
+  if (zipCode) {
+    form.setFieldsValue({ zipCode });
+  }
+}, [zipCode, form]);
   return (
     <div className="padding-navbar1 Quicksand">
       <div className="shadow border-[1px] border-[#D6DDEB] bg-white my-10 rounded-xl">
@@ -485,6 +488,7 @@ export default function EditProfileNanny() {
                   <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
                   <Form.Item
                     name="zipCode"
+                    value={zipCode}
                     rules={[
                       { required: true, message: "ZIP code is required" },
                     ]}
