@@ -338,7 +338,7 @@ const App = ({ head, enable, withDraw, payNow }) => {
       }
     }
 
-    if (head == 'Email Verification') {
+    if (head === 'Email Verification') {
       let { oneTimePass } = values
       setLoading(true)
       oneTimePass = oneTimePass.join('')

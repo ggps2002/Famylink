@@ -19,6 +19,7 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
   const [selectedChildren, setSelectedChildren] = useState(
     user?.noOfChildren?.length
   );
@@ -27,6 +28,66 @@ export default function EditProfile() {
     const len = user?.noOfChildren?.length || 0;
     return Array.from({ length: len }, (_, i) => info[`Child${i + 1}`] || "");
   });
+
+  useEffect(() => {
+    const getCurrentLocation = async () => {
+      if (!location) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+                import.meta.env.VITE_GOOGLE_KEY
+              }`
+            );
+            const data = await response.json();
+
+            if (data.status === "OK") {
+              const address = data.results[0].formatted_address;
+              const components = data.results[0].address_components;
+
+              const zipObj = components.find((comp) =>
+                comp.types.includes("postal_code")
+              );
+              const zip = zipObj ? zipObj.long_name : "";
+
+              if (!zip) {
+                fireToastMessage({
+                  message:
+                    "Zip code is not available for the selected location. Please try another location.",
+                  type: "error",
+                });
+                return;
+              }
+
+              setLocation(address);
+              setZipCode(zip);
+
+              form.setFieldsValue({
+                location: address,
+                zipCode: zip,
+              });
+
+              const { lat, lng } = data.results[0].geometry.location;
+              setCoordinates({
+                lat,
+                lng,
+                formatted: address,
+              });
+            }
+          } catch (error) {
+            fireToastMessage({
+              message: "Failed to fetch location details.",
+              type: "error",
+            });
+          }
+        });
+      }
+    };
+
+    getCurrentLocation();
+  }, []);
 
   const handleChildrenChange = (value) => {
     setSelectedChildren(value);
@@ -75,55 +136,34 @@ export default function EditProfile() {
   // Transform the input object
   const onFinish = async (values) => {
     setLoading(true);
-
     try {
       const formData = new FormData();
 
-      // 🌍 Geocode location
-      try {
-        const da = await api.get(`/location?address=${location}`);
-        if (da?.status === 200) {
-          const result = da?.data?.results[0];
-          const cor = result?.geometry.location;
-          const location1 = {
-            type: "Point",
-            coordinates: [cor?.lng, cor?.lat],
-            format_location: result?.formatted_address,
-          };
-          formData.append("location", JSON.stringify(location1));
-
-          const zipComponent = result?.address_components?.find((comp) =>
-            comp.types.includes("postal_code")
-          );
-          const zipCodeFromApi = zipComponent?.long_name;
-
-          if (!zipCodeFromApi) {
-            return fireToastMessage({
-              message:
-                "Zip code is not available for the selected location. Please try another location.",
-              type: "error",
-            });
-          }
-
-          setZipCode(zipCodeFromApi);
-          if (!values.zipCode && zipCodeFromApi) {
-            values.zipCode = zipCodeFromApi;
-          }
-        }
-      } catch (err) {
+      // ✅ Validate location data
+      if (!zipCode) {
         return fireToastMessage({
-          message: "Please fill proper zip code",
           type: "error",
+          message: "Zip code is missing. Please enter a Zip Code.",
         });
       }
 
-      // ✅ Append fields
+      if (coordinates) {
+        const location1 = {
+          type: "Point",
+          coordinates: [coordinates.lng, coordinates.lat],
+          format_location: coordinates.formatted,
+        };
+        formData.append("location", JSON.stringify(location1));
+      }
+
+      formData.append("zipCode", zipCode);
+
+      // ✅ Append basic fields
       if (values.fullName) formData.append("name", values.fullName);
       if (values.age) formData.append("age", values.age);
-      if (values.description) formData.append("aboutMe", values.description);
       if (values.gender) formData.append("gender", values.gender);
+      if (values.description) formData.append("aboutMe", values.description);
       if (file) formData.append("imageUrl", file);
-      if (zipCode) formData.append("zipCode", zipCode);
 
       // 👶 Append children info
       const childrenInfo = {};
@@ -169,7 +209,6 @@ export default function EditProfile() {
         message: "Failed to update user.",
       });
     } finally {
-      // 🔁 Always stop the loading spinner
       setLoading(false);
     }
   };
@@ -302,6 +341,81 @@ export default function EditProfile() {
                   </Form.Item>
                 </div> */}
                 <div>
+                  <p className="mb-2 font-semibold text-lg capitalize">
+                    Address
+                  </p>
+                  <Form.Item
+                    name="location"
+                    rules={[{ required: true, message: "Address is required" }]}
+                  >
+                    <Spin spinning={loading} size="small">
+                      <Autocomplete
+                        className="input-width"
+                        apiKey={import.meta.env.VITE_GOOGLE_KEY}
+                        style={{
+                          width: "100%",
+                          borderRadius: "1.5rem",
+                          padding: "0.75rem",
+                          border: "1px solid #D6DDEB",
+                        }}
+                        value={location || ""}
+                        onPlaceSelected={(place) => {
+                          const address = place.formatted_address;
+                          const components = place?.address_components || [];
+
+                          const zipObj = components.find((comp) =>
+                            comp.types.includes("postal_code")
+                          );
+                          const zip = zipObj ? zipObj.long_name : "";
+
+                          if (!zip) {
+                            fireToastMessage({
+                              message:
+                                "Zip code is not available for the selected location. Please try another location.",
+                              type: "error",
+                            });
+                            setLocation("");
+                            setZipCode("");
+                            form.setFieldsValue({ location: "", zipCode: "" });
+                            return;
+                          }
+
+                          const lat = place?.geometry?.location?.lat();
+                          const lng = place?.geometry?.location?.lng();
+
+                          if (lat && lng) {
+                            setCoordinates({
+                              lat,
+                              lng,
+                              formatted: address,
+                            });
+                          }
+
+                          setLocation(address);
+                          setZipCode(zip);
+
+                          form.setFieldsValue({
+                            location: address,
+                            zipCode: zip,
+                          });
+
+                          setLoading(false);
+                        }}
+                        onChange={(e) => {
+                          setLocation(e.target.value);
+                          setLoading(e.target.value.length > 0);
+                        }}
+                        onBlur={() => setLoading(false)}
+                        options={{
+                          types: ["address"],
+                          componentRestrictions: { country: "us" },
+                        }}
+                      />
+                    </Spin>
+                  </Form.Item>
+                </div>
+
+                <div>
                   <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
                   <Form.Item
                     name="zipCode"
@@ -322,7 +436,7 @@ export default function EditProfile() {
                         onBlur={(e) =>
                           handleZipValidation(e.target.value.trim())
                         }
-                        className="p-4 border-none rounded-3xl input-width"
+                        className="border rounded-3xl"
                         maxLength={10}
                       />
                     </Spin>

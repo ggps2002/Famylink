@@ -1,4 +1,5 @@
 import { Checkbox, TimePicker } from 'antd';
+import PropTypes from 'prop-types';
 
 export default function HireStep3({ daysState, setDaysState, head, subHead }) {
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -89,3 +90,16 @@ export default function HireStep3({ daysState, setDaysState, head, subHead }) {
         </div>
     );
 }
+
+HireStep3.propTypes = {
+    daysState: PropTypes.objectOf(
+        PropTypes.shape({
+            checked: PropTypes.bool.isRequired,
+            start: PropTypes.any,
+            end: PropTypes.any,
+        })
+    ).isRequired,
+    setDaysState: PropTypes.func.isRequired,
+    head: PropTypes.node,
+    subHead: PropTypes.node,
+};

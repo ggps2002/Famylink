@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 // Load environment variables
-const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.famylink.us";
+const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.gmail.com";
 const EMAIL_USER = process.env.EMAIL_USER || ""; // Your Gmail address
 const EMAIL_PASS = process.env.EMAIL_PASS || ""; // Your Gmail app password
 const EMAIL_PORT = 587;// Default port for SMTP

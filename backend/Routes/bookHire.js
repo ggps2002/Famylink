@@ -101,9 +101,8 @@ router.post("/request", authMiddleware, async (req, res) => {
           (new Date() - rejectedAtDate) / (1000 * 60 * 60 * 24)
         );
         return res.status(400).json({
-          message: `Rejected booking exists. You can reapply after ${
-            30 - diffInDays
-          } day(s).`,
+          message: `Rejected booking exists. You can reapply after ${30 - diffInDays
+            } day(s).`,
         });
       } else {
         // 30+ days have passed → allow reapplication
@@ -403,8 +402,8 @@ router.get("/requested-data", authMiddleware, async (req, res) => {
     // If no pagination, calculate totalCount only if needed
     const totalCount = limit
       ? await Booking.countDocuments({
-          $or: queryConditions,
-        })
+        $or: queryConditions,
+      })
       : bookings.length;
 
     const totalPages = limit ? Math.ceil(totalCount / limit) : 1; // Calculate total pages only if limit is provided
@@ -415,11 +414,11 @@ router.get("/requested-data", authMiddleware, async (req, res) => {
       data: bookings,
       pagination: limit
         ? {
-            totalRecords: totalCount,
-            totalPages,
-            currentPage: page,
-            recordsPerPage: limit,
-          }
+          totalRecords: totalCount,
+          totalPages,
+          currentPage: page,
+          recordsPerPage: limit,
+        }
         : undefined,
     });
   } catch (error) {
@@ -605,18 +604,25 @@ router.get("/get-withdraw-requests", authMiddleware, async (req, res) => {
 
 router.get("/status", authMiddleware, async (req, res) => {
   const userId = req.userId;
-  const { jobId } = req.query; 
+  const { jobId, nannyId } = req.query;
 
   try {
-    const currentBooking = await Booking.findOne({ jobId }).populate("jobId");
-
-    if (!currentBooking) {
-      return res
-        .status(404)
-        .json({ message: "Booking not found for this jobId" });
+    if (!jobId && !nannyId) {
+      return res.status(400).json({ message: "jobId or nannyId is required" });
     }
 
-    // Get user and their type
+    let currentBooking;
+
+    if (jobId) {
+      currentBooking = await Booking.findOne({ jobId }).populate("jobId");
+    } else if (nannyId) {
+      currentBooking = await Booking.findOne({ requestBy: nannyId }).populate("jobId");
+    }
+
+    if (!currentBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -624,32 +630,30 @@ router.get("/status", authMiddleware, async (req, res) => {
 
     const type = user.type;
 
-    // Check if user is related to this job
     const isNanny =
       type === "Nanny" && currentBooking.requestBy.toString() === userId;
     const isParent =
       type === "Parents" &&
       currentBooking.jobId &&
-      currentBooking.jobId.user &&
-      currentBooking.jobId.user.toString() === userId;
+      currentBooking.jobId.user?.toString() === userId;
 
     if (!isNanny && !isParent) {
-      return res
-        .status(403)
-        .json({ message: "User is not part of this booking" });
+      return res.status(403).json({ message: "User is not part of this booking" });
     }
 
-    // Build query for all bookings related to this jobId
-    const query = {
-      jobId,
+    const filterQuery = {
       $or: [{ nannyReview: false }, { familyReview: false }],
     };
 
-    const bookings = await Booking.find(query).populate("jobId");
+    if (jobId) filterQuery.jobId = jobId;
+    else if (nannyId) filterQuery.requestBy = nannyId;
+
+    const bookings = await Booking.find(filterQuery).populate("jobId");
 
     if (!bookings.length) {
       return res.status(404).json({ message: "No relevant bookings found" });
     }
+
     const response = bookings.map((booking) => ({
       status: booking.status,
       booking,
@@ -663,6 +667,7 @@ router.get("/status", authMiddleware, async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 });
+
 
 router.put("/withdraw/:bookingId", authMiddleware, async (req, res) => {
   const userId = req.userId; // Get the ID of the authenticated user
@@ -1141,11 +1146,11 @@ router.get("/accepted-bookings-request", authMiddleware, async (req, res) => {
       data: bookings,
       pagination: limit
         ? {
-            totalRecords: totalCount,
-            totalPages,
-            currentPage: page,
-            recordsPerPage: limit,
-          }
+          totalRecords: totalCount,
+          totalPages,
+          currentPage: page,
+          recordsPerPage: limit,
+        }
         : undefined,
     });
   } catch (error) {
@@ -1344,7 +1349,7 @@ router.put(
           .status(403)
           .json({ message: "Only parents can reconsider bookings" });
       }
-      
+
       const booking = await Booking.findById(bookingId).populate("jobId");
 
       if (!booking) {

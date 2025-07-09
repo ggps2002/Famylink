@@ -1,87 +1,166 @@
-import { useEffect, useState } from 'react'
-import { Pagination } from 'antd'
-import CardComm from './cardComm'
-import { NavLink } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux' // Replace with your actual action creator
-import { fetchAllBlogThunk } from '../../Redux/blogsSlice'
+import React from "react";
+import { Dislike, Like, Reply } from "../../../assets/icons";
 
-export default function PagComm ({ category, nanny }) {
-  const dispatch = useDispatch()
-  const { data, pagination, isLoading } = useSelector(state => state.blogs)
-  const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 10 // Number of records per page
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(
-        fetchAllBlogThunk({
-          limit: pageSize,
-          page: currentPage,
-          category: category !== 'Community Resources' ? category : undefined
-        })
-      ).unwrap()
-    }
-    fetchData()
-  }, [currentPage, pageSize, category])
-
-  const handlePageChange = page => {
-    setCurrentPage(page)
-  }
+function PaginationComm() {
   return (
-    <div>
-      {/* Display a loader if the data is still loading */}
-      {isLoading ? (
-        <div className='flex justify-center mt-10'>Loading...</div>
-      ) : (
-        <>
-          {/* Render profiles */}
-          <div className='flex flex-wrap justify-start gap-x-12 gap-y-8'>
-            {data.length > 0 &&
-              data?.map((v, i) => (
-                <NavLink
-                  key={i}
-                  to={
-                    nanny
-                      ? `/nanny/details/${v._id}`
-                      : `/family/details/${v._id}`
-                  }
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                >
-                  <CardComm
-                    img={v.images[0]}
-                    head={v.name}
-                    val={v.category}
-                    para={v.description}
-                  />
-                </NavLink>
-              ))}
+    <div className="w-full px-4 md:px-8 max-w-[1440px] mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+        {/* LEFT SIDEBAR */}
+        <div className="lg:col-span-3 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <h2 className="text-2xl font-bold mb-3">Post 1</h2>
+            <p className="text-gray-700 mb-4">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute
+              irure dolor in reprehenderit in voluptate velit esse cillum
+              dolore.
+            </p>
+            <div className="text-sm text-gray-500">
+              Created by: Admin <br />
+              Posted on: 20 June 2024 @ 9:30am
+            </div>
+            <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+              <div className="flex gap-2">
+                <img src={Like} alt="like" />
+                <span className="cursor-pointer">25</span>
+              </div>
+              <div className="flex gap-2">
+                <img src={Dislike} alt="dislike" />
+                <span className="cursor-pointer">5</span>
+              </div>
+              <div className="flex gap-2">
+                <img src={Reply} alt="reply" />
+                <span className="cursor-pointer">Reply</span>
+              </div>
+            </div>
           </div>
+        </div>
 
-          {/* Pagination controls */}
-          {data.length > 0 ? (
-            <div className='flex justify-end items-center mt-6'>
-              <p className='font-medium text-sm'>
-                Showing {(currentPage - 1) * pageSize + 1} to{' '}
-                {Math.min(currentPage * pageSize, pagination.totalRecords || 0)}{' '}
-                of {pagination.totalRecords || 0} Results
-              </p>
-              <Pagination
-                className='font-bold pagination-custom Quicksand'
-                current={currentPage}
-                pageSize={pageSize}
-                total={pagination.totalRecords || 0}
-                onChange={handlePageChange}
-                showSizeChanger={false}
+        {/* CENTER CONTENT */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Write New Post */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <div className="flex items-center gap-4">
+              <img
+                src="https://i.pravatar.cc/100"
+                alt="user"
+                className="rounded-full w-12 h-12"
+              />
+              <input
+                type="text"
+                placeholder="Write your post.........."
+                className="w-full border border-gray-300 rounded-full px-6 py-3 text-[18px] focus:outline-none"
               />
             </div>
-          ) : (
-            <p className='font-semibold text-center text-lg'>
-              No results found for "
-              {category.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}". Please
-              try a different category or search term.
-            </p>
-          )}
-        </>
-      )}
+            <button className="mt-3 text-blue-500 text-lg">
+              📷 Photo/Video
+            </button>
+          </div>
+
+          {/* Reply Card */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col min-h-[400px]">
+            {/* Content */}
+            <div className="flex gap-4 overflow-auto">
+              <div className="overflow-y-auto pr-2 max-h-[800px]">
+                {Array(6)
+                  .fill(null)
+                  .map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex gap-4 border-b last:border-b-0 p-6"
+                    >
+                      <img
+                        src={`https://i.pravatar.cc/100?img=${i + 1}`}
+                        alt="user"
+                        className="rounded-full w-12 h-12 flex-shrink-0"
+                      />
+                      <div>
+                        <h2 className="text-2xl font-bold mb-2">
+                          Henry Dillon
+                        </h2>
+                        <p className="text-gray-700">
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Sed, neque? Veniam quaerat debitis, sequi
+                          reiciendis, iusto officia eius perferendis similique
+                          quod voluptates nihil nemo molestias non fuga
+                          voluptatem unde quos nam quia esse explicabo.
+                          Quibusdam tenetur sapiente alias ea exercitationem
+                          consectetur nam!
+                        </p>
+                        <div className="text-sm text-gray-500 mt-4">
+                          Posted on: 20 June 2024 @ 9:30am
+                        </div>
+                        <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+                          <div className="flex gap-2">
+                            <img src={Like} alt="like" />
+                            <span className="cursor-pointer">25</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <img src={Dislike} alt="dislike" />
+                            <span className="cursor-pointer">5</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <img src={Reply} alt="reply" />
+                            <span className="cursor-pointer">Reply</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Reply Input Pinned at Bottom */}
+            <div className="mt-auto pt-4 border-t">
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://i.pravatar.cc/100"
+                  alt="user"
+                  className="rounded-full w-12 h-12"
+                />
+                <input
+                  type="text"
+                  placeholder="Reply to post1"
+                  className="w-full border border-gray-300 rounded-full px-6 py-3 text-[18px] focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDEBAR */}
+        <div className="lg:col-span-3 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <h2 className="text-2xl font-semibold mb-4">Suggested Topics</h2>
+            {Array(5)
+              .fill(null)
+              .map((_, i) => (
+                <p
+                  key={i}
+                  className="text-gray-700 border-b py-3 last:border-b-0"
+                >
+                  Lorem ipsum dolor sit amet.
+                  <span className="block text-sm text-gray-400">3h</span>
+                </p>
+              ))}
+          </div>
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <h2 className="text-2xl font-semibold mb-4">Local Events</h2>
+            {Array(5)
+              .fill(null)
+              .map((_, i) => (
+                <p
+                  key={i}
+                  className="text-gray-700 border-b py-3 last:border-b-0"
+                >
+                  Lorem ipsum dolor sit amet.
+                  <span className="block text-sm text-gray-400">3h</span>
+                </p>
+              ))}
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
+
+export default PaginationComm;

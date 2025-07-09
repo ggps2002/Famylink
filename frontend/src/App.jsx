@@ -171,7 +171,7 @@ function App() {
             <Route path='message' element={<MessageNanny />} />
             <Route path='booking' element={<BookingNanny />} />
             <Route path='favorites' element={<FavoritesNanny />} />
-            <Route path='tipsAndArticles' element={<TipsAndArticlesNanny />} />
+            <Route path='community' element={<TipsAndArticlesNanny />} />
             <Route path='howItWorks' element={<HowItWorks />} />
             <Route path='trustsAndSafety' element={<TrustsAndSafety />} />
             <Route path='details/:id' element={<DetailsCommArtNanny />} />
@@ -179,10 +179,10 @@ function App() {
               path='community'
               element={<TipsAndArticles nanny={true} />}
             /> */}
-             <Route
+             {/* <Route
               path='community'
               element={<ComingSoon />}
-            />
+            /> */}
             <Route path='desktop1/:id' element={<Desktop1 nanny={true} />} />
             <Route path='desktop2/:id/:topicId' element={<Desktop2 nanny={true} />} />
             <Route path='desktop3/:id/:postId' element={<Desktop3 nanny={true} />} />

@@ -2,6 +2,7 @@ import { Form, Checkbox } from 'antd';
 import { useEffect, useState } from 'react';
 import { toCamelCase } from '../../toCamelStr';
 import { InputTextArea } from '../../input';
+import PropTypes from 'prop-types';
 
 export default function NannyNoStep2({ formRef, data, defaultValue, defaultSubValue, textAreaHead, inputName, inputText, head, subHead }) {
     const [form] = Form.useForm();
@@ -84,5 +85,22 @@ export default function NannyNoStep2({ formRef, data, defaultValue, defaultSubVa
                 </Form>
             </div>
         </div>
-    )
+    );
 }
+
+NannyNoStep2.propTypes = {
+    formRef: PropTypes.object,
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            subHead: PropTypes.string,
+        })
+    ).isRequired,
+    defaultValue: PropTypes.string,
+    defaultSubValue: PropTypes.string,
+    textAreaHead: PropTypes.string,
+    inputName: PropTypes.string,
+    inputText: PropTypes.string,
+    head: PropTypes.string,
+    subHead: PropTypes.string,
+};

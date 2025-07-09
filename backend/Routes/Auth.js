@@ -458,7 +458,11 @@ router.post("/verify-otp", authMiddleware, async (req, res) => {
     user.otp = undefined;
     user.otpExpiry = undefined;
 
-    await user.save(); // Save the updated user document
+    console.log("Updated User:", user);
+
+    await user.save()
+      .then(() => console.log('User updated successfully'))
+      .catch(err => console.error('Error saving user:', err)); // Save the updated user document
 
     // Generate tokens
     const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } =

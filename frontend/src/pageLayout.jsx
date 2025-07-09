@@ -190,7 +190,7 @@ export default function PageLayout() {
           <Navbar1 nanny={true} />
           <div className="bg-gradient-to-b from-[#FFCADA] via-[#F6EEE966] to-[#FFF1F5] py-8">
             {(
-              pathname !== '/nanny/tipsAndArticles' &&
+              pathname !== '/nanny/community' &&
               !pathname.startsWith('/nanny/details/') &&
               pathname !== '/nanny/edit' &&
               !isProfileComplete
