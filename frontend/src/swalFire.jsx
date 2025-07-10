@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import check from './assets/images/Checkmark.png'
 import deleteIcon from './assets/images/deleteIcon.png'
-import './app.css';
+import './App.css';
 
 const SwalFireSuccess = ({ handleConfirm, title }) => {
     Swal.fire({
