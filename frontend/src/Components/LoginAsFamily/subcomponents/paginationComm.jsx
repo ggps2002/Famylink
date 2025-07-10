@@ -60,8 +60,8 @@ const PaginationComm = () => {
 
   useEffect(() => {
     dispatch(fetchAllCommunityThunk()).then(async (res) => {
-      const communities = res.payload?.data?.data || [];
-      const all = communities?.flatMap((comm) =>
+      const fetchedCommunities  = res.payload?.data?.data || [];
+      const all = fetchedCommunities ?.flatMap((comm) =>
         comm.topics.flatMap((topic) =>
           topic.posts.map((post) => ({
             ...post,
