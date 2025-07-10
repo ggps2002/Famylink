@@ -8,7 +8,7 @@ import { api } from "./Config/api";
 import { refreshTokenThunk, logout } from "./Components/Redux/authSlice";
 
 export default function PageLayout() {
-  const { user } = useSelector(s => s.auth)
+  const { user } = useSelector((s) => s.auth);
   const pathsWithHeaderFooter = [
     "/yourBusiness",
     "/forFamilies",
@@ -134,23 +134,37 @@ export default function PageLayout() {
     };
   }, [dispatch, navigate, pathname]);
 
-  const availability = user?.additionalInfo.find(info => info.key === 'avaiForWorking')?.value?.option;
-  const language = user?.additionalInfo.find(info => info.key === 'language')?.value?.option;
-  const start = user?.additionalInfo.find(info => info.key === 'availability')?.value?.option;
-  const workExp = user?.additionalInfo.find(info => info.key === 'experience')?.value?.option;
-  const specificDaysAndTime = user?.additionalInfo.find(info => info.key === 'specificDaysAndTime')?.value;
-  const salaryExp = user?.additionalInfo.find(info => info.key === 'salaryExp')?.value;
-  const ageGroupsExp = user?.additionalInfo.find(info => info.key === 'ageGroupsExp')?.value?.option;
+  const availability = user?.additionalInfo.find(
+    (info) => info.key === "avaiForWorking"
+  )?.value?.option;
+  const language = user?.additionalInfo.find((info) => info.key === "language")
+    ?.value?.option;
+  const start = user?.additionalInfo.find((info) => info.key === "availability")
+    ?.value?.option;
+  const workExp = user?.additionalInfo.find((info) => info.key === "experience")
+    ?.value?.option;
+  const specificDaysAndTime = user?.additionalInfo.find(
+    (info) => info.key === "specificDaysAndTime"
+  )?.value;
+  const salaryExp = user?.additionalInfo.find(
+    (info) => info.key === "salaryExp"
+  )?.value;
+  const ageGroupsExp = user?.additionalInfo.find(
+    (info) => info.key === "ageGroupsExp"
+  )?.value?.option;
 
   const isProfileComplete =
     availability &&
-    Array.isArray(language) && language.length > 0 &&
+    Array.isArray(language) &&
+    language.length > 0 &&
     start &&
     workExp &&
-    specificDaysAndTime && Object.keys(specificDaysAndTime).length > 0 &&
+    specificDaysAndTime &&
+    Object.keys(specificDaysAndTime).length > 0 &&
     salaryExp &&
-    Object.values(salaryExp).every(val => val && val.trim() !== '') &&
-    Array.isArray(ageGroupsExp) && ageGroupsExp.length > 0;
+    Object.values(salaryExp).every((val) => val && val.trim() !== "") &&
+    Array.isArray(ageGroupsExp) &&
+    ageGroupsExp.length > 0;
 
   return (
     <>
@@ -171,10 +185,17 @@ export default function PageLayout() {
         <>
           <Navbar1 />
           <div
-            className={`${pathname.startsWith("/family/post-a-job") || pathname.startsWith("/family/post-a-nannyShare")
-              ? "bg-white"
-              : "bg-gradient-to-b py-8"
-              } from-[#9EDCE180] via-[#DAF4EF66] to-[#EFECE64D]`}
+            className={`${
+              pathname.startsWith("/family/post-a-job") ||
+              pathname.startsWith("/family/post-a-nannyShare")
+                ? "bg-white"
+                : `bg-gradient-to-b ${
+                    pathname.startsWith("/family/pricing") ||
+                    pathname.startsWith("/family/message")
+                      ? "py-0"
+                      : "py-8"
+                  } from-[#9EDCE180] via-[#DAF4EF66] to-[#EFECE64D]`
+            }`}
           >
             <Outlet />
           </div>
@@ -183,19 +204,23 @@ export default function PageLayout() {
             pathname.startsWith("/family/post-a-nannyShare")
           ) && <Footer />}
         </>
-
       )}
       {pathname.startsWith("/nanny") && (
         <>
           <Navbar1 nanny={true} />
-          <div className="bg-gradient-to-b from-[#FFCADA] via-[#F6EEE966] to-[#FFF1F5] py-8">
-            {(
-              pathname !== '/nanny/community' &&
-              !pathname.startsWith('/nanny/details/') &&
-              pathname !== '/nanny/edit' &&
-              !isProfileComplete
-            ) && (
-                <NavLink to={'/nanny/edit'}>
+          <div
+            className={`bg-gradient-to-b from-[#FFCADA] via-[#F6EEE966] to-[#FFF1F5] py-8 ${
+              pathname.startsWith("/nanny/pricing") ||
+              (pathname.startsWith("/nanny/message") && "py-0")
+            }`}
+          >
+            {pathname !== "/nanny/community" &&
+              !pathname.startsWith("/nanny/details/") &&
+              pathname !== "/nanny/edit" &&
+              pathname !== "/nanny/pricing" &&
+              pathname !== "/nanny/message" &&
+              !isProfileComplete && (
+                <NavLink to={"/nanny/edit"}>
                   <p className="padding-navbar1 max-lg:pb-4 cursor-pointer animate-glow transition-colors duration-300 hover:text-gray-500 lg:text-2xl font-bold  tracking-wide inline-block">
                     Setting Up Profile
                   </p>

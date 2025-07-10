@@ -142,6 +142,11 @@ const userSchema = new Schema({
   stripeId: {
     type: Schema.Types.String,
   },
+  subscriptionId: String,
+  premium: {
+    type: Boolean,
+    default: false,
+  },
   status: {
     type: Schema.Types.String,
     enum: ["Active", "Block"],

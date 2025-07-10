@@ -143,7 +143,7 @@ export default function Navbar1({ nanny }) {
         )}
 
       <div className="flex items-center gap-x-4">
-        <NavLink to={nanny ? 'nanny/comingSoon' : 'family/comingSoon'}>
+        <NavLink to={nanny ? 'nanny/pricing' : 'family/pricing'}>
           <button className="bg-[#38AEE3] lg:block hidden w-28 text-white h-10 rounded-full Belleza transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110">Upgrade</button></NavLink>
         <div className="relative">
           <img

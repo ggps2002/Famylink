@@ -291,141 +291,77 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
 })
 
 router.post('/:postId/like', authMiddleware, async (req, res) => {
-  const { postId } = req.params
-  const userId = req.userId // Extract user ID from the authentication middleware
+  const { postId } = req.params;
+  const userId = req.userId;
 
   try {
-    // Find the community containing the post
-    const community = await Community.findOne({
-      'topics.posts._id': postId // Match postId in nested structure
-    })
+    const community = await Community.findOne({ 'topics.posts._id': postId });
+    if (!community) return res.status(404).json({ message: 'Post not found' });
 
-    if (!community) {
-      return res.status(404).json({ message: 'Post not found' })
-    }
-
-    // Find the topic containing the post
     const topic = community.topics.find(t =>
       t.posts.some(p => p._id.toString() === postId)
-    )
+    );
+    const post = topic.posts.find(p => p._id.toString() === postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    if (!topic) {
-      return res.status(404).json({ message: 'Topic not found' })
-    }
-
-    // Find the post by ID
-    const post = topic.posts.id(postId)
-    let notificationMessage = null;
-    // Remove user ID from dislikes if present
-    if (post.dislikes.includes(userId)) {
-      post.dislikes.pull(userId)
-      const noti = await Notification.findOneAndDelete({
-        senderId: userId,
-        postId: postId,
-        content: 'dislike',
-      });
-      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
-
-      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
-    }
-
-    // Toggle like: Add user to likes if not present; otherwise, remove
     if (post.likes.includes(userId)) {
-      post.likes.pull(userId) // Remove user from likes
-      const noti = await Notification.findOneAndDelete({
-        senderId: userId,
-        postId: postId,
-        content: 'like',
-      });
-      notificationMessage = 'You removed your like on this post.';
-      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
-
-      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+      post.likes.pull(userId);
     } else {
-      post.likes.unshift(userId) // Add user to likes
-      notificationMessage = 'You liked this post';
+      post.likes.push(userId);
+      post.dislikes.pull(userId); // remove from dislikes if present
     }
 
-    // Save changes
-    await community.save()
+    await community.save();
 
     res.status(200).json({
-      message: notificationMessage,
-    })
+      message: "Post like toggled",
+      likes: post.likes.length,
+      dislikes: post.dislikes.length,
+    });
   } catch (error) {
-    console.error('Error updating like status:', error)
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-})
+});
+
+
+
+
 
 router.post('/:postId/dislike', authMiddleware, async (req, res) => {
-  const { postId } = req.params
-  const userId = req.userId // Extract user ID from the authentication middleware
+  const { postId } = req.params;
+  const userId = req.userId;
 
   try {
-    // Find the community containing the post
-    const community = await Community.findOne({
-      'topics.posts._id': postId // Match postId in nested structure
-    })
+    const community = await Community.findOne({ 'topics.posts._id': postId });
+    if (!community) return res.status(404).json({ message: 'Post not found' });
 
-    if (!community) {
-      return res.status(404).json({ message: 'Post not found' })
-    }
-
-    // Find the topic containing the post
     const topic = community.topics.find(t =>
       t.posts.some(p => p._id.toString() === postId)
-    )
+    );
+    const post = topic.posts.find(p => p._id.toString() === postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    if (!topic) {
-      return res.status(404).json({ message: 'Topic not found' })
-    }
-
-    // Find the post by ID
-    const post = topic.posts.id(postId)
-    let notificationMessage = null;
-    // Remove user ID from likes if present
-    if (post.likes.includes(userId)) {
-      post.likes.pull(userId)
-      const noti = await Notification.findOneAndDelete({
-        senderId: userId,
-        postId: postId,
-        content: 'like',
-      });
-      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
-
-      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
-    }
-
-    // Toggle dislike: Add user to dislikes if not present; otherwise, remove
     if (post.dislikes.includes(userId)) {
-      post.dislikes.pull(userId) // Remove user from dislikes
-      const noti =  await Notification.findOneAndDelete({
-        senderId: userId,
-        postId: postId,
-        content: 'dislike',
-      });
-
-      notificationMessage = 'You removed your dislike on this post';
-      // const populatedNotification = await Notification.find({ receiverId: noti.receiverId }).sort({ createdAt: -1 }).populate('senderId', 'email name imageUrl type _id');
-
-      // io.to(noti.receiverId).emit('removeNotifcation', populatedNotification);
+      post.dislikes.pull(userId);
     } else {
-      post.dislikes.unshift(userId) // Add user to dislikes
-      notificationMessage = 'You dislike this post';
+      post.dislikes.push(userId);
+      post.likes.pull(userId); // remove from likes if present
     }
 
-    // Save changes
-    await community.save()
+    await community.save();
 
     res.status(200).json({
-      message: notificationMessage,
-    })
+      message: "Post dislike toggled",
+      likes: post.likes.length,
+      dislikes: post.dislikes.length,
+    });
   } catch (error) {
-    console.error('Error updating dislike status:', error)
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-})
+});
+
+
+
 
 router.post('/:postId/comment', authMiddleware, async (req, res) => {
   const { postId } = req.params // Post ID from the URL
@@ -471,7 +407,7 @@ router.post('/:postId/comment', authMiddleware, async (req, res) => {
       comment,
       createdAt: new Date()
     }
-     post.comments.unshift(newComment) // Add comment to the post's comments array
+    post.comments.unshift(newComment) // Add comment to the post's comments array
 
     // Save changes
     await community.save()
@@ -863,6 +799,41 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+// POST /community/:postId/comments/:commentId/replies
+router.post('/:postId/comments/:commentId/replies', authMiddleware, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const { reply } = req.body; // just the reply text
+  const userId = req.user._id;
+
+  try {
+    const post = await CommunityPost.findById(postId);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const comment = post.comments.id(commentId);
+    if (!comment) return res.status(404).json({ error: 'Comment not found' });
+
+    const newReply = {
+      _id: new mongoose.Types.ObjectId(),
+      user: userId,
+      comment: reply,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      likes: [],
+      dislikes: [],
+      replies: [],
+    };
+
+    comment.replies.push(newReply);
+    await post.save();
+
+    res.status(201).json({ message: 'Reply added', comment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 router.get('/:communityId/topics/:topicId', async (req, res) => {
   try {
     const { communityId, topicId } = req.params
@@ -944,6 +915,113 @@ router.get('/:postId/getPost', async (req, res) => {
     })
   }
 })
+
+router.post('/:commentId/:replyId/replyLike', authMiddleware, async (req, res) => {
+  const { commentId, replyId } = req.params;
+  const userId = req.userId;
+
+  try {
+    const community = await Community.findOne({
+      'topics.posts.comments._id': commentId,
+    });
+
+    if (!community) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    // Locate the topic and post
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p.comments.id(commentId))
+    );
+    const post = topic.posts.find(p => p.comments.id(commentId));
+    const comment = post.comments.id(commentId);
+
+    // Find the reply
+    const reply = comment.replies.id(replyId);
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
+    }
+
+    // Toggle like/dislike logic
+    if (reply.likes.includes(userId)) {
+      reply.likes.pull(userId); // Unlike
+    } else {
+      reply.likes.unshift(userId); // Like
+      reply.dislikes.pull(userId); // Remove from dislikes
+    }
+
+    await community.save();
+
+    res.status(200).json({
+      message: 'Reply like toggled successfully',
+      likes: reply.likes.length,
+      dislikes: reply.dislikes.length,
+    });
+  } catch (error) {
+    console.error('Error liking reply:', error);
+    res.status(500).json({ message: 'Error liking reply', error: error.message });
+  }
+});
+
+router.post("/post/:postId/comment/:commentId/dislike", authMiddleware, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const userId = req.userId;
+
+  try {
+    const community = await Community.findOne({ 'topics.posts._id': postId });
+    if (!community) return res.status(404).json({ message: "Post not found" });
+
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    );
+    const post = topic.posts.find(p => p._id.toString() === postId);
+    const comment = post.comments.id(commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    if (comment.dislikes.includes(userId)) {
+      comment.dislikes.pull(userId);
+    } else {
+      comment.dislikes.push(userId);
+      comment.likes.pull(userId); // Remove from likes if present
+    }
+
+    await community.save();
+    res.status(200).json({ message: "Comment dislike toggled", dislikes: comment.dislikes.length });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+router.post("/post/:postId/comment/:commentId/like", authMiddleware, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const userId = req.userId;
+
+  try {
+    const community = await Community.findOne({ 'topics.posts._id': postId });
+    if (!community) return res.status(404).json({ message: "Post not found" });
+
+    const topic = community.topics.find(t =>
+      t.posts.some(p => p._id.toString() === postId)
+    );
+    const post = topic.posts.find(p => p._id.toString() === postId);
+    const comment = post.comments.id(commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    if (comment.likes.includes(userId)) {
+      comment.likes.pull(userId);
+    } else {
+      comment.likes.push(userId);
+      comment.dislikes.pull(userId);
+    }
+
+    await community.save();
+    res.status(200).json({ message: "Comment like toggled", likes: comment.likes.length });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 
 // router.post('/:commentId/addReply', authMiddleware, async (req, res) => {
 //   const { commentId } = req.params; // Parent comment or reply ID

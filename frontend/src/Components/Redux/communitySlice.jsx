@@ -177,6 +177,21 @@ export const postCommentThunk = createAsyncThunk(
   }
 )
 
+export const replyCommentReplyThunk = createAsyncThunk(
+  'community/replyComment',
+  async ({ postId, commentId, reply }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/community/${postId}/comments/${commentId}/replies`, {
+        reply,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
 export const replyCommentThunk = createAsyncThunk(
   'community/post/replyComment',
   async ({ id, comment, to }, { getState, rejectWithValue }) => {
@@ -201,6 +216,37 @@ export const replyCommentThunk = createAsyncThunk(
     }
   }
 )
+
+export const postCommentLikeThunk = createAsyncThunk(
+  'community/postCommentLike',
+  async ({ postId, commentId }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+      const response = await api.post(`/community/post/${postId}/comment/${commentId}/like`, {
+        userId: auth.user._id,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const postCommentDislikeThunk = createAsyncThunk(
+  'community/postCommentDislike',
+  async ({ postId, commentId }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+      const response = await api.post(`/community/post/${postId}/comment/${commentId}/dislike`, {
+        userId: auth.user._id,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 
 export const deleteCommentThunk = createAsyncThunk(
   'community/post/delComment',
