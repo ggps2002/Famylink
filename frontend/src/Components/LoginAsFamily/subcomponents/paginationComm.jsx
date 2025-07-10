@@ -406,13 +406,23 @@ const PaginationComm = () => {
                           className="border border-gray-300 rounded-lg px-4 py-2 text-base w-full sm:w-auto"
                         >
                           <option value="">Select Topic</option>
-                          {communities
-                            ?.flatMap((comm) => comm.topics)
-                            ?.map((t) => (
-                              <option key={t._id} value={t._id}>
-                                {t.name}
-                              </option>
-                            ))}
+                          {Array.isArray(communities) &&
+                            communities
+                              .flatMap((comm) =>
+                                Array.isArray(comm.topics) ? comm.topics : []
+                              )
+                              .slice(0, 5)
+                              .map((topic) => (
+                                <p
+                                  key={topic._id}
+                                  className="text-gray-700 border-b py-3 last:border-b-0"
+                                >
+                                  {topic.name}
+                                  <span className="block text-sm text-gray-400">
+                                    Community Topic
+                                  </span>
+                                </p>
+                              ))}
                         </select>
                       </div>
 
