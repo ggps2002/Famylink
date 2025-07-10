@@ -60,8 +60,8 @@ const PaginationComm = () => {
 
   useEffect(() => {
     dispatch(fetchAllCommunityThunk()).then(async (res) => {
-      const fetchedCommunities  = res.payload?.data?.data || [];
-      const all = fetchedCommunities ?.flatMap((comm) =>
+      const fetchedCommunities = res.payload?.data?.data || [];
+      const all = fetchedCommunities?.flatMap((comm) =>
         comm.topics.flatMap((topic) =>
           topic.posts.map((post) => ({
             ...post,
@@ -409,19 +409,16 @@ const PaginationComm = () => {
                           {Array.isArray(communities) &&
                             communities
                               .flatMap((comm) =>
-                                Array.isArray(comm.topics) ? comm.topics : []
+                                (comm.topics || []).map((topic) => ({
+                                  ...topic,
+                                  communityName: comm.name,
+                                }))
                               )
                               .slice(0, 5)
                               .map((topic) => (
-                                <p
-                                  key={topic._id}
-                                  className="text-gray-700 border-b py-3 last:border-b-0"
-                                >
-                                  {topic.name}
-                                  <span className="block text-sm text-gray-400">
-                                    Community Topic
-                                  </span>
-                                </p>
+                                <option key={topic._id} value={topic._id}>
+                                  {topic.name} — {topic.communityName}
+                                </option>
                               ))}
                         </select>
                       </div>
