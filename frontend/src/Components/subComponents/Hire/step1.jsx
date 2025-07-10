@@ -1,6 +1,6 @@
 import { Form, Checkbox, Select, Spin, Input } from "antd";
 import { InputDa, InputPassword, InputDOB } from "../input";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { fireToastMessage } from "../../../toastContainer";
 import document from "../../../assets/documents/Terms_and_Conditions.pdf";
@@ -152,79 +152,6 @@ export default function HireStep1({ formRef, head, comm }) {
             <InputDOB />
 
             <div>
-              <p className="mb-2 font-semibold text-lg capitalize">Address</p>
-              <Form.Item
-                name="location"
-                rules={[{ required: true, message: "Address is required" }]}
-              >
-                <Spin spinning={loading} size="small">
-                  <Autocomplete
-                    className="input-width"
-                    apiKey={import.meta.env.VITE_GOOGLE_KEY}
-                    style={{
-                      width: "100%",
-                      borderRadius: "1.5rem",
-                      padding: "0.75rem",
-                      border: "1px solid #D6DDEB",
-                    }}
-                    value={location || ""}
-                    onPlaceSelected={(place) => {
-                      const address = place.formatted_address;
-                      const components = place?.address_components || [];
-
-                      const zipObj = components.find((comp) =>
-                        comp.types.includes("postal_code")
-                      );
-                      const zip = zipObj ? zipObj.long_name : "";
-
-                      if (!zip) {
-                        fireToastMessage({
-                          message:
-                            "Zip code is not available for the selected location. Please try another location.",
-                          type: "error",
-                        });
-                        setLocation("");
-                        setZipCode("");
-                        form.setFieldsValue({ location: "", zipCode: "" });
-                        return;
-                      }
-
-                      const lat = place?.geometry?.location?.lat();
-                      const lng = place?.geometry?.location?.lng();
-
-                      if (lat && lng) {
-                        setCoordinates({
-                          lat,
-                          lng,
-                          formatted: address,
-                        });
-                      }
-
-                      setLocation(address);
-                      setZipCode(zip);
-
-                      form.setFieldsValue({
-                        location: address,
-                        zipCode: zip,
-                      });
-
-                      setLoading(false);
-                    }}
-                    onChange={(e) => {
-                      setLocation(e.target.value);
-                      setLoading(e.target.value.length > 0);
-                    }}
-                    onBlur={() => setLoading(false)}
-                    options={{
-                      types: ["address"],
-                      componentRestrictions: { country: "us" },
-                    }}
-                  />
-                </Spin>
-              </Form.Item>
-            </div>
-
-            <div>
               <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
               <Form.Item
                 name="zipCode"
@@ -247,6 +174,79 @@ export default function HireStep1({ formRef, head, comm }) {
                 </Spin>
               </Form.Item>
             </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-xl capitalize Classico">Address</p>
+            <Form.Item
+              name="location"
+              rules={[{ required: true, message: "Address is required" }]}
+            >
+              <Spin spinning={loading} size="small">
+                <Autocomplete
+                  className="input-width"
+                  apiKey={import.meta.env.VITE_GOOGLE_KEY}
+                  style={{
+                    width: "100%",
+                    borderRadius: "1.5rem",
+                    padding: "0.75rem",
+                    border: "1px solid #D6DDEB",
+                  }}
+                  value={location || ""}
+                  onPlaceSelected={(place) => {
+                    const address = place.formatted_address;
+                    const components = place?.address_components || [];
+
+                    const zipObj = components.find((comp) =>
+                      comp.types.includes("postal_code")
+                    );
+                    const zip = zipObj ? zipObj.long_name : "";
+
+                    if (!zip) {
+                      fireToastMessage({
+                        message:
+                          "Zip code is not available for the selected location. Please try another location.",
+                        type: "error",
+                      });
+                      setLocation("");
+                      setZipCode("");
+                      form.setFieldsValue({ location: "", zipCode: "" });
+                      return;
+                    }
+
+                    const lat = place?.geometry?.location?.lat();
+                    const lng = place?.geometry?.location?.lng();
+
+                    if (lat && lng) {
+                      setCoordinates({
+                        lat,
+                        lng,
+                        formatted: address,
+                      });
+                    }
+
+                    setLocation(address);
+                    setZipCode(zip);
+
+                    form.setFieldsValue({
+                      location: address,
+                      zipCode: zip,
+                    });
+
+                    setLoading(false);
+                  }}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    setLoading(e.target.value.length > 0);
+                  }}
+                  onBlur={() => setLoading(false)}
+                  options={{
+                    types: ["address"],
+                    componentRestrictions: { country: "us" },
+                  }}
+                />
+              </Spin>
+            </Form.Item>
           </div>
 
           <div className="flex flex-wrap justify-start gap-x-6">

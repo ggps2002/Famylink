@@ -209,7 +209,7 @@ export default function PageLayout() {
         <>
           <Navbar1 nanny={true} />
           <div
-            className={`bg-gradient-to-b from-[#FFCADA] via-[#F6EEE966] to-[#FFF1F5] py-8 ${
+            className={`bg-gradient-to-b from-[#FFEE8C] to-[#fdf8ea] py-8 ${
               pathname.startsWith("/nanny/pricing") ||
               (pathname.startsWith("/nanny/message") && "py-0")
             }`}

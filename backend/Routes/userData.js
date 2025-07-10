@@ -220,6 +220,37 @@ router.get("/getFiltered", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/getUserById/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("userId", id)
+
+    const user = await User.findById(id)
+      .select("name profilePic imageUrl type")
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: 500,
+      message: "Error fetching user",
+      error: err.message,
+    });
+  }
+});
+
+
 
 // Assuming you're using Express and have a User model imported
 router.get("/getById/:id", async (req, res) => {

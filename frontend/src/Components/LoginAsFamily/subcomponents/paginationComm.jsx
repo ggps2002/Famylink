@@ -1,6 +1,7 @@
 // PaginationComm.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Avatar from "react-avatar";
 import {
   fetchAllCommunityThunk,
   fetchPostByIdThunk,
@@ -11,11 +12,13 @@ import {
   postCommentLikeThunk,
   postCommentDislikeThunk,
   postReplyDislikeThunk,
-  replyCommentReplyThunk,
+  replyPostReplyThunk,
+  createPostThunk,
 } from "../../Redux/communitySlice";
 import { Dislike, Like, Reply } from "../../../assets/icons";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { api } from "../../../Config/api";
 
 const PaginationComm = () => {
   const dispatch = useDispatch();
@@ -30,11 +33,35 @@ const PaginationComm = () => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [quotedText, setQuotedText] = useState(""); // for UI quote
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [postContent, setPostContent] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState("");
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [postCreators, setPostCreators] = useState({});
+
+  const handleCreatePost = async () => {
+    if (!postContent.trim() || !selectedTopic) return;
+
+    console.log("Anonymous:", isAnonymous);
+
+    await dispatch(
+      createPostThunk({
+        description: postContent,
+        topicId: selectedTopic,
+        anonymous: isAnonymous,
+      })
+    );
+
+    setPostContent("");
+    setSelectedTopic("");
+    setIsAnonymous(false);
+    dispatch(fetchAllCommunityThunk());
+  };
 
   useEffect(() => {
-    dispatch(fetchAllCommunityThunk()).then((res) => {
+    dispatch(fetchAllCommunityThunk()).then(async (res) => {
       const communities = res.payload?.data?.data || [];
-      const all = communities.flatMap((comm) =>
+      const all = communities?.flatMap((comm) =>
         comm.topics.flatMap((topic) =>
           topic.posts.map((post) => ({
             ...post,
@@ -45,6 +72,27 @@ const PaginationComm = () => {
         )
       );
       setPosts(all);
+
+      // 🔽 Fetch user info for non-anonymous posts
+      const uniqueUserIds = [
+        ...new Set(
+          all
+            .map((p) => p.createdBy)
+            .filter((id) => id && id !== "000000000000000000000000")
+        ),
+      ];
+
+      const creatorMap = {};
+      for (const userId of uniqueUserIds) {
+        try {
+          const res = await api.get(`/userData/getUserById/${userId}`);
+          creatorMap[userId] = res.data?.data?.name || "User";
+        } catch {
+          creatorMap[userId] = "User";
+        }
+      }
+
+      setPostCreators(creatorMap);
     });
   }, [dispatch]);
 
@@ -202,55 +250,55 @@ const PaginationComm = () => {
     }
   };
 
-const handlePostCommentReply = () => {
-  if (!replyText.trim()) return;
+  const handlePostCommentReply = () => {
+    if (!replyText.trim()) return;
 
-  if (replyToCommentId) {
-    // 🔁 Nested reply to a comment
-    dispatch(
-      replyCommentThunk({
-        postId: activePostId,
-        commentId: replyToCommentId,
-        reply: replyText,
-      })
-    ).then(() => {
-      dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
-        const updated = res.payload?.data;
-        if (updated) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p._id === updated._id ? { ...p, comments: updated.comments } : p
-            )
-          );
-        }
-      });
-      setReplyText("");
-      setReplyToCommentId(null);
-      setQuotedText("");
-      setIsReplyModalOpen(false);
-    });
-  } else {
-    // 🔁 Fallback to posting a top-level comment
-    dispatch(postCommentThunk({ id: activePostId, comment: replyText })).then(
-      () => {
+    if (replyToCommentId) {
+      // 🔁 Nested reply to a comment
+      dispatch(
+        replyPostReplyThunk({
+          postId: activePostId,
+          commentId: replyToCommentId,
+          reply: replyText,
+        })
+      ).then(() => {
         dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
           const updated = res.payload?.data;
           if (updated) {
             setPosts((prev) =>
               prev.map((p) =>
-                p._id === updated._id
-                  ? { ...p, comments: updated.comments }
-                  : p
+                p._id === updated._id ? { ...p, comments: updated.comments } : p
               )
             );
           }
         });
         setReplyText("");
+        setReplyToCommentId(null);
+        setQuotedText("");
         setIsReplyModalOpen(false);
-      }
-    );
-  }
-};
+      });
+    } else {
+      // 🔁 Fallback to posting a top-level comment
+      dispatch(postCommentThunk({ id: activePostId, comment: replyText })).then(
+        () => {
+          dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
+            const updated = res.payload?.data;
+            if (updated) {
+              setPosts((prev) =>
+                prev.map((p) =>
+                  p._id === updated._id
+                    ? { ...p, comments: updated.comments }
+                    : p
+                )
+              );
+            }
+          });
+          setReplyText("");
+          setIsReplyModalOpen(false);
+        }
+      );
+    }
+  };
 
   return (
     <div className="w-full mx-auto">
@@ -270,7 +318,11 @@ const handlePostCommentReply = () => {
                 <h2 className="text-2xl font-bold mb-3">{post.topicName}</h2>
                 <p className="text-gray-700 mb-4">{post.description || ""}</p>
                 <div className="text-sm text-gray-500">
-                  Created by: Admin <br />
+                  Created by:{" "}
+                  {post.createdBy === "000000000000000000000000"
+                    ? "anonymous"
+                    : postCreators[post.createdBy] || "Loading..."}{" "}
+                  <br />
                   Posted on: {new Date(post.createdAt).toLocaleString()}
                 </div>
                 <div className="flex gap-6 mt-4 text-gray-600 text-lg">
@@ -310,21 +362,72 @@ const handlePostCommentReply = () => {
           <div className="lg:col-span-6 space-y-6">
             {/* New Post Box */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center gap-4">
-                <img
-                  src="https://i.pravatar.cc/100"
-                  alt="user"
-                  className="rounded-full w-12 h-12"
-                />
-                <input
-                  type="text"
-                  placeholder="Write your post.........."
-                  className="w-full border border-gray-300 rounded-full px-6 py-3 text-[18px] focus:outline-none"
-                />
+              <div className="flex items-start gap-4">
+                {user?.profilePic ? (
+                  <img
+                    src={user?.profilePic}
+                    alt="user"
+                    className="rounded-full w-12 h-12"
+                  />
+                ) : (
+                  <Avatar
+                    className="rounded-full text-black"
+                    size="48"
+                    color="#38AEE3"
+                    name={user.name?.split(" ").slice(0, 2).join(" ")}
+                  />
+                )}
+
+                <div className="flex-1">
+                  <textarea
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
+                    placeholder="Write your post..."
+                    className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-lg focus:outline-none resize-none"
+                    rows={4}
+                  />
+
+                  {postContent.trim() && (
+                    <>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
+                        <label className="flex items-center gap-2 text-gray-600 text-base">
+                          <input
+                            type="checkbox"
+                            checked={isAnonymous}
+                            onChange={(e) => setIsAnonymous(e.target.checked)}
+                            className="w-5 h-5"
+                          />
+                          Post Anonymously
+                        </label>
+
+                        <select
+                          value={selectedTopic}
+                          onChange={(e) => setSelectedTopic(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-4 py-2 text-base w-full sm:w-auto"
+                        >
+                          <option value="">Select Topic</option>
+                          {communities
+                            ?.flatMap((comm) => comm.topics)
+                            ?.map((t) => (
+                              <option key={t._id} value={t._id}>
+                                {t.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mt-4">
+                        <button
+                          onClick={handleCreatePost}
+                          className="bg-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-600 transition"
+                        >
+                          Post
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-              <button className="mt-3 text-blue-500 text-lg">
-                📷 Photo/Video
-              </button>
             </div>
 
             {/* Replies */}
@@ -464,13 +567,25 @@ const handlePostCommentReply = () => {
                 {/* Reply Input */}
                 <div className="mt-auto pt-4 border-t">
                   <div className="flex gap-4">
-                    <img
-                      src="https://i.pravatar.cc/100"
-                      alt="user"
-                      className="rounded-full w-16 h-16"
-                    />
+                    {user?.profilePic ? (
+                      <img
+                        src={user?.profilePic}
+                        alt="user"
+                        className="rounded-full w-12 h-12"
+                      />
+                    ) : (
+                      <Avatar
+                        className="rounded-full text-black"
+                        size="32"
+                        color={"#38AEE3"}
+                        name={user.name
+                          ?.split(" ") // Split by space
+                          .slice(0, 2) // Take first 1–2 words
+                          .join(" ")}
+                      />
+                    )}
                     <div className="w-full">
-                      <h2 className="text-2xl font-bold mb-2">User</h2>
+                      <h2 className="text-2xl font-bold mb-2">{user.name}</h2>
                       <textarea
                         placeholder={`Reply to ${activePost.description}`}
                         className="w-full border border-gray-300 rounded-2xl p-3 text-[18px] focus:outline-none min-h-32 placeholder-gray-400"
@@ -481,7 +596,7 @@ const handlePostCommentReply = () => {
                   </div>
                   <div className="flex justify-end mt-4">
                     <button
-                      onClick={handlePostCommentReply}
+                      onClick={handlePostReply}
                       className="rounded-full text-white bg-[#38AEE3] flex items-center justify-center px-6 py-3"
                     >
                       Post Reply
@@ -496,19 +611,23 @@ const handlePostCommentReply = () => {
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h2 className="text-2xl font-semibold mb-4">Suggested Topics</h2>
-              {Array(5)
-                .fill(null)
-                .map((_, i) => (
-                  <p
-                    key={i}
-                    className="text-gray-700 border-b py-3 last:border-b-0"
-                  >
-                    Lorem ipsum dolor sit amet.
-                    <span className="block text-sm text-gray-400">3h</span>
-                  </p>
-                ))}
+              {Array.isArray(communities) &&
+                communities
+                  .flatMap((comm) => comm.topics || [])
+                  .slice(0, 5)
+                  .map((topic) => (
+                    <p
+                      key={topic._id}
+                      className="text-gray-700 border-b py-3 last:border-b-0"
+                    >
+                      {topic.name}
+                      <span className="block text-sm text-gray-400">
+                        Community Topic
+                      </span>
+                    </p>
+                  ))}
             </div>
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            {/* <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h2 className="text-2xl font-semibold mb-4">Local Events</h2>
               {Array(5)
                 .fill(null)
@@ -521,7 +640,7 @@ const handlePostCommentReply = () => {
                     <span className="block text-sm text-gray-400">3h</span>
                   </p>
                 ))}
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -566,7 +685,7 @@ const handlePostCommentReply = () => {
                   />
                   <div className="mt-4 flex justify-end">
                     <button
-                      onClick={handlePostReply}
+                      onClick={handlePostCommentReply}
                       className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full"
                     >
                       Post Reply

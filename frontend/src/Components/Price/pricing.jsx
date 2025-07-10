@@ -223,7 +223,7 @@ export default function Pricing({ nanny }) {
     <div
       className={`lg:py-12 py-6 px-1 bg-gradient-to-b ${
         nanny
-          ? "from-[#FFCADA] via-[#F6EEE9] to-[#FFF1F5]"
+          ? "from-[#FFEE8C] to-[#fdf8ea]"
           : "from-[#9EDCE1] via-[#DAF4EF] to-[#EFECE6]"
       }`}
     >

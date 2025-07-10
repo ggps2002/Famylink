@@ -3,6 +3,7 @@ import Community from '../Schema/community.js'
 import User from '../Schema/user.js' // Path to your Community model
 import { authMiddleware } from '../Services/utils/middlewareAuth.js'
 import Notification from '../Schema/notificaion.js'
+import mongoose from "mongoose";
 
 const router = express.Router()
 
@@ -800,18 +801,40 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST /community/:postId/comments/:commentId/replies
-router.post('/:postId/comments/:commentId/replies', authMiddleware, async (req, res) => {
+router.post("/:postId/comments/:commentId/replies", authMiddleware, async (req, res) => {
   const { postId, commentId } = req.params;
-  const { reply } = req.body; // just the reply text
-  const userId = req.user._id;
+  const { reply } = req.body;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized: No user found" });
+  }
 
   try {
-    const post = await CommunityPost.findById(postId);
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+    const community = await Community.findOne({ "topics.posts._id": postId });
 
-    const comment = post.comments.id(commentId);
-    if (!comment) return res.status(404).json({ error: 'Comment not found' });
+    if (!community) {
+      return res.status(404).json({ error: "Community post not found" });
+    }
 
+    // Find the post inside topics
+    let foundPost = null;
+    let topicFound = null;
+
+    for (const topic of community.topics) {
+      const post = topic.posts.id(postId);
+      if (post) {
+        foundPost = post;
+        topicFound = topic;
+        break;
+      }
+    }
+
+    if (!foundPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Construct new reply
     const newReply = {
       _id: new mongoose.Types.ObjectId(),
       user: userId,
@@ -823,13 +846,36 @@ router.post('/:postId/comments/:commentId/replies', authMiddleware, async (req, 
       replies: [],
     };
 
-    comment.replies.push(newReply);
-    await post.save();
+    // Recursively insert reply by parent _id
+    function insertReplyRecursive(array) {
+      for (const item of array) {
+        if (item._id.toString() === commentId) {
+          item.replies.push(newReply);
+          return true;
+        }
+        if (item.replies?.length > 0) {
+          const found = insertReplyRecursive(item.replies);
+          if (found) return true;
+        }
+      }
+      return false;
+    }
 
-    res.status(201).json({ message: 'Reply added', comment });
+    const inserted = insertReplyRecursive(foundPost.comments);
+
+    if (!inserted) {
+      return res.status(404).json({ error: "Parent comment/reply not found" });
+    }
+
+    // ✅ Mark the whole `topics` path as modified at root
+    community.markModified("topics");
+
+    await community.save();
+
+    res.status(201).json({ message: "Reply added successfully", reply: newReply });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Reply creation error:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -915,6 +961,64 @@ router.get('/:postId/getPost', async (req, res) => {
     })
   }
 })
+
+router.post("/post", authMiddleware, async (req, res) => {
+  try {
+    const { topicId, description = "", anonymous } = req.body;
+    const userId = req.userId;
+
+    console.log("Anonymous:", anonymous)
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No user found" });
+    }
+
+    if (!topicId || !description.trim()) {
+      return res.status(400).json({ message: "Topic ID and description are required" });
+    }
+
+    // Find the community that contains the topic
+    const community = await Community.findOne({ "topics._id": topicId });
+    if (!community) {
+      return res.status(404).json({ message: "Topic not found in any community" });
+    }
+
+    const topic = community.topics.id(topicId);
+    if (!topic) {
+      return res.status(404).json({ message: "Topic ID is invalid" });
+    }
+
+    const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
+
+    const newPost = {
+      description,
+      createdBy: anonymous ? ANONYMOUS_USER_ID : userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      likes: [],
+      dislikes: [],
+      comments: [],
+    };
+
+    topic.posts.unshift(newPost);
+    topic.updatedAt = new Date(); // optional: update topic timestamp
+    community.updatedAt = new Date(); // optional: update community timestamp
+
+    await community.save();
+
+    res.status(201).json({
+      message: "Post created successfully",
+      post: topic.posts[0],
+      topicId: topic._id,
+      communityId: community._id,
+    });
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
 
 router.post('/:commentId/:replyId/replyLike', authMiddleware, async (req, res) => {
   const { commentId, replyId } = req.params;
