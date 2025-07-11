@@ -20,6 +20,23 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { api } from "../../../Config/api";
 
+const dateFormatting = (date) => {
+  const createdAtDate = new Date(date);
+  const formattedDate = createdAtDate.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const formattedTime = createdAtDate
+    .toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) // gives "9:30 AM"
+
+  return `${formattedDate} @ ${formattedTime}`
+};
+
 const PaginationComm = () => {
   const dispatch = useDispatch();
   const { data: communities, isLoading } = useSelector(
@@ -56,79 +73,81 @@ const PaginationComm = () => {
     setIsAnonymous(false);
     dispatch(fetchAllCommunityThunk());
 
-     await fetchAllData();
+    await fetchAllData();
   };
 
   const fetchAllData = useCallback(async () => {
-  try {
-    const res = await dispatch(fetchAllCommunityThunk());
-    const fetchedCommunities = res.payload?.data?.data || [];
-    setLocalCommunities(fetchedCommunities);
+    try {
+      const res = await dispatch(fetchAllCommunityThunk());
+      const fetchedCommunities = res.payload?.data?.data || [];
+      setLocalCommunities(fetchedCommunities);
 
-    const allPosts = fetchedCommunities.flatMap((comm) =>
-      (comm.topics || []).flatMap((topic) =>
-        (topic.posts || []).map((post) => ({
-          ...post,
-          topicId: topic._id,
-          topicName: topic.name,
-          communityId: comm._id,
-        }))
-      )
-    );
-    setPosts(allPosts);
+      const allPosts = fetchedCommunities.flatMap((comm) =>
+        (comm.topics || []).flatMap((topic) =>
+          (topic.posts || []).map((post) => ({
+            ...post,
+            topicId: topic._id,
+            topicName: topic.name,
+            communityId: comm._id,
+          }))
+        )
+      );
+      setPosts(allPosts);
 
-    const userIds = new Set();
+      const userIds = new Set();
 
-    for (const post of allPosts) {
-      const postUserId = post.createdBy?.$oid || post.createdBy;
-      if (postUserId && postUserId !== "000000000000000000000000") {
-        userIds.add(postUserId);
-      }
-
-      for (const comment of post.comments || []) {
-        const commentUserId = comment.user?._id || comment.user || "000000000000000000000000";
-        if (commentUserId && commentUserId !== "000000000000000000000000") {
-          userIds.add(commentUserId);
+      for (const post of allPosts) {
+        const postUserId = post.createdBy?.$oid || post.createdBy;
+        if (postUserId && postUserId !== "000000000000000000000000") {
+          userIds.add(postUserId);
         }
 
-        for (const reply of comment.replies || []) {
-          const replyUserId = reply.user?._id || reply.user || "000000000000000000000000";
-          if (replyUserId && replyUserId !== "000000000000000000000000") {
-            userIds.add(replyUserId);
+        for (const comment of post.comments || []) {
+          const commentUserId =
+            comment.user?._id || comment.user || "000000000000000000000000";
+          if (commentUserId && commentUserId !== "000000000000000000000000") {
+            userIds.add(commentUserId);
+          }
+
+          for (const reply of comment.replies || []) {
+            const replyUserId =
+              reply.user?._id || reply.user || "000000000000000000000000";
+            if (replyUserId && replyUserId !== "000000000000000000000000") {
+              userIds.add(replyUserId);
+            }
           }
         }
       }
+
+      const userMap = {
+        "000000000000000000000000": {
+          name: "User",
+          profilePic: null,
+        },
+      };
+
+      await Promise.all(
+        Array.from(userIds).map(async (id) => {
+          if (id === "000000000000000000000000") return;
+
+          try {
+            const res = await api.get(`/userData/getUserById/${id}`);
+            const data = res.data?.data;
+            userMap[id] = {
+              name: data?.name || "User",
+              profilePic: data?.profilePic || null,
+            };
+          } catch {
+            userMap[id] = { name: "User", profilePic: null };
+          }
+        })
+      );
+
+      setPostCreators(userMap);
+    } catch (err) {
+      console.error("Error fetching community or user data:", err);
     }
-
-    const userMap = {
-      "000000000000000000000000": {
-        name: "User",
-        profilePic: null,
-      },
-    };
-
-    await Promise.all(
-      Array.from(userIds).map(async (id) => {
-        if (id === "000000000000000000000000") return;
-
-        try {
-          const res = await api.get(`/userData/getUserById/${id}`);
-          const data = res.data?.data;
-          userMap[id] = {
-            name: data?.name || "User",
-            profilePic: data?.profilePic || null,
-          };
-        } catch {
-          userMap[id] = { name: "User", profilePic: null };
-        }
-      })
-    );
-
-    setPostCreators(userMap);
-  } catch (err) {
-    console.error("Error fetching community or user data:", err);
-  }
-}, [dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchAllData();
@@ -366,7 +385,7 @@ const PaginationComm = () => {
                       ? "anonymous"
                       : postCreators[post.createdBy]?.name || "Loading..."}
                     <br />
-                    Posted on: {new Date(post.createdAt).toLocaleString()}
+                    Posted on: {dateFormatting(post.createdAt)}
                   </div>
                   <div className="flex gap-6 mt-4 text-gray-600 text-lg">
                     <div className="flex gap-2">
@@ -491,77 +510,87 @@ const PaginationComm = () => {
                       </div>
                     ) : (
                       activePost.comments?.map((reply) => {
-                        const user = postCreators[reply.user?._id || reply.user || "000000000000000000000000"];
-                       return( <div
-                          key={reply._id}
-                          className="border-b last:border-b-0"
-                        >
-                          <div className="flex gap-4 p-6 border-b last:border-b-0">
-                            {user?.profilePic ? (
-                              <img
-                                src={user?.profilePic}
-                                alt="user"
-                                className="rounded-full w-12 h-12"
-                              />
-                            ) : (
-                              <Avatar
-                                className="rounded-full text-black"
-                                size="48"
-                                color="#38AEE3"
-                                name={user?.name
-                                  ?.split(" ")
-                                  .slice(0, 2)
-                                  .join(" ")}
-                              />
-                            )}
-                            <div>
-                              <h2 className="text-2xl font-bold mb-2">
-                                {user?.name}
-                              </h2>
-                              <p className="text-gray-700">{reply.comment}</p>
-                              <div className="text-sm text-gray-500 mt-4">
-                                Posted on:{" "}
-                                {new Date(reply.createdAt).toLocaleString()}
-                              </div>
-                              <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                                <div className="flex gap-2">
-                                  <img
-                                    src={Like}
-                                    alt="like"
-                                    onClick={() => handleCommentLike(reply._id)}
-                                    className="cursor-pointer"
-                                  />
-                                  <span>{reply.likes?.length || 0}</span>
+                        const user =
+                          postCreators[
+                            reply.user?._id ||
+                              reply.user ||
+                              "000000000000000000000000"
+                          ];
+                        return (
+                          <div
+                            key={reply._id}
+                            className="border-b last:border-b-0"
+                          >
+                            <div className="flex gap-4 p-6 border-b last:border-b-0">
+                              {user?.profilePic ? (
+                                <img
+                                  src={user?.profilePic}
+                                  alt="user"
+                                  className="rounded-full w-12 h-12"
+                                />
+                              ) : (
+                                <Avatar
+                                  className="rounded-full text-black"
+                                  size="32"
+                                  color="#38AEE3"
+                                  name={user?.name
+                                    ?.split(" ")
+                                    .slice(0, 2)
+                                    .join(" ")}
+                                />
+                              )}
+                              <div>
+                                <h2 className="text-2xl font-bold mb-2">
+                                  {user?.name}
+                                </h2>
+                                <p className="text-gray-700">{reply.comment}</p>
+                                <div className="text-sm text-gray-500 mt-4">
+                                  Posted on:{" "}
+                                  {dateFormatting(reply.createdAt)}
                                 </div>
-                                <div className="flex gap-2">
-                                  <img
-                                    src={Dislike}
-                                    alt="dislike"
-                                    onClick={() =>
-                                      handleCommentDislike(reply._id)
-                                    }
-                                    className="cursor-pointer"
-                                  />
-                                  <span>{reply.dislikes?.length || 0}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                  <img
-                                    src={Reply}
-                                    alt="reply"
-                                    onClick={() => {
-                                      setReplyToCommentId(reply._id);
-                                      setQuotedText(reply.comment);
-                                      setIsReplyModalOpen(true);
-                                    }}
-                                    className="cursor-pointer"
-                                  />
+                                <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+                                  <div className="flex gap-2">
+                                    <img
+                                      src={Like}
+                                      alt="like"
+                                      onClick={() =>
+                                        handleCommentLike(reply._id)
+                                      }
+                                      className="cursor-pointer"
+                                    />
+                                    <span>{reply.likes?.length || 0}</span>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <img
+                                      src={Dislike}
+                                      alt="dislike"
+                                      onClick={() =>
+                                        handleCommentDislike(reply._id)
+                                      }
+                                      className="cursor-pointer"
+                                    />
+                                    <span>{reply.dislikes?.length || 0}</span>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <img
+                                      src={Reply}
+                                      alt="reply"
+                                      onClick={() => {
+                                        setReplyToCommentId(reply._id);
+                                        setQuotedText(reply.comment);
+                                        setIsReplyModalOpen(true);
+                                      }}
+                                      className="cursor-pointer"
+                                    />
 
-                                  <span className="cursor-pointer">Reply</span>
+                                    <span className="cursor-pointer">
+                                      Reply
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          {/* {reply.replies?.map((nested) => (
+                            {/* {reply.replies?.map((nested) => (
                             <>
                               <div
                                 key={nested._id}
@@ -637,8 +666,9 @@ const PaginationComm = () => {
                               </div>
                             </>
                           ))} */}
-                        </div>
-                      )})
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -654,7 +684,7 @@ const PaginationComm = () => {
                     ) : (
                       <Avatar
                         className="rounded-full text-black"
-                        size="32"
+                        size="48"
                         color={"#38AEE3"}
                         name={user.name
                           ?.split(" ") // Split by space
