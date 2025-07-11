@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import img2 from "../../assets/images/img2.png";
 import Sec2 from "../subComponents/sec2";
 import s1 from "../../assets/images/s1.png";
@@ -17,12 +18,71 @@ import { TestimonialSlider } from "../subComponents/carousel";
 import Sec4 from "../subComponents/sec4";
 import { NavLink } from "react-router-dom";
 import { AnimatedWrapper } from "../subComponents/animation";
+import { fireToastMessage } from "../../toastContainer";
+import { api } from "../../Config/api";
+
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState({
+    email: false,
+    feedback: false,
+  });
+  const [feedback, setFeedback] = useState("");
+  const handleEmailSubmit = async () => {
+    if (!email.trim()) return alert("Please enter your email");
+    if (!isValidEmail(email)) {
+      fireToastMessage({
+        message: "Please enter a valid email address",
+        type: "error"
+      });
+      return;
+    }
+    setIsLoading((prev) => ({ ...prev, email: true }));
+    try {
+      const { data } = await api.post("/subscribe/news-letter", {
+        email: email,
+      });
+      fireToastMessage({
+        message: data?.message || "Subscribed successfully!",
+      });
+    } catch (error) {
+      const msg =
+        error?.response?.data?.message || "Something went wrong. Try again!";
+      fireToastMessage({ type: "error", message: msg });
+    } finally {
+      setEmail("");
+      setIsLoading((prev) => ({ ...prev, email: false }));
+    }
+  };
+
+  const handleFeedbackSubmit = async () => {
+    if (!feedback.trim()) return alert("Please enter your thoughts");
+    setIsLoading((prev) => ({ ...prev, feedback: true }));
+    try {
+      const { data } = await api.post("/feedback", {
+        text: feedback,
+      });
+      fireToastMessage({
+        message: data?.message || "Feedback received successfully!",
+      });
+    } catch (error) {
+      const msg =
+        error?.response?.data?.message || "Something went wrong. Try again!";
+      fireToastMessage({ type: "error", message: msg });
+    } finally {
+      setEmail("");
+      setIsLoading((prev) => ({ ...prev, feedback: false }));
+    }
+    setFeedback("");
+  };
   return (
     <>
       <div className="relative flex justify-center items-center text-center home-sec1">
-        <div >
+        <div>
           <AnimatedWrapper
             animationConfig={{
               from: { opacity: 0, y: -50 },
@@ -208,17 +268,69 @@ export default function Home() {
                 }}
                 className="px-3 font-normal lg:leading-[12px] leading-tight uppercase Classico family-font"
               >
-                What our families are saying
+                Join Our Founding Families
               </p>
             </AnimatedWrapper>
             <p className="mx-auto mt-12 mb-14 text-lg home-sec3 line1-20">
-              FamyLink makes it easy to find great care, share a nanny, and
-              connect with other families — all in one place. Because raising
-              kids takes a village.
+              FamyLink is live and helping families find great care, share a
+              nanny, and connect with others—all in one place.
             </p>
           </div>
-          <div className="flex justify-center">
-            <TestimonialSlider />
+          <div className="bg-white p-8 max-w-4xl mx-auto my-12 ">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+              Join our newsletter for updates, tips, and early access to new
+              features
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Help us shape the future of childcare. We’d love to hear your
+              thoughts!
+            </p>
+
+            {/* Grid for input sections */}
+            <div className="flex flex-col md:flex-row gap-6 md:gap-0 md:justify-around">
+              {/* Newsletter Section */}
+              <div className="flex flex-col">
+                <label className="text-lg font-semibold text-gray-700 mb-2">
+                  → Join Our Newsletter
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-64 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#85D1F1] mb-3"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button
+                  disabled={isLoading.email}
+                  className="self-start bg-[#85D1F1] px-5 py-2 rounded-md hover:scale-105 transition"
+                  onClick={handleEmailSubmit}
+                >
+                  {isLoading.email ? "Sending..." : "Join"}
+                </button>
+              </div>
+              <div className="hidden md:block w-px bg-gray-300 mx-4"></div>{" "}
+              {/* vertical on md+ */}
+              {/* Feedback Section */}
+              <div className="flex flex-col">
+                <label className="text-lg font-semibold text-gray-700 mb-2">
+                  → Share Your Thoughts
+                </label>
+                <textarea
+                  placeholder="We'd love your feedback..."
+                  className="w-96 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#85D1F1] mb-3"
+                  rows={4}
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                />
+                <button
+                  disabled={isLoading.feedback}
+                  className="self-start bg-[#85D1F1] px-5 py-2 hover:scale-105 rounded-md transition"
+                  onClick={handleFeedbackSubmit}
+                >
+                  {isLoading.feedback ? "Sending..." : "Share"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

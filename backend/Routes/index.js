@@ -17,6 +17,7 @@ import Verification from './verification.js'
 import NannyShare from './nannyShare.js'
 import PostJob from './postJob.js'
 import Subscription from './subscription.js'
+import Feedback from './feedback.js'
 
 const router = express.Router()
 
@@ -38,5 +39,6 @@ router.use('/community', Community)
 router.use('/adminUser', AdminUser)
 router.use('/verify', Verification)
 router.use('/subscribe', Subscription)
+router.use('/feedback', Feedback);
 
 export default router   
