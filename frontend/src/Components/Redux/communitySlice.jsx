@@ -186,7 +186,7 @@ export const postReplyDislikeThunk = createAsyncThunk(
 
 export const postCommentThunk = createAsyncThunk(
   "community/post/comment",
-  async ({ id, comment }, { getState, rejectWithValue }) => {
+  async ({ id, comment, isAnonymous }, { getState, rejectWithValue }) => {
     const state = getState();
     const { accessToken } = state.auth;
     try {
@@ -194,6 +194,7 @@ export const postCommentThunk = createAsyncThunk(
         `/community/${id}/comment`,
         {
           comment,
+          isAnonymous
         },
         {
           headers: {

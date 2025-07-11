@@ -1,5 +1,5 @@
 // PaginationComm.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "react-avatar";
 import {
@@ -38,11 +38,10 @@ const PaginationComm = () => {
   const [selectedTopic, setSelectedTopic] = useState("");
   const [mediaFiles, setMediaFiles] = useState([]);
   const [postCreators, setPostCreators] = useState({});
+  const [localCommunities, setLocalCommunities] = useState([]);
 
   const handleCreatePost = async () => {
     if (!postContent.trim() || !selectedTopic) return;
-
-    console.log("Anonymous:", isAnonymous);
 
     await dispatch(
       createPostThunk({
@@ -56,67 +55,108 @@ const PaginationComm = () => {
     setSelectedTopic("");
     setIsAnonymous(false);
     dispatch(fetchAllCommunityThunk());
+
+     await fetchAllData();
   };
 
-  useEffect(() => {
-    dispatch(fetchAllCommunityThunk()).then(async (res) => {
-      const fetchedCommunities = res.payload?.data?.data || [];
-      const all = fetchedCommunities?.flatMap((comm) =>
-        comm.topics.flatMap((topic) =>
-          topic.posts.map((post) => ({
-            ...post,
-            topicId: topic._id,
-            topicName: topic.name,
-            communityId: comm._id,
-          }))
-        )
-      );
-      setPosts(all);
+  const fetchAllData = useCallback(async () => {
+  try {
+    const res = await dispatch(fetchAllCommunityThunk());
+    const fetchedCommunities = res.payload?.data?.data || [];
+    setLocalCommunities(fetchedCommunities);
 
-      // 🔽 Fetch user info for non-anonymous posts
-      const uniqueUserIds = [
-        ...new Set(
-          all
-            .map((p) => p.createdBy)
-            .filter((id) => id && id !== "000000000000000000000000")
-        ),
-      ];
+    const allPosts = fetchedCommunities.flatMap((comm) =>
+      (comm.topics || []).flatMap((topic) =>
+        (topic.posts || []).map((post) => ({
+          ...post,
+          topicId: topic._id,
+          topicName: topic.name,
+          communityId: comm._id,
+        }))
+      )
+    );
+    setPosts(allPosts);
 
-      const creatorMap = {};
-      for (const userId of uniqueUserIds) {
-        try {
-          const res = await api.get(`/userData/getUserById/${userId}`);
-          creatorMap[userId] = res.data?.data?.name || "User";
-        } catch {
-          creatorMap[userId] = "User";
-        }
+    const userIds = new Set();
+
+    for (const post of allPosts) {
+      const postUserId = post.createdBy?.$oid || post.createdBy;
+      if (postUserId && postUserId !== "000000000000000000000000") {
+        userIds.add(postUserId);
       }
 
-      setPostCreators(creatorMap);
-    });
-  }, [dispatch]);
+      for (const comment of post.comments || []) {
+        const commentUserId = comment.user?._id || comment.user || "000000000000000000000000";
+        if (commentUserId && commentUserId !== "000000000000000000000000") {
+          userIds.add(commentUserId);
+        }
+
+        for (const reply of comment.replies || []) {
+          const replyUserId = reply.user?._id || reply.user || "000000000000000000000000";
+          if (replyUserId && replyUserId !== "000000000000000000000000") {
+            userIds.add(replyUserId);
+          }
+        }
+      }
+    }
+
+    const userMap = {
+      "000000000000000000000000": {
+        name: "User",
+        profilePic: null,
+      },
+    };
+
+    await Promise.all(
+      Array.from(userIds).map(async (id) => {
+        if (id === "000000000000000000000000") return;
+
+        try {
+          const res = await api.get(`/userData/getUserById/${id}`);
+          const data = res.data?.data;
+          userMap[id] = {
+            name: data?.name || "User",
+            profilePic: data?.profilePic || null,
+          };
+        } catch {
+          userMap[id] = { name: "User", profilePic: null };
+        }
+      })
+    );
+
+    setPostCreators(userMap);
+  } catch (err) {
+    console.error("Error fetching community or user data:", err);
+  }
+}, [dispatch]);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
 
   const activePost = posts.find((p) => p._id === activePostId);
 
   const handlePostReply = () => {
     if (replyText.trim() && activePostId) {
-      dispatch(postCommentThunk({ id: activePostId, comment: replyText })).then(
-        () => {
-          dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
-            const updated = res.payload?.data;
-            if (updated) {
-              setPosts((prev) =>
-                prev.map((p) =>
-                  p._id === updated._id
-                    ? { ...p, comments: updated.comments }
-                    : p
-                )
-              );
-            }
-          });
-          setReplyText("");
-        }
-      );
+      dispatch(
+        postCommentThunk({
+          id: activePostId,
+          comment: replyText,
+          isAnonymous: isAnonymous,
+        })
+      ).then(() => {
+        dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
+          const updated = res.payload?.data;
+          if (updated) {
+            setPosts((prev) =>
+              prev.map((p) =>
+                p._id === updated._id ? { ...p, comments: updated.comments } : p
+              )
+            );
+          }
+        });
+        setReplyText("");
+      });
     }
   };
 
@@ -309,53 +349,57 @@ const PaginationComm = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* LEFT SIDEBAR */}
-          <div className="lg:col-span-3 space-y-6">
-            {posts.map((post) => (
-              <div
-                key={post._id}
-                className="bg-white border border-gray-200 rounded-2xl p-6"
-              >
-                <h2 className="text-2xl font-bold mb-3">{post.topicName}</h2>
-                <p className="text-gray-700 mb-4">{post.description || ""}</p>
-                <div className="text-sm text-gray-500">
-                  Created by:{" "}
-                  {post.createdBy === "000000000000000000000000"
-                    ? "anonymous"
-                    : postCreators[post.createdBy] || "Loading..."}{" "}
-                  <br />
-                  Posted on: {new Date(post.createdAt).toLocaleString()}
+          <div className="lg:col-span-3">
+            <div className="space-y-6 h-[80vh] overflow-y-auto pr-2">
+              {posts.map((post) => (
+                <div
+                  key={post._id}
+                  className="bg-white border border-gray-200 rounded-2xl p-6"
+                >
+                  <h2 className="text-2xl font-bold mb-3">{post.topicName}</h2>
+                  <p className="text-gray-700 mb-4 whitespace-pre-wrap break-words">
+                    {post.description || ""}
+                  </p>
+                  <div className="text-sm text-gray-500">
+                    Created by:{" "}
+                    {post.createdBy === "000000000000000000000000"
+                      ? "anonymous"
+                      : postCreators[post.createdBy]?.name || "Loading..."}
+                    <br />
+                    Posted on: {new Date(post.createdAt).toLocaleString()}
+                  </div>
+                  <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+                    <div className="flex gap-2">
+                      <img
+                        src={Like}
+                        alt="like"
+                        className="cursor-pointer"
+                        onClick={() => handleLike(post._id)}
+                      />
+                      <span>{post.likes?.length || 0}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <img
+                        src={Dislike}
+                        alt="dislike"
+                        className="cursor-pointer"
+                        onClick={() => handleDislike(post._id)}
+                      />
+                      <span>{post.dislikes?.length || 0}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <img
+                        src={Reply}
+                        alt="reply"
+                        className="cursor-pointer"
+                        onClick={() => setActivePostId(post._id)}
+                      />
+                      <span>Reply</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                  <div className="flex gap-2">
-                    <img
-                      src={Like}
-                      alt="like"
-                      className="cursor-pointer"
-                      onClick={() => handleLike(post._id)}
-                    />
-                    <span>{post.likes?.length || 0}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <img
-                      src={Dislike}
-                      alt="dislike"
-                      className="cursor-pointer"
-                      onClick={() => handleDislike(post._id)}
-                    />
-                    <span>{post.dislikes?.length || 0}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <img
-                      src={Reply}
-                      alt="reply"
-                      className="cursor-pointer"
-                      onClick={() => setActivePostId(post._id)}
-                    />
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* CENTER CONTENT */}
@@ -386,20 +430,19 @@ const PaginationComm = () => {
                     className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-lg focus:outline-none resize-none"
                     rows={4}
                   />
+                  <label className="flex items-center gap-2 text-gray-600 text-base my-2">
+                    <input
+                      type="checkbox"
+                      checked={isAnonymous}
+                      onChange={(e) => setIsAnonymous(e.target.checked)}
+                      className="w-5 h-5"
+                    />
+                    Stay Anonymous
+                  </label>
 
                   {postContent.trim() && (
                     <>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
-                        <label className="flex items-center gap-2 text-gray-600 text-base">
-                          <input
-                            type="checkbox"
-                            checked={isAnonymous}
-                            onChange={(e) => setIsAnonymous(e.target.checked)}
-                            className="w-5 h-5"
-                          />
-                          Post Anonymously
-                        </label>
-
                         <select
                           value={selectedTopic}
                           onChange={(e) => setSelectedTopic(e.target.value)}
@@ -442,133 +485,161 @@ const PaginationComm = () => {
               <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col min-h-[400px]">
                 <div className="flex gap-4 overflow-auto">
                   <div className="overflow-y-auto pr-2 max-h-[800px] w-full">
-                    {activePost.comments?.map((reply) => (
-                      <div key={reply._id} className="border-b last:border-b-0">
-                        <div className="flex gap-4 p-6 border-b last:border-b-0">
-                          <img
-                            src={`https://i.pravatar.cc/100?u=${reply.user}`}
-                            alt="user"
-                            className="rounded-full w-12 h-12 flex-shrink-0"
-                          />
-                          <div>
-                            <h2 className="text-2xl font-bold mb-2">User</h2>
-                            <p className="text-gray-700">{reply.comment}</p>
-                            <div className="text-sm text-gray-500 mt-4">
-                              Posted on:{" "}
-                              {new Date(reply.createdAt).toLocaleString()}
-                            </div>
-                            <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                              <div className="flex gap-2">
-                                <img
-                                  src={Like}
-                                  alt="like"
-                                  onClick={() => handleCommentLike(reply._id)}
-                                  className="cursor-pointer"
-                                />
-                                <span>{reply.likes?.length || 0}</span>
+                    {!activePost.comments.length ? (
+                      <div className="text-gray-500 text-lg flex justify-center items-center h-[200px]">
+                        <p>No replies yet</p>
+                      </div>
+                    ) : (
+                      activePost.comments?.map((reply) => {
+                        const user = postCreators[reply.user?._id || reply.user || "000000000000000000000000"];
+                       return( <div
+                          key={reply._id}
+                          className="border-b last:border-b-0"
+                        >
+                          <div className="flex gap-4 p-6 border-b last:border-b-0">
+                            {user?.profilePic ? (
+                              <img
+                                src={user?.profilePic}
+                                alt="user"
+                                className="rounded-full w-12 h-12"
+                              />
+                            ) : (
+                              <Avatar
+                                className="rounded-full text-black"
+                                size="48"
+                                color="#38AEE3"
+                                name={user?.name
+                                  ?.split(" ")
+                                  .slice(0, 2)
+                                  .join(" ")}
+                              />
+                            )}
+                            <div>
+                              <h2 className="text-2xl font-bold mb-2">
+                                {user?.name}
+                              </h2>
+                              <p className="text-gray-700">{reply.comment}</p>
+                              <div className="text-sm text-gray-500 mt-4">
+                                Posted on:{" "}
+                                {new Date(reply.createdAt).toLocaleString()}
                               </div>
-                              <div className="flex gap-2">
-                                <img
-                                  src={Dislike}
-                                  alt="dislike"
-                                  onClick={() =>
-                                    handleCommentDislike(reply._id)
-                                  }
-                                  className="cursor-pointer"
-                                />
-                                <span>{reply.dislikes?.length || 0}</span>
-                              </div>
-                              <div className="flex gap-2">
-                                <img
-                                  src={Reply}
-                                  alt="reply"
-                                  onClick={() => {
-                                    setReplyToCommentId(reply._id);
-                                    setQuotedText(reply.comment);
-                                    setIsReplyModalOpen(true);
-                                  }}
-                                  className="cursor-pointer"
-                                />
+                              <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+                                <div className="flex gap-2">
+                                  <img
+                                    src={Like}
+                                    alt="like"
+                                    onClick={() => handleCommentLike(reply._id)}
+                                    className="cursor-pointer"
+                                  />
+                                  <span>{reply.likes?.length || 0}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <img
+                                    src={Dislike}
+                                    alt="dislike"
+                                    onClick={() =>
+                                      handleCommentDislike(reply._id)
+                                    }
+                                    className="cursor-pointer"
+                                  />
+                                  <span>{reply.dislikes?.length || 0}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <img
+                                    src={Reply}
+                                    alt="reply"
+                                    onClick={() => {
+                                      setReplyToCommentId(reply._id);
+                                      setQuotedText(reply.comment);
+                                      setIsReplyModalOpen(true);
+                                    }}
+                                    className="cursor-pointer"
+                                  />
 
-                                <span className="cursor-pointer">Reply</span>
+                                  <span className="cursor-pointer">Reply</span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        {reply.replies?.map((nested) => (
-                          <>
-                            <div
-                              key={nested._id}
-                              className="flex gap-4 border-b last:border-b-0 p-6"
-                            >
-                              <img
-                                src={`https://i.pravatar.cc/100?u=${nested.user}`}
-                                alt="user"
-                                className="rounded-full w-12 h-12 flex-shrink-0"
-                              />
-                              <div>
-                                <h2 className="text-2xl font-bold mb-2">
-                                  User
-                                </h2>
-                                <p className="rounded-2xl border border-gray-200 p-4 mb-4">
-                                  <span className="text-gray-400 text-lg">
-                                    Replying to:
-                                  </span>
-                                  <br />"{reply.comment}"
-                                </p>
-                                <p>{nested.comment}</p>
-                                <div className="text-sm text-gray-500 mt-4">
-                                  Posted on:{" "}
-                                  {new Date(nested.createdAt).toLocaleString()}
-                                </div>
-                                <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Like}
-                                      alt="like"
-                                      onClick={() =>
-                                        handleReplyLike(reply._id, nested._id)
-                                      }
-                                      className="cursor-pointer"
-                                    />
-                                    <span>{nested.likes?.length || 0}</span>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Dislike}
-                                      alt="dislike"
-                                      onClick={() =>
-                                        handleReplyDislike(
-                                          reply._id,
-                                          nested._id
-                                        )
-                                      }
-                                      className="cursor-pointer"
-                                    />
-                                    <span>{nested.dislikes?.length || 0}</span>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Reply}
-                                      alt="reply"
-                                      onClick={() => {
-                                        setReplyToCommentId(reply._id); // this must be set
-                                        setQuotedText(reply.comment); // optional — for showing quote
-                                        setIsReplyModalOpen(true); // open the modal
-                                      }}
-                                    />
-
-                                    <span className="cursor-pointer">
-                                      Reply
+                          {/* {reply.replies?.map((nested) => (
+                            <>
+                              <div
+                                key={nested._id}
+                                className="flex gap-4 border-b last:border-b-0 p-6"
+                              >
+                                <img
+                                  src={`https://i.pravatar.cc/100?u=${nested.user}`}
+                                  alt="user"
+                                  className="rounded-full w-12 h-12 flex-shrink-0"
+                                />
+                                <div>
+                                  <h2 className="text-2xl font-bold mb-2">
+                                    User
+                                  </h2>
+                                  <p className="rounded-2xl border border-gray-200 p-4 mb-4">
+                                    <span className="text-gray-400 text-lg">
+                                      Replying to:
                                     </span>
+                                    <br />"{reply.comment}"
+                                  </p>
+                                  <p>{nested.comment}</p>
+                                  <div className="text-sm text-gray-500 mt-4">
+                                    Posted on:{" "}
+                                    {new Date(
+                                      nested.createdAt
+                                    ).toLocaleString()}
+                                  </div>
+                                  <div className="flex gap-6 mt-4 text-gray-600 text-lg">
+                                    <div className="flex gap-2">
+                                      <img
+                                        src={Like}
+                                        alt="like"
+                                        onClick={() =>
+                                          handleReplyLike(reply._id, nested._id)
+                                        }
+                                        className="cursor-pointer"
+                                      />
+                                      <span>{nested.likes?.length || 0}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <img
+                                        src={Dislike}
+                                        alt="dislike"
+                                        onClick={() =>
+                                          handleReplyDislike(
+                                            reply._id,
+                                            nested._id
+                                          )
+                                        }
+                                        className="cursor-pointer"
+                                      />
+                                      <span>
+                                        {nested.dislikes?.length || 0}
+                                      </span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <img
+                                        src={Reply}
+                                        alt="reply"
+                                        onClick={() => {
+                                          setReplyToCommentId(reply._id); // this must be set
+                                          setQuotedText(reply.comment); // optional — for showing quote
+                                          setIsReplyModalOpen(true); // open the modal
+                                        }}
+                                      />
+
+                                      <span className="cursor-pointer">
+                                        Reply
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </>
-                        ))}
-                      </div>
-                    ))}
+                            </>
+                          ))} */}
+                        </div>
+                      )})
+                    )}
                   </div>
                 </div>
                 {/* Reply Input */}
@@ -594,7 +665,10 @@ const PaginationComm = () => {
                     <div className="w-full">
                       <h2 className="text-2xl font-bold mb-2">{user.name}</h2>
                       <textarea
-                        placeholder={`Reply to ${activePost.description}`}
+                        placeholder={`Reply to ${activePost.description.slice(
+                          0,
+                          25
+                        )}...`}
                         className="w-full border border-gray-300 rounded-2xl p-3 text-[18px] focus:outline-none min-h-32 placeholder-gray-400"
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
@@ -618,8 +692,8 @@ const PaginationComm = () => {
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h2 className="text-2xl font-semibold mb-4">Suggested Topics</h2>
-              {Array.isArray(communities) &&
-                communities
+              {Array.isArray(localCommunities) &&
+                localCommunities
                   .flatMap((comm) => comm.topics || [])
                   .slice(0, 5)
                   .map((topic) => (

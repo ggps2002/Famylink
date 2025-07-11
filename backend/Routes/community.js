@@ -366,8 +366,9 @@ router.post('/:postId/dislike', authMiddleware, async (req, res) => {
 
 router.post('/:postId/comment', authMiddleware, async (req, res) => {
   const { postId } = req.params // Post ID from the URL
-  const { comment } = req.body // Comment details from the request body
+  const { comment, isAnonymous } = req.body // Comment details from the request body
   const userId = req.userId // Extract user ID from the authenticated token
+  console.log('comment anonymous', comment, isAnonymous)
 
   // Validate input
   if (!comment || typeof comment !== 'string') {
@@ -401,10 +402,10 @@ router.post('/:postId/comment', authMiddleware, async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' })
     }
-
+    const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
     // Add the new comment
     const newComment = {
-      user: userId, // Associate the comment with the logged-in user
+      user: isAnonymous ? ANONYMOUS_USER_ID : userId, // Associate the comment with the logged-in user
       comment,
       createdAt: new Date()
     }
