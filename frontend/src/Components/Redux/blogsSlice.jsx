@@ -9,7 +9,9 @@ const initialState = {
     totalPages: 0,
     pageSize: 0,
     totalRecords: 0
-  }
+  },
+  blogsByCategory: {}, // <- store blogs by category
+  error: null
 }
 
 export const fetchAllBlogThunk = createAsyncThunk(
@@ -44,6 +46,21 @@ export const fetchBlogByIdThunk = createAsyncThunk(
         }
     }
 );
+
+export const fetchBlogByCategoryThunk = createAsyncThunk(
+  'blogs/fetchByCategory',
+  async (category, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get(`/blog`, {
+        params: { category }
+      });
+      return { category, blogs: data.data }; // include category
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 
 const blogSlice = createSlice({
   name: 'blog',
@@ -80,6 +97,20 @@ const blogSlice = createSlice({
         state.isLoading = false
         state.error = action.payload || 'Error fetching blogs'
       })
+
+    .addCase(fetchBlogByCategoryThunk.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(fetchBlogByCategoryThunk.fulfilled, (state, action) => {
+      state.isLoading = false;
+      const { category, blogs } = action.payload;
+      state.blogsByCategory[category] = blogs;
+    })
+    .addCase(fetchBlogByCategoryThunk.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || "Error fetching blogs by category";
+    });
+
   }
 })
 

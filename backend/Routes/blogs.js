@@ -311,6 +311,17 @@ router.get('', async (req, res) => {
   }
 });
 
+// GET /blog/category/:category
+router.get('/category/:category', async (req, res) => {
+  const { category } = req.params;
+  try {
+    const blogs = await Blogs.find({ category });
+    res.status(200).json({ success: true, data: blogs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
