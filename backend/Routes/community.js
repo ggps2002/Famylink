@@ -402,10 +402,11 @@ router.post('/:postId/comment', authMiddleware, async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' })
     }
-    const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
+    // const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
     // Add the new comment
     const newComment = {
-      user: isAnonymous ? ANONYMOUS_USER_ID : userId, // Associate the comment with the logged-in user
+      user: userId, // Associate the comment with the logged-in user
+      isAnonymous: isAnonymous,
       comment,
       createdAt: new Date()
     }
@@ -989,11 +990,12 @@ router.post("/post", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "Topic ID is invalid" });
     }
 
-    const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
+    // const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
 
     const newPost = {
       description,
-      createdBy: anonymous ? ANONYMOUS_USER_ID : userId,
+      createdBy: userId,
+      isAnonymous: anonymous,
       createdAt: new Date(),
       updatedAt: new Date(),
       likes: [],

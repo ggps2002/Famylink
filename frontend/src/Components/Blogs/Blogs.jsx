@@ -48,7 +48,13 @@ export default function Blogs({ category = "Tips for Parents" }) {
       <aside className="hidden md:flex flex-col w-1/4 lg:w-1/5 border-r p-4 overflow-y-auto max-h-screen">
         <h2 className="text-2xl font-bold mb-4">All Blogs</h2>
         <ul className="space-y-2">
-          {blogs.map((blog) => (
+          {
+            blogs.length === 0 ? (
+            <div className="text-gray-500 text-2xl">
+                No blogs yet.
+            </div>
+            )
+           : (blogs.map((blog) => (
             <li
               key={blog._id}
               onClick={() => setSelectedBlog(blog)}
@@ -60,7 +66,7 @@ export default function Blogs({ category = "Tips for Parents" }) {
             >
               {blog.name}
             </li>
-          ))}
+          )))}
         </ul>
       </aside>
 
@@ -116,7 +122,7 @@ export default function Blogs({ category = "Tips for Parents" }) {
             )}
           </div>
         ) : (
-          <p className="text-gray-500 text-center">No blog selected.</p>
+          <p className="text-gray-500 text-center text-4xl">No blog selected.</p>
         )}
       </main>
     </div>

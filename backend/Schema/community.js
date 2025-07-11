@@ -41,6 +41,7 @@ const CommentSchema = new Schema({
     ref: 'users',
     required: true,
   },
+  isAnonymous: Boolean,
   comment: {
     type: String,
     required: true,
@@ -62,6 +63,7 @@ const PostSchema = new Schema({
     type: String,
     required: true,
   },
+  isAnonymous: Boolean,
   likes: {
     type: [Schema.Types.ObjectId], // Store user IDs of those who liked the post
     default: [],

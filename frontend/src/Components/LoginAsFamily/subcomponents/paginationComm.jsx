@@ -28,17 +28,16 @@ const dateFormatting = (date) => {
     month: "long",
     year: "numeric",
   });
-  const formattedTime = createdAtDate
-    .toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) // gives "9:30 AM"
+  const formattedTime = createdAtDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }); // gives "9:30 AM"
 
-  return `${formattedDate} @ ${formattedTime}`
+  return `${formattedDate} @ ${formattedTime}`;
 };
 
-const PaginationComm = ({category}) => {
+const PaginationComm = ({ category }) => {
   const dispatch = useDispatch();
   const { data: communities, isLoading } = useSelector(
     (state) => state.community
@@ -98,38 +97,34 @@ const PaginationComm = ({category}) => {
       const userIds = new Set();
 
       for (const post of allPosts) {
+        console.log("post", post)
         const postUserId = post.createdBy?.$oid || post.createdBy;
-        if (postUserId && postUserId !== "000000000000000000000000") {
+        if (!post.isAnonymous) {
           userIds.add(postUserId);
         }
 
         for (const comment of post.comments || []) {
           const commentUserId =
-            comment.user?._id || comment.user || "000000000000000000000000";
-          if (commentUserId && commentUserId !== "000000000000000000000000") {
+            comment.user?._id;
+          if (!comment.isAnonymous) {
             userIds.add(commentUserId);
           }
 
           for (const reply of comment.replies || []) {
             const replyUserId =
-              reply.user?._id || reply.user || "000000000000000000000000";
-            if (replyUserId && replyUserId !== "000000000000000000000000") {
+              reply.user?._id;
+            if (!reply.isAnonymous) {
               userIds.add(replyUserId);
             }
           }
         }
       }
 
-      const userMap = {
-        "000000000000000000000000": {
-          name: "User",
-          profilePic: null,
-        },
-      };
+      const userMap = {};
 
       await Promise.all(
         Array.from(userIds).map(async (id) => {
-          if (id === "000000000000000000000000") return;
+          // if (id === "000000000000000000000000") return;
 
           try {
             const res = await api.get(`/userData/getUserById/${id}`);
@@ -360,9 +355,8 @@ const PaginationComm = ({category}) => {
     }
   };
 
-  return (
-    category === "Community Resources" ? 
-    (<div className="w-full mx-auto">
+  return category === "Community Resources" ? (
+    <div className="w-full mx-auto">
       {isLoading ? (
         <div className="text-center py-10">
           <span className="inline-block w-10 h-10 border-4 border-blue-500 border-dashed rounded-full animate-spin"></span>
@@ -383,8 +377,8 @@ const PaginationComm = ({category}) => {
                   </p>
                   <div className="text-sm text-gray-500">
                     Created by:{" "}
-                    {post.createdBy === "000000000000000000000000"
-                      ? "anonymous"
+                    {post.isAnonymous
+                      ? "User"
                       : postCreators[post.createdBy]?.name || "Loading..."}
                     <br />
                     Posted on: {dateFormatting(post.createdAt)}
@@ -512,19 +506,16 @@ const PaginationComm = ({category}) => {
                       </div>
                     ) : (
                       activePost.comments?.map((reply) => {
-                        const user =
-                          postCreators[
-                            reply.user?._id ||
-                              reply.user ||
-                              "000000000000000000000000"
-                          ];
+                        console.log("reply", reply);
+                        console.log("post creators", postCreators)
+                        const user = !reply.isAnonymous ? postCreators[reply.user?._id] : {};
                         return (
                           <div
                             key={reply._id}
                             className="border-b last:border-b-0"
                           >
                             <div className="flex gap-4 p-6 border-b last:border-b-0">
-                              {user?.profilePic ? (
+                              {user?.profilePic? (
                                 <img
                                   src={user?.profilePic}
                                   alt="user"
@@ -535,7 +526,7 @@ const PaginationComm = ({category}) => {
                                   className="rounded-full text-black"
                                   size="32"
                                   color="#38AEE3"
-                                  name={user?.name
+                                  name={user?.name || "User"
                                     ?.split(" ")
                                     .slice(0, 2)
                                     .join(" ")}
@@ -543,12 +534,11 @@ const PaginationComm = ({category}) => {
                               )}
                               <div>
                                 <h2 className="text-2xl font-bold mb-2">
-                                  {user?.name}
+                                  {user?.name || "User"}
                                 </h2>
                                 <p className="text-gray-700">{reply.comment}</p>
                                 <div className="text-sm text-gray-500 mt-4">
-                                  Posted on:{" "}
-                                  {dateFormatting(reply.createdAt)}
+                                  Posted on: {dateFormatting(reply.createdAt)}
                                 </div>
                                 <div className="flex gap-6 mt-4 text-gray-600 text-lg">
                                   <div className="flex gap-2">
@@ -810,9 +800,9 @@ const PaginationComm = ({category}) => {
           </div>
         </Dialog>
       </Transition.Root>
-    </div>) : (
-      <Blogs category={category}/>
-    )
+    </div>
+  ) : (
+    <Blogs category={category} />
   );
 };
 
