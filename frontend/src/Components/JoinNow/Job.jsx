@@ -1700,8 +1700,7 @@ export default function Job() {
       <div
         className="px-4 py-4 rounded-3xl"
         style={{
-          background:
-            "linear-gradient(174.22deg, #FFCADA 0%, rgba(246, 238, 233, 0.4) 69.71%, #FFF1F5 100%)",
+          background: "linear-gradient(to bottom, #FFEE8C, #fdf8ea)",
         }}
       >
         <div className="flex justify-end gap-4">

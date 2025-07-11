@@ -45,7 +45,7 @@ export default function JobSeekers() {
         }
     ]
     return (
-        <div className="pb-12" style={{ background: "linear-gradient(176.7deg, #FFCADA -21.31%, rgba(246, 238, 233, 0.4) 52.57%, #FFF1F5 100%)" }}>
+        <div className="pb-12  bg-gradient-to-b from-[#FFEE8C] to-[#fdf8ea]">
             <div className="padd-res">
                 <Sec1 pic={img4} head={"Find your ideal job with ease"} preHead={"Discover jobs that match your passion and skills"} />
 
