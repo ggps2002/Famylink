@@ -19,6 +19,7 @@ import { Dislike, Like, Reply } from "../../../assets/icons";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { api } from "../../../Config/api";
+import Blogs from "../../Blogs/Blogs";
 
 const dateFormatting = (date) => {
   const createdAtDate = new Date(date);
@@ -37,7 +38,7 @@ const dateFormatting = (date) => {
   return `${formattedDate} @ ${formattedTime}`
 };
 
-const PaginationComm = () => {
+const PaginationComm = ({category}) => {
   const dispatch = useDispatch();
   const { data: communities, isLoading } = useSelector(
     (state) => state.community
@@ -360,7 +361,8 @@ const PaginationComm = () => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    category === "Community Resources" ? 
+    (<div className="w-full mx-auto">
       {isLoading ? (
         <div className="text-center py-10">
           <span className="inline-block w-10 h-10 border-4 border-blue-500 border-dashed rounded-full animate-spin"></span>
@@ -808,7 +810,9 @@ const PaginationComm = () => {
           </div>
         </Dialog>
       </Transition.Root>
-    </div>
+    </div>) : (
+      <Blogs category={category}/>
+    )
   );
 };
 
