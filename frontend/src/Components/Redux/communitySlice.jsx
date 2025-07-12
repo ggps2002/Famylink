@@ -211,14 +211,14 @@ export const postCommentThunk = createAsyncThunk(
 
 export const replyPostReplyThunk = createAsyncThunk(
   "community/replyComment",
-  async ({ postId, commentId, reply }, { getState, rejectWithValue }) => {
-    const { state } = getState();
+  async ({ postId, commentId, reply, isAnonymous }, { getState, rejectWithValue }) => {
+    const state = getState();
     const { accessToken } = state.auth;
 
     try {
       const response = await api.post(
         `/community/${postId}/comments/${commentId}/replies`,
-        { reply }, // 👈 body
+        { reply, isAnonymous }, // 👈 body
         {
           headers: {
             Authorization: `Bearer ${accessToken}`, // 👈 correct placement

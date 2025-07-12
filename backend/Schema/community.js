@@ -9,6 +9,7 @@ const ReplySchema = new Schema({
     ref: 'users',
     required: true,
   },
+  isAnonymous: Boolean,
   comment: {
     type: String,
     required: true,

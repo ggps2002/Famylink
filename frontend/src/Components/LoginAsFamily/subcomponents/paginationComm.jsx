@@ -96,23 +96,23 @@ const PaginationComm = ({ category }) => {
 
       const userIds = new Set();
 
+      console.log("All posts", allPosts);
+
       for (const post of allPosts) {
-        console.log("post", post)
         const postUserId = post.createdBy?.$oid || post.createdBy;
         if (!post.isAnonymous) {
           userIds.add(postUserId);
         }
 
         for (const comment of post.comments || []) {
-          const commentUserId =
-            comment.user?._id;
+          const commentUserId = comment.user?._id;
           if (!comment.isAnonymous) {
             userIds.add(commentUserId);
           }
 
           for (const reply of comment.replies || []) {
             const replyUserId =
-              reply.user?._id;
+              typeof reply.user === "string" ? reply.user : reply.user?._id;
             if (!reply.isAnonymous) {
               userIds.add(replyUserId);
             }
@@ -138,6 +138,8 @@ const PaginationComm = ({ category }) => {
           }
         })
       );
+
+      console.log("UserMap", userMap);
 
       setPostCreators(userMap);
     } catch (err) {
@@ -306,15 +308,19 @@ const PaginationComm = ({ category }) => {
   };
 
   const handlePostCommentReply = () => {
+    console.log("ReplyText", replyText);
+    console.log("replyToCommentId", replyToCommentId);
     if (!replyText.trim()) return;
 
     if (replyToCommentId) {
       // 🔁 Nested reply to a comment
+      console.log("replyToCommentId", replyToCommentId);
       dispatch(
         replyPostReplyThunk({
           postId: activePostId,
           commentId: replyToCommentId,
           reply: replyText,
+          isAnonymous: isAnonymous,
         })
       ).then(() => {
         dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
@@ -505,110 +511,69 @@ const PaginationComm = ({ category }) => {
                         <p>No replies yet</p>
                       </div>
                     ) : (
-                      activePost.comments?.map((reply) => {
-                        console.log("reply", reply);
-                        console.log("post creators", postCreators)
-                        const user = !reply.isAnonymous ? postCreators[reply.user?._id] : {};
-                        return (
-                          <div
-                            key={reply._id}
-                            className="border-b last:border-b-0"
-                          >
-                            <div className="flex gap-4 p-6 border-b last:border-b-0">
-                              {user?.profilePic? (
-                                <img
-                                  src={user?.profilePic}
-                                  alt="user"
-                                  className="rounded-full w-12 h-12"
-                                />
-                              ) : (
-                                <Avatar
-                                  className="rounded-full text-black"
-                                  size="32"
-                                  color="#38AEE3"
-                                  name={user?.name || "User"
-                                    ?.split(" ")
-                                    .slice(0, 2)
-                                    .join(" ")}
-                                />
-                              )}
-                              <div>
-                                <h2 className="text-2xl font-bold mb-2">
-                                  {user?.name || "User"}
-                                </h2>
-                                <p className="text-gray-700">{reply.comment}</p>
-                                <div className="text-sm text-gray-500 mt-4">
-                                  Posted on: {dateFormatting(reply.createdAt)}
-                                </div>
-                                <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Like}
-                                      alt="like"
-                                      onClick={() =>
-                                        handleCommentLike(reply._id)
-                                      }
-                                      className="cursor-pointer"
-                                    />
-                                    <span>{reply.likes?.length || 0}</span>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Dislike}
-                                      alt="dislike"
-                                      onClick={() =>
-                                        handleCommentDislike(reply._id)
-                                      }
-                                      className="cursor-pointer"
-                                    />
-                                    <span>{reply.dislikes?.length || 0}</span>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <img
-                                      src={Reply}
-                                      alt="reply"
-                                      onClick={() => {
-                                        setReplyToCommentId(reply._id);
-                                        setQuotedText(reply.comment);
-                                        setIsReplyModalOpen(true);
-                                      }}
-                                      className="cursor-pointer"
-                                    />
+                      [...activePost.comments]
+                        .sort(
+                          (a, b) =>
+                            new Date(b.createdAt) - new Date(a.createdAt)
+                        )
+                        .map((reply) => {
+                          const user = !reply.isAnonymous
+                            ? postCreators[reply.user?._id]
+                            : {};
+                          const replying =
+                            reply.replies &&
+                            reply.replies.length > 0 &&
+                            reply.replies[0] &&
+                            !reply.replies[0].isAnonymous
+                              ? postCreators[reply.replies[0].user]
+                              : {};
 
-                                    <span className="cursor-pointer">
-                                      Reply
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* {reply.replies?.map((nested) => (
-                            <>
-                              <div
-                                key={nested._id}
-                                className="flex gap-4 border-b last:border-b-0 p-6"
-                              >
-                                <img
-                                  src={`https://i.pravatar.cc/100?u=${nested.user}`}
-                                  alt="user"
-                                  className="rounded-full w-12 h-12 flex-shrink-0"
-                                />
+                          return (
+                            <div
+                              key={reply._id}
+                              className="border-b last:border-b-0"
+                            >
+                              <div className="flex gap-4 p-6 border-b last:border-b-0">
+                                {user?.profilePic ? (
+                                  <img
+                                    src={user?.profilePic}
+                                    alt="user"
+                                    className="rounded-full w-12 h-12"
+                                  />
+                                ) : (
+                                  <Avatar
+                                    className="rounded-full text-black"
+                                    size="32"
+                                    color="#38AEE3"
+                                    name={
+                                      user?.name ||
+                                      "User"?.split(" ").slice(0, 2).join(" ")
+                                    }
+                                  />
+                                )}
                                 <div>
                                   <h2 className="text-2xl font-bold mb-2">
-                                    User
+                                    {user?.name || "User"}
                                   </h2>
-                                  <p className="rounded-2xl border border-gray-200 p-4 mb-4">
-                                    <span className="text-gray-400 text-lg">
-                                      Replying to:
-                                    </span>
-                                    <br />"{reply.comment}"
+                                  {reply.replies &&
+                                    reply.replies.length > 0 && (
+                                      <div className="flex gap-2">
+                                        <div>
+                                          <p className="rounded-2xl border border-gray-200 p-4 mb-4">
+                                            <span className="text-gray-400 text-lg">
+                                              Replying to{" "}
+                                              {replying.name || "User"}
+                                            </span>
+                                            <br />"{reply.replies[0].comment}"
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                  <p className="text-gray-700">
+                                    {reply.comment}
                                   </p>
-                                  <p>{nested.comment}</p>
                                   <div className="text-sm text-gray-500 mt-4">
-                                    Posted on:{" "}
-                                    {new Date(
-                                      nested.createdAt
-                                    ).toLocaleString()}
+                                    Posted on: {dateFormatting(reply.createdAt)}
                                   </div>
                                   <div className="flex gap-6 mt-4 text-gray-600 text-lg">
                                     <div className="flex gap-2">
@@ -616,37 +581,33 @@ const PaginationComm = ({ category }) => {
                                         src={Like}
                                         alt="like"
                                         onClick={() =>
-                                          handleReplyLike(reply._id, nested._id)
+                                          handleCommentLike(reply._id)
                                         }
                                         className="cursor-pointer"
                                       />
-                                      <span>{nested.likes?.length || 0}</span>
+                                      <span>{reply.likes?.length || 0}</span>
                                     </div>
                                     <div className="flex gap-2">
                                       <img
                                         src={Dislike}
                                         alt="dislike"
                                         onClick={() =>
-                                          handleReplyDislike(
-                                            reply._id,
-                                            nested._id
-                                          )
+                                          handleCommentDislike(reply._id)
                                         }
                                         className="cursor-pointer"
                                       />
-                                      <span>
-                                        {nested.dislikes?.length || 0}
-                                      </span>
+                                      <span>{reply.dislikes?.length || 0}</span>
                                     </div>
                                     <div className="flex gap-2">
                                       <img
                                         src={Reply}
                                         alt="reply"
                                         onClick={() => {
-                                          setReplyToCommentId(reply._id); // this must be set
-                                          setQuotedText(reply.comment); // optional — for showing quote
-                                          setIsReplyModalOpen(true); // open the modal
+                                          setReplyToCommentId(reply._id);
+                                          setQuotedText(reply.comment);
+                                          setIsReplyModalOpen(true);
                                         }}
+                                        className="cursor-pointer"
                                       />
 
                                       <span className="cursor-pointer">
@@ -656,11 +617,9 @@ const PaginationComm = ({ category }) => {
                                   </div>
                                 </div>
                               </div>
-                            </>
-                          ))} */}
-                          </div>
-                        );
-                      })
+                            </div>
+                          );
+                        })
                     )}
                   </div>
                 </div>

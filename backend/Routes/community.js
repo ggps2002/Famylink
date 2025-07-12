@@ -805,81 +805,70 @@ router.get('/:id', async (req, res) => {
 // POST /community/:postId/comments/:commentId/replies
 router.post("/:postId/comments/:commentId/replies", authMiddleware, async (req, res) => {
   const { postId, commentId } = req.params;
-  const { reply } = req.body;
-  const userId = req.user?._id;
+  const { reply, isAnonymous } = req.body;
+  const userId = req.userId;
 
-  if (!userId) {
-    return res.status(401).json({ error: "Unauthorized: No user found" });
-  }
+  console.log("Commenting to post with postId:", postId);
+  console.log("Commenting to commentId with commentId:", commentId);
+  console.log("Comment:", reply);
+  console.log("Reply annonymous:", isAnonymous)
+  console
+
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
   try {
     const community = await Community.findOne({ "topics.posts._id": postId });
+    if (!community) return res.status(404).json({ error: "Post not found" });
 
-    if (!community) {
-      return res.status(404).json({ error: "Community post not found" });
-    }
-
-    // Find the post inside topics
     let foundPost = null;
-    let topicFound = null;
 
     for (const topic of community.topics) {
       const post = topic.posts.id(postId);
       if (post) {
         foundPost = post;
-        topicFound = topic;
         break;
       }
     }
 
-    if (!foundPost) {
-      return res.status(404).json({ error: "Post not found" });
-    }
+    if (!foundPost) return res.status(404).json({ error: "Post not found in topics" });
 
-    // Construct new reply
-    const newReply = {
+    // Find the comment to reference
+    const commentToNest = foundPost.comments.find(
+      (c) => c._id.toString() === commentId
+    );
+
+    if (!commentToNest) return res.status(404).json({ error: "Target comment not found" });
+
+    console.log("ReplyComment", commentToNest)
+
+    // Construct a new top-level comment that nests the existing one
+    const newComment = {
       _id: new mongoose.Types.ObjectId(),
       user: userId,
       comment: reply,
+      isAnonymous: isAnonymous,
       createdAt: new Date(),
       updatedAt: new Date(),
       likes: [],
       dislikes: [],
-      replies: [],
+      replies: [commentToNest.toObject()], // directly embedding the existing comment
     };
 
-    // Recursively insert reply by parent _id
-    function insertReplyRecursive(array) {
-      for (const item of array) {
-        if (item._id.toString() === commentId) {
-          item.replies.push(newReply);
-          return true;
-        }
-        if (item.replies?.length > 0) {
-          const found = insertReplyRecursive(item.replies);
-          if (found) return true;
-        }
-      }
-      return false;
-    }
+    foundPost.comments.push(newComment);
 
-    const inserted = insertReplyRecursive(foundPost.comments);
-
-    if (!inserted) {
-      return res.status(404).json({ error: "Parent comment/reply not found" });
-    }
-
-    // ✅ Mark the whole `topics` path as modified at root
     community.markModified("topics");
-
     await community.save();
 
-    res.status(201).json({ message: "Reply added successfully", reply: newReply });
+    res.status(201).json({
+      message: "New comment created with nested existing comment",
+      comment: newComment,
+    });
   } catch (err) {
-    console.error("Reply creation error:", err);
+    console.error("Error creating nested comment:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 router.get('/:communityId/topics/:topicId', async (req, res) => {
