@@ -27,24 +27,29 @@ export const fetchAllCommunityThunk = createAsyncThunk(
 
 export const createPostThunk = createAsyncThunk(
   "community/createPost",
-  async ({ topicId, description, anonymous }, { getState, rejectWithValue }) => {
+  async (
+    { topicId, description, anonymous, mediaFiles },
+    { getState, rejectWithValue }
+  ) => {
     const { auth } = getState();
     const { accessToken } = auth;
 
     try {
-      const { data } = await api.post(
-        "/community/post",
-        {
-          topicId,
-          description,
-          anonymous,
+      const formData = new FormData();
+      formData.append("topicId", topicId);
+      formData.append("description", description);
+      formData.append("anonymous", anonymous);
+
+      mediaFiles?.forEach((file) => {
+        formData.append("media", file); // Field name must match your multer setup
+      });
+
+      const { data } = await api.post("/community/post", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          // ⚠️ Don't manually set Content-Type here, Axios will handle it
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      });
 
       return data;
     } catch (error) {
@@ -53,8 +58,6 @@ export const createPostThunk = createAsyncThunk(
     }
   }
 );
-
-
 
 export const fetchCommunityByIdThunk = createAsyncThunk(
   "community/getById",
@@ -194,7 +197,7 @@ export const postCommentThunk = createAsyncThunk(
         `/community/${id}/comment`,
         {
           comment,
-          isAnonymous
+          isAnonymous,
         },
         {
           headers: {
@@ -211,7 +214,10 @@ export const postCommentThunk = createAsyncThunk(
 
 export const replyPostReplyThunk = createAsyncThunk(
   "community/replyComment",
-  async ({ postId, commentId, reply, isAnonymous }, { getState, rejectWithValue }) => {
+  async (
+    { postId, commentId, reply, isAnonymous },
+    { getState, rejectWithValue }
+  ) => {
     const state = getState();
     const { accessToken } = state.auth;
 

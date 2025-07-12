@@ -15,7 +15,7 @@ import {
   replyPostReplyThunk,
   createPostThunk,
 } from "../../Redux/communitySlice";
-import { Dislike, Like, Reply } from "../../../assets/icons";
+import { Dislike, Like, Reply, Upload } from "../../../assets/icons";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { api } from "../../../Config/api";
@@ -65,17 +65,18 @@ const PaginationComm = ({ category }) => {
 
     await dispatch(
       createPostThunk({
-        description: postContent,
         topicId: selectedTopic,
+        description: postContent,
         anonymous: isAnonymous,
+        mediaFiles,
       })
     );
 
     setPostContent("");
     setSelectedTopic("");
+    setMediaFiles([]);
     setIsAnonymous(false);
     dispatch(fetchAllCommunityThunk());
-
     await fetchAllData();
   };
 
@@ -406,6 +407,26 @@ const PaginationComm = ({ category }) => {
                   <p className="text-gray-700 mb-4 whitespace-pre-wrap break-words">
                     {post.description || ""}
                   </p>
+                  {post.media.map((mediaItem, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-lg overflow-hidden border border-gray-200"
+                    >
+                      {mediaItem.type === "image" ? (
+                        <img
+                          src={mediaItem.url}
+                          alt={`media-${idx}`}
+                          className="w-full h-auto object-cover"
+                        />
+                      ) : (
+                        <video
+                          src={mediaItem.url}
+                          controls
+                          className="w-full h-auto object-contain"
+                        />
+                      )}
+                    </div>
+                  ))}
                   <div className="text-sm text-gray-500">
                     Created by:{" "}
                     {post.isAnonymous
@@ -510,14 +531,57 @@ const PaginationComm = ({ category }) => {
                                 </option>
                               ))}
                         </select>
-                      </div>
+                        <input
+                          id="media-upload"
+                          type="file"
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={(e) =>
+                            setMediaFiles(Array.from(e.target.files))
+                          }
+                          className="hidden"
+                        />
 
+                        {/* Label triggers file input */}
+                        <label
+                          htmlFor="media-upload"
+                          className="cursor-pointer inline-flex items-center gap-2 text-gray-600 hover:text-blue-500"
+                        >
+                          {/* SVG icon (you can replace this with any icon) */}
+                          <img src={Upload} alt="upload" />
+                          <span>Photo/Video</span>
+                        </label>
+                      </div>
+                      {mediaFiles.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {mediaFiles.map((file, idx) => (
+                            <div
+                              key={idx}
+                              className=" border border-gray-300 rounded overflow-hidden"
+                            >
+                              {file.type.startsWith("image") ? (
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt="preview"
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <video
+                                  src={URL.createObjectURL(file)}
+                                  controls
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mt-4">
                         <button
                           onClick={handleCreatePost}
                           className="bg-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-600 transition"
                         >
-                          Post
+                          Share Post
                         </button>
                       </div>
                     </>

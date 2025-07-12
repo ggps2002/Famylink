@@ -4,6 +4,8 @@ import User from '../Schema/user.js' // Path to your Community model
 import { authMiddleware } from '../Services/utils/middlewareAuth.js'
 import Notification from '../Schema/notificaion.js'
 import mongoose from "mongoose";
+import { upload } from '../Services/utils/uploadMiddleware.js'
+import uploadImage from '../Services/utils/uplaodImage.js'
 
 const router = express.Router()
 
@@ -1016,48 +1018,50 @@ router.get('/:postId/getPost', async (req, res) => {
   }
 })
 
-router.post("/post", authMiddleware, async (req, res) => {
+router.post("/post", authMiddleware, upload.array("media", 5), async (req, res) => {
   try {
     const { topicId, description = "", anonymous } = req.body;
     const userId = req.userId;
 
-    console.log("Anonymous:", anonymous)
-
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized: No user found" });
-    }
-
-    if (!topicId || !description.trim()) {
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    if (!topicId || !description.trim())
       return res.status(400).json({ message: "Topic ID and description are required" });
-    }
 
-    // Find the community that contains the topic
     const community = await Community.findOne({ "topics._id": topicId });
-    if (!community) {
-      return res.status(404).json({ message: "Topic not found in any community" });
-    }
+    if (!community) return res.status(404).json({ message: "Topic not found" });
 
     const topic = community.topics.id(topicId);
-    if (!topic) {
-      return res.status(404).json({ message: "Topic ID is invalid" });
-    }
+    if (!topic) return res.status(404).json({ message: "Invalid topic ID" });
 
-    // const ANONYMOUS_USER_ID = new mongoose.Types.ObjectId("000000000000000000000000");
+    // 🔽 Upload each file to Cloudinary
+    const media = [];
+
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const file = req.files[i];
+        const url = await uploadImage(file.buffer, userId, `community_post_${Date.now()}_${i}`);
+        media.push({
+          url,
+          type: file.mimetype.startsWith("image") ? "image" : "video",
+        });
+      }
+    }
 
     const newPost = {
       description,
       createdBy: userId,
-      isAnonymous: anonymous,
+      isAnonymous: anonymous === "true" || anonymous === true,
       createdAt: new Date(),
       updatedAt: new Date(),
       likes: [],
       dislikes: [],
       comments: [],
+      media,
     };
 
     topic.posts.unshift(newPost);
-    topic.updatedAt = new Date(); // optional: update topic timestamp
-    community.updatedAt = new Date(); // optional: update community timestamp
+    topic.updatedAt = new Date();
+    community.updatedAt = new Date();
 
     await community.save();
 
@@ -1068,7 +1072,7 @@ router.post("/post", authMiddleware, async (req, res) => {
       communityId: community._id,
     });
   } catch (error) {
-    console.error("Error creating post:", error);
+    console.error("Error creating post with media:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });

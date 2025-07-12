@@ -10,6 +10,12 @@ const ReplySchema = new Schema({
     required: true,
   },
   isAnonymous: Boolean,
+  media: [
+  {
+    url: String,
+    type: { type: String, enum: ["image", "video"] },
+  },
+],
   comment: {
     type: String,
     required: true,
@@ -43,6 +49,12 @@ const CommentSchema = new Schema({
     required: true,
   },
   isAnonymous: Boolean,
+  media: [
+  {
+    url: String,
+    type: { type: String, enum: ["image", "video"] },
+  },
+],
   comment: {
     type: String,
     required: true,
@@ -65,6 +77,12 @@ const PostSchema = new Schema({
     required: true,
   },
   isAnonymous: Boolean,
+  media: [
+  {
+    url: String,
+    type: { type: String, enum: ["image", "video"] },
+  },
+],
   likes: {
     type: [Schema.Types.ObjectId], // Store user IDs of those who liked the post
     default: [],
