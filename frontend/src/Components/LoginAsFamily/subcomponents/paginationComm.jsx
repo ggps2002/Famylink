@@ -45,6 +45,7 @@ const PaginationComm = ({ category }) => {
   const { user } = useSelector((state) => state.auth);
 
   const [activePostId, setActivePostId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState("");
   const [replyText, setReplyText] = useState("");
   const [posts, setPosts] = useState([]);
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
@@ -56,6 +57,8 @@ const PaginationComm = ({ category }) => {
   const [mediaFiles, setMediaFiles] = useState([]);
   const [postCreators, setPostCreators] = useState({});
   const [localCommunities, setLocalCommunities] = useState([]);
+  const [deleteCommentId, setDeleteCommentId] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleCreatePost = async () => {
     if (!postContent.trim() || !selectedTopic) return;
@@ -74,6 +77,29 @@ const PaginationComm = ({ category }) => {
     dispatch(fetchAllCommunityThunk());
 
     await fetchAllData();
+  };
+
+  const handleDeleteComment = async () => {
+    if (!activePostId || !deleteCommentId) return;
+
+    try {
+      await api.delete(`/community/${activePostId}/comment/${deleteCommentId}`);
+
+      const res = await dispatch(fetchPostByIdThunk(activePostId));
+      const updated = res.payload?.data;
+      if (updated) {
+        setPosts((prev) =>
+          prev.map((p) =>
+            p._id === updated._id ? { ...p, comments: updated.comments } : p
+          )
+        );
+      }
+
+      setIsDeleteDialogOpen(false);
+      setDeleteCommentId(null);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
 
   const fetchAllData = useCallback(async () => {
@@ -95,8 +121,6 @@ const PaginationComm = ({ category }) => {
       setPosts(allPosts);
 
       const userIds = new Set();
-
-      console.log("All posts", allPosts);
 
       for (const post of allPosts) {
         const postUserId = post.createdBy?.$oid || post.createdBy;
@@ -139,8 +163,6 @@ const PaginationComm = ({ category }) => {
         })
       );
 
-      console.log("UserMap", userMap);
-
       setPostCreators(userMap);
     } catch (err) {
       console.error("Error fetching community or user data:", err);
@@ -148,8 +170,11 @@ const PaginationComm = ({ category }) => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (user?._id) {
+      setCurrentUserId(user._id.toString());
+    }
     fetchAllData();
-  }, [fetchAllData]);
+  }, [fetchAllData, user]);
 
   const activePost = posts.find((p) => p._id === activePostId);
 
@@ -610,10 +635,19 @@ const PaginationComm = ({ category }) => {
                                         className="cursor-pointer"
                                       />
 
-                                      <span className="cursor-pointer">
-                                        Reply
-                                      </span>
+                                      <span>Reply</span>
                                     </div>
+                                    {currentUserId === reply.user?._id && (
+                                      <div
+                                        className="text-red-500 cursor-pointer"
+                                        onClick={() => {
+                                          setDeleteCommentId(reply._id);
+                                          setIsDeleteDialogOpen(true);
+                                        }}
+                                      >
+                                        <span>Delete</span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -751,6 +785,63 @@ const PaginationComm = ({ category }) => {
                       className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full"
                     >
                       Post Reply
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      <Transition.Root show={isDeleteDialogOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsDeleteDialogOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-xl font-semibold">
+                    Confirm Delete
+                  </Dialog.Title>
+                  <p className="mt-4 text-gray-700">
+                    Are you sure you want to delete this comment? This action
+                    cannot be undone.
+                  </p>
+                  <div className="mt-6 flex justify-end gap-4">
+                    <button
+                      onClick={() => setIsDeleteDialogOpen(false)}
+                      className="px-4 py-2 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteComment}
+                      className="px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+                    >
+                      Yes, Delete
                     </button>
                   </div>
                 </Dialog.Panel>

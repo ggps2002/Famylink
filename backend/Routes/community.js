@@ -291,6 +291,69 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
   }
 })
 
+router.delete('/:postId/comment/:commentId', authMiddleware, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const userId = req.userId;
+
+  try {
+    // Find the community with the given post ID
+    const community = await Community.findOne({ 'topics.posts._id': postId });
+
+    if (!community) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Find the topic containing the post
+    const topic = community.topics.find(t => t.posts.id(postId));
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' });
+    }
+
+    // Find the post
+    const post = topic.posts.id(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Find the comment
+    const comment = post.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    // Get the logged-in user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Allow Admin or original comment creator to delete
+    const isOwner = comment.user.toString() === userId;
+    const isAdmin = user.type === 'Admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: 'Access denied. Only the comment owner or an Admin can delete this comment.'
+      });
+    }
+
+    // Remove the comment
+    post.comments.pull(commentId);
+
+    // Save the updated document
+    await community.save();
+
+    return res.status(200).json({ message: 'Comment deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting comment:', err);
+    return res.status(500).json({
+      message: 'Error deleting comment',
+      error: err.message
+    });
+  }
+});
+
+
 router.post('/:postId/like', authMiddleware, async (req, res) => {
   const { postId } = req.params;
   const userId = req.userId;
