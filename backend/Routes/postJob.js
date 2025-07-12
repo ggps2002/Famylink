@@ -538,13 +538,26 @@ router.get("/:id", authMiddleware, async (req, res) => {
       });
     }
 
-    // Calculate averageRating
+    // Calculate averageRating and count reviews per star
     const totalRating = enrichedReviews.reduce(
       (sum, review) => sum + review.rating,
       0
     );
     const averageRating =
       enrichedReviews.length > 0 ? (totalRating / enrichedReviews.length).toFixed(1) : 0;
+
+    // Count reviews by star rating
+    const reviewCounts = enrichedReviews.reduce((acc, review) => {
+      acc[review.rating] = (acc[review.rating] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Convert to array format for frontend
+    const reviewCountsByStars = Array.from({ length: 5 }, (_, i) => ({
+      stars: 5 - i,
+      count: reviewCounts[5 - i] || 0,
+    }));
+
 
     const { jobType, _id, createdAt, updatedAt } = job;
 
@@ -556,11 +569,13 @@ router.get("/:id", authMiddleware, async (req, res) => {
         ...userObj,
         averageRating,
         reviews: enrichedReviews,
+        reviewCountsByStars, // 👈 Include here
       },
       createdAt,
       updatedAt,
       [jobType]: job[jobType],
     };
+
 
     return res.status(200).json({ data });
   } catch (error) {

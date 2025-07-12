@@ -416,16 +416,16 @@ export default function ProfileNanny() {
                       }
                       size={8}
                     />
-                    <p style={{ fontSize: 8 }}>
+                    <p>
                       {data?.user?.reviews?.length} Reviews
                     </p>
                   </div>
                   <div>
-                    <Prog num={5} pro={100} color={"#029E76"} />
-                    <Prog num={4} pro={70} color={"#029E76"} />
-                    <Prog num={3} pro={60} color={"#FEA500"} />
-                    <Prog num={2} pro={40} color={"#FF5269"} />
-                    <Prog num={1} pro={30} color={"#FF5269"} />
+                    <Prog num={5} pro={ data?.user?.reviewCountsByStars[0].count} color={"#029E76"} />
+                    <Prog num={4} pro={ data?.user?.reviewCountsByStars[1].count} color={"#029E76"} />
+                    <Prog num={3} pro={ data?.user?.reviewCountsByStars[2].count} color={"#FEA500"} />
+                    <Prog num={2} pro={ data?.user?.reviewCountsByStars[3].count} color={"#FF5269"} />
+                    <Prog num={1} pro={ data?.user?.reviewCountsByStars[4].count} color={"#FF5269"} />
                   </div>
                 </div>
 
