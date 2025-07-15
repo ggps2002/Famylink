@@ -12,68 +12,127 @@ import { sendEmail } from '../Services/email/email.js'
 
 const router = express.Router()
 
-router.post(
-  '/',
-  authMiddleware,
-  upload.array('images', 10),
-  async (req, res) => {
-    const id = req.userId
 
-    try {
-      // Fetch user by ID
-      const user = await User.findById(id)
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' })
-      }
-
-      // Check if the user is an admin
-      if (user.type !== 'Admin') {
-        return res
-          .status(403)
-          .json({ message: 'Access denied. Only Admins can create blogs.' })
-      }
-
-      const { name, category, description } = req.body
-
-      // Validate required fields
-      if (!name || !category || !description) {
-        return res
-          .status(400)
-          .json({ message: 'Name, category, and description are required' })
-      }
-
-      const imageUrls = []
-
-      // Handle image uploads
-      if (req.files && req.files.length > 0) {
-        req.files.forEach(file => {
-          const filePath = createPublicUrlForFile(req, file) // Generate public URL for the file
-          imageUrls.push(filePath) // Add file path to images array
-        })
-      }
-
-      // Create new blog
-      const blog = new Blogs({
-        name,
-        category,
-        description,
-        images: imageUrls,
-        createdAt: new Date()
-      })
-
-      // Save blog to database
-      await blog.save()
-
-      await notifyUsersAboutNewBlog(name, category)
-
-      return res
-        .status(201)
-        .json({ message: 'Blog created successfully', blog })
-    } catch (error) {
-      return res.status(500).json({ message: error.message })
+router.post("/create", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied." });
     }
+    const { title, excerpt, content, category, featuredImage } = req.body;
+
+    // Validation
+    if (!title || !excerpt || !content || !category) {
+      return res.status(400).json({ message: "All required fields must be filled." });
+    }
+
+    // Create the blog post
+    const newBlog = new Blogs({
+      title,
+      excerpt,
+      content,
+      category,
+      featuredImage,
+    });
+
+    await newBlog.save();
+
+    await notifyUsersAboutNewBlog(title, category);
+
+    return res.status(201).json({
+      message: "Blog post created successfully",
+      blog: newBlog,
+    });
+  } catch (err) {
+    console.error("🔥 Error creating blog:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-)
+});
+
+router.get("/get-blogs", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied." });
+    }
+
+    // Fetch all blogs, sorted by creation date (newest first)
+    const blogs = await Blogs.find().sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      message: "Blogs fetched successfully",
+      blogs,
+    });
+  } catch (err) {
+    console.error("🔥 Error fetching blogs:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
+// router.post(
+//   '/',
+//   authMiddleware,
+//   upload.array('images', 10),
+//   async (req, res) => {
+//     const id = req.userId
+
+//     try {
+//       // Fetch user by ID
+//       const user = await User.findById(id)
+//       if (!user) {
+//         return res.status(404).json({ message: 'User not found' })
+//       }
+
+//       // Check if the user is an admin
+//       if (user.type !== 'Admin') {
+//         return res
+//           .status(403)
+//           .json({ message: 'Access denied. Only Admins can create blogs.' })
+//       }
+
+//       const { name, category, description } = req.body
+
+//       // Validate required fields
+//       if (!name || !category || !description) {
+//         return res
+//           .status(400)
+//           .json({ message: 'Name, category, and description are required' })
+//       }
+
+//       const imageUrls = []
+
+//       // Handle image uploads
+//       if (req.files && req.files.length > 0) {
+//         req.files.forEach(file => {
+//           const filePath = createPublicUrlForFile(req, file) // Generate public URL for the file
+//           imageUrls.push(filePath) // Add file path to images array
+//         })
+//       }
+
+//       // Create new blog
+//       const blog = new Blogs({
+//         name,
+//         category,
+//         description,
+//         images: imageUrls,
+//         createdAt: new Date()
+//       })
+
+//       // Save blog to database
+//       await blog.save()
+
+//       await notifyUsersAboutNewBlog(name, category)
+
+//       return res
+//         .status(201)
+//         .json({ message: 'Blog created successfully', blog })
+//     } catch (error) {
+//       return res.status(500).json({ message: error.message })
+//     }
+//   }
+// )
 
 
 async function notifyUsersAboutNewBlog(blogName, blogCategory) {

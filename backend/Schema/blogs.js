@@ -1,38 +1,43 @@
-import mongoose from "mongoose";
+// models/Blog.ts
 
-const { Schema } = mongoose;
+import mongoose, { Schema } from 'mongoose';
 
-const blogSchema = new Schema({
-    name: {
-        type: Schema.Types.String,
-        required: true,
+const BlogSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    excerpt: {
+      type: String,
+      required: true,
+      maxlength: 300,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    featuredImage: {
+      type: String,
     },
     category: {
-        type: Schema.Types.String,
-        required: true,
-        enum: [
-            'Tips for Parents',
-            'Tips For Nannies',
-            'Platform Tips',
-            'Special Needs Care',
-            'Do It Yourself',
-            'Nanny Activities',
-            'News',
-        ], // Restrict to specific options
+      type: String,
+      required: true,
+      enum: [
+        'Tips for Parents',
+        'Tips For Nannies',
+        'Platform Tips',
+        'Special Needs Care',
+        'Do It Yourself',
+        'Nanny Activities',
+        'News',
+      ],
     },
-    description: {
-        type: Schema.Types.String, // Assuming locationSchema is not defined, updating to String
-        required: true, // Add required if the description is mandatory
-    },
-    images: {
-        type: [Schema.Types.String], // Array of strings for multiple images
-        required: true, // Ensures at least one image is provided
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now, // Default value is the current date and time
-    }
-}, { timestamps: true });
+  },
+  {
+    timestamps: true, // Adds createdAt and updatedAt
+  }
+);
 
-const Blogs = mongoose.model('blogs', blogSchema);
-export default Blogs;
+export default mongoose.models.Blog || mongoose.model('Blog', BlogSchema);

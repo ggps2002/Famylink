@@ -250,7 +250,18 @@ router.get("/getUserById/:id", async (req, res) => {
   }
 });
 
-
+router.get("/count/perType", async (req, res) => {                        // ** come back to it later
+  try {
+    const familyCount = await User.countDocuments({ type: "Parents" });
+    const nannyCount = await User.countDocuments({ type: "Nanny" });
+    return res.status(200).json({ familyCount, nannyCount });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+})
 
 // Assuming you're using Express and have a User model imported
 router.get("/getById/:id", async (req, res) => {
@@ -299,6 +310,238 @@ router.get("/getById/:id", async (req, res) => {
     });
   }
 });
+
+router.get("/top-users", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Aggregation to compute avgRating and reviewCount for Nannies
+    const topNannies = await User.aggregate([
+      {
+        $match: {
+          type: "Nanny",
+          "reviews.0": { $exists: true },
+        },
+      },
+      {
+        $addFields: {
+          avgRating: { $avg: "$reviews.rating" },
+          reviewCount: { $size: "$reviews" },
+        },
+      },
+      { $sort: { avgRating: -1, reviewCount: -1 } },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          imageUrl: 1,
+          avgRating: 1,
+          reviewCount: 1,
+        },
+      },
+    ]);
+
+    const topParents = await User.aggregate([
+      {
+        $match: {
+          type: "Parents",
+          "reviews.0": { $exists: true },
+        },
+      },
+      {
+        $addFields: {
+          avgRating: { $avg: "$reviews.rating" },
+          reviewCount: { $size: "$reviews" },
+        },
+      },
+      { $sort: { avgRating: -1, reviewCount: -1 } },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          imageUrl: 1,
+          avgRating: 1,
+          reviewCount: 1,
+        },
+      },
+    ]);
+
+    // Format function
+    const formatUser = (user) => {
+      const [firstName, ...rest] = user.name.split(" ");
+      return {
+        id: user._id,
+        firstName,
+        lastName: rest.join(" ") || "",
+        profileImage: user.imageUrl,
+        avgRating: user.avgRating || 0,
+        reviewCount: user.reviewCount || 0,
+      };
+    };
+
+    return res.status(200).json({
+      topNannies: topNannies.map(formatUser),
+      topParents: topParents.map(formatUser),
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Failed to fetch top users",
+      error: err.message,
+    });
+  }
+});
+
+router.get("/families", authMiddleware, async (req, res) => {
+  try {
+    // Ensure only admins can access this route
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    // Pagination setup
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+    const query = { type: "Parents" };
+
+    // Fetch paginated families
+    const families = await User.find(query)
+      .select("-password -otp -otpExpiry -notifications -__v -online")
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalCount = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Format families into the frontend Users interface
+    const formatted = families.map((family) => {
+      const [firstName = "", ...rest] = family.name?.split(" ") ?? [];
+      const lastName = rest.join(" ");
+      const cityStateParts = family.location?.format_location?.split(", ") ?? [];
+
+      const avgRating =
+        family.reviews?.length > 0
+          ? family.reviews.reduce((acc, r) => acc + r.rating, 0) / family.reviews.length
+          : 0;
+
+      return {
+        id: family._id,
+        username: family.email.split("@")[0],
+        email: family.email,
+        firstName,
+        lastName,
+        role: "Parents",
+        profileImage: family.imageUrl || null,
+        phone: family.phoneNo || "",
+        city: cityStateParts[cityStateParts.length - 3] || "",
+        state: cityStateParts[cityStateParts.length - 2] || "",
+        hourlyRate: undefined,
+        bio: family.aboutMe || "",
+        avgRating: parseFloat(avgRating.toFixed(1)),
+        totalReviews: family.reviews?.length || 0,
+        isVerifiedEmail: family.verified?.emailVer || false,
+        isVerifiedID: family.verified?.nationalIDVer === "true",
+        isActive: family.status === "Active",
+        createdAt: family.createdAt,
+      };
+    });
+
+    return res.status(200).json({
+      data: formatted,
+      pagination: {
+        totalRecords: totalCount,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch families",
+      error: error.message,
+    });
+  }
+});
+
+
+router.get("/nannies", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+    const query = { type: 'Nanny' };
+
+    const nannies = await User.find(query)
+      .select("-password -otp -otpExpiry -notifications -__v -online") // sanitize
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalCount = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Transform MongoDB User -> Frontend Nanny interface
+    const formatted = nannies.map((nanny) => {
+      const [firstName, ...rest] = nanny.name?.split(" ") ?? [];
+      const lastName = rest.join(" ");
+      const cityState = nanny.location?.format_location?.split(", ") ?? [];
+      const avgRating = nanny.reviews.length > 0
+        ? nanny.reviews.reduce((sum, r) => sum + r.rating, 0) / nanny.reviews.length
+        : 0;
+
+      return {
+        id: nanny._id,
+        username: nanny.email.split("@")[0],
+        email: nanny.email,
+        firstName,
+        lastName,
+        role: "Nanny",
+        profileImage: nanny.imageUrl || null,
+        phone: nanny.phoneNo || "",
+        city: cityState[cityState.length - 3] || "",
+        state: cityState[cityState.length - 2] || "",
+        hourlyRate: undefined, // you can derive this from additionalInfo if needed
+        bio: nanny.additionalInfo.find(info => info.key === "jobDescription").value || "",
+        avgRating: avgRating,
+        totalReviews: nanny.reviews.length,
+        isVerifiedEmail: nanny.verified?.emailVer || false,
+        isVerifiedID: nanny.verified?.nationalIDVer === "true",
+        isActive: nanny.status === "Active",
+        createdAt: nanny.createdAt,
+      };
+    });
+
+    res.status(200).json({
+      data: formatted,
+      pagination: {
+        totalRecords: totalCount,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch users",
+      error: error.message,
+    });
+  }
+});
+
 
 router.get("/getAllData/admin", authMiddleware, async (req, res) => {
   try {

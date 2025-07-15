@@ -18,6 +18,7 @@ import NannyShare from './nannyShare.js'
 import PostJob from './postJob.js'
 import Subscription from './subscription.js'
 import Feedback from './feedback.js'
+import Revenue from './revenue.js'
 
 const router = express.Router()
 
@@ -34,11 +35,12 @@ router.use('/book-hire', BookHire)
 router.use('/payment/stripe', Payment)
 router.use('/chats', Chat)
 router.use('/message', Message)
-router.use('/blog', Blog)
+router.use('/blogs', Blog)
 router.use('/community', Community)
 router.use('/adminUser', AdminUser)
 router.use('/verify', Verification)
 router.use('/subscribe', Subscription)
 router.use('/feedback', Feedback);
+router.use('/revenue', Revenue)
 
 export default router   

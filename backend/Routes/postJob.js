@@ -402,7 +402,74 @@ router.get("/user-jobs", authMiddleware, async (req, res) => {
   }
 });
 
+// GET /count
+router.get("/count", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied." });
+    }
 
+    const totalJobs = await postJob.countDocuments();
+
+    return res.status(200).json({ totalJobs });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/all-jobs", async (req, res) => {
+  console.log("📥 GET /postJob/fetchAllJobs called");
+  try {
+    const jobs = await postJob.find()
+      .populate({
+        path: "user",
+        select: "name email imageUrl location zipCode reviews noOfChildren age gender",
+      })
+      .lean();
+
+    const formattedJobs = jobs.map((job) => {
+      const jobDetails = job[job.jobType];
+      if (!jobDetails) return null;
+
+      const hourlyRate =
+        typeof jobDetails.hourlyRate === "number"
+          ? jobDetails.hourlyRate
+          : parseFloat(jobDetails?.hourlyRate?.min?.toString() || "0");
+
+      const user = job.user || {};
+
+      return {
+        id: job._id,
+        title: job.jobType,
+        description: jobDetails?.jobDescription || "",
+        familyId: user._id || "",
+        location: user.location?.format_location || "",
+        hourlyRate,
+        schedule: jobDetails?.preferredSchedule || "",
+        requirements:
+          jobDetails?.specificRequirements?.otherPreferences || "",
+        childrenAges: user.noOfChildren || "",
+        isActive: true,
+        createdAt: job.createdAt,
+        family: {
+          firstName: (user.name || "").split(" ")[0] || "",
+          lastName: (user.name || "").split(" ")[1] || "",
+          city: user.location?.city || "",
+          state: user.location?.state || "",
+        },
+      };
+    }).filter(Boolean);
+
+    res.status(200).json({ jobs: formattedJobs });
+  } catch (error) {
+    console.error("🔥 Error fetching jobs:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 router.get("/admin-job", authMiddleware, async (req, res) => {
   const userId = req.userId;
@@ -585,7 +652,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
     });
   }
 });
-
 
 
 export default router;

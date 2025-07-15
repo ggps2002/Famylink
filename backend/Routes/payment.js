@@ -190,46 +190,46 @@ router.post("/create-subscription", authMiddleware, async (req, res) => {
 
 
 router.post('/cancel-subscription', authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (!user || !user.subscriptionId) {
-      return res.status(404).json({ message: "Subscription not found" });
+    try {
+        const user = await User.findById(req.userId);
+        if (!user || !user.subscriptionId) {
+            return res.status(404).json({ message: "Subscription not found" });
+        }
+
+        const subscription = await stripe.subscriptions.update(user.subscriptionId, {
+            cancel_at_period_end: true,
+        });
+
+        res.status(200).json({
+            message: "Subscription set to cancel at period end",
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            currentPeriodEnd: subscription.current_period_end,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
     }
-
-    const subscription = await stripe.subscriptions.update(user.subscriptionId, {
-      cancel_at_period_end: true,
-    });
-
-    res.status(200).json({
-      message: "Subscription set to cancel at period end",
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      currentPeriodEnd: subscription.current_period_end,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
 });
 
 router.get('/subscription-status', authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (!user?.subscriptionId) {
-      return res.json({ active: false });
+    try {
+        const user = await User.findById(req.userId);
+        if (!user?.subscriptionId) {
+            return res.json({ active: false });
+        }
+
+        const subscription = await stripe.subscriptions.retrieve(user.subscriptionId);
+
+        res.json({
+            active: subscription.status === "active",
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            periodEnd: subscription.current_period_end,
+            plan: subscription.items.data[0].price.nickname || "Unknown Plan",
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-
-    const subscription = await stripe.subscriptions.retrieve(user.subscriptionId);
-
-    res.json({
-      active: subscription.status === "active",
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      periodEnd: subscription.current_period_end,
-      plan: subscription.items.data[0].price.nickname || "Unknown Plan",
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
 
@@ -252,6 +252,19 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
             if (userId) {
                 await User.findByIdAndUpdate(userId, { premium: true });
             }
+            const invoice = event.data.object;
+
+            // ✅ Example values
+            const amountPaid = invoice.amount_paid / 100; // convert cents to dollars
+            const customerId = invoice.customer;
+            const timestamp = invoice.created * 1000;
+
+            // Optional: store to DB
+            await Revenue.create({
+                amount: amountPaid,
+                stripeCustomerId: customerId,
+                paidAt: new Date(timestamp),
+            });
         }
 
         if (
