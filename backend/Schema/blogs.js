@@ -21,6 +21,10 @@ const BlogSchema = new Schema(
     featuredImage: {
       type: String,
     },
+    isDraft: {
+        type: Boolean,
+        required: true,
+    },
     category: {
       type: String,
       required: true,

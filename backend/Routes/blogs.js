@@ -12,6 +12,82 @@ import { sendEmail } from '../Services/email/email.js'
 
 const router = express.Router()
 
+router.patch("/publish/:id", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied." });
+    }
+    const { id: blogId } = req.params;
+
+    const blog = await Blogs.findById(blogId);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    const publishedBlog = await Blogs.findByIdAndUpdate(blogId, { isDraft: !blog.isDraft }, {
+      new: true, // returns the updated document
+      runValidators: true, // optional: re-validate schema)
+    })
+    // Create the blog post
+    if (!publishedBlog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    if (publishedBlog.isDraft) {
+      res.status(200).json({
+        blog: publishedBlog,
+        message: `Your Blog titled ${publishedBlog.title} is Published successfully 🎉!!`,
+      });
+    }
+    else {
+      res.status(200).json({
+        blog: publishedBlog,
+        message: `Your Blog titled "${publishedBlog.title}" is Unpublished`,
+      });
+    }
+  } catch (err) {
+    console.error("🔥 Error creating blog:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.patch("/edit", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.type !== "Admin") {
+      return res.status(403).json({ message: "Access denied." });
+    }
+    const { _id, title, excerpt, content, category, featuredImage , isDraft} = req.body;
+
+    const blog = await Blogs.findById(_id);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    const editedBlog = await Blogs.findByIdAndUpdate(_id, {
+      title, excerpt, content, category, featuredImage, isDraft
+    }, {
+      new: true, // returns the updated document
+      runValidators: true, // optional: re-validate schema)
+    })
+    // Create the blog post
+    if (!editedBlog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    res.status(200).json({
+      blog: editedBlog,
+      message: `Your Blog titled "${editedBlog.title}" is edited successfully 🎉!!`,
+    });
+
+  } catch (err) {
+    console.error("🔥 Error creating blog:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 
 router.post("/create", authMiddleware, async (req, res) => {
   try {
@@ -32,6 +108,7 @@ router.post("/create", authMiddleware, async (req, res) => {
       excerpt,
       content,
       category,
+      isDraft,
       featuredImage,
     });
 
@@ -199,32 +276,32 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Blog not found' })
     }
 
-    // Check if images are used by other blogs
-    if (Array.isArray(blog.images) && blog.images.length > 0) {
-      for (const imageUrl of blog.images) {
-        const isImageUsedElsewhere = await Blogs.findOne({
-          _id: { $ne: blogId }, // Exclude the current blog
-          images: imageUrl
-        })
+    // // Check if images are used by other blogs
+    // if (Array.isArray(blog.images) && blog.images.length > 0) {
+    //   for (const imageUrl of blog.images) {
+    //     const isImageUsedElsewhere = await Blogs.findOne({
+    //       _id: { $ne: blogId }, // Exclude the current blog
+    //       images: imageUrl
+    //     })
 
-        if (!isImageUsedElsewhere) {
-          // Convert the image URL to a local file path
-          const localFilePath = createLocalUrlForFile(imageUrl)
+    //     if (!isImageUsedElsewhere) {
+    //       // Convert the image URL to a local file path
+    //       const localFilePath = createLocalUrlForFile(imageUrl)
 
-          // If the file exists, delete it
-          if (fs.existsSync(localFilePath)) {
-            fs.unlinkSync(localFilePath)
-          }
-        }
-      }
-    }
+    //       // If the file exists, delete it
+    //       if (fs.existsSync(localFilePath)) {
+    //         fs.unlinkSync(localFilePath)
+    //       }
+    //     }
+    //   }
+    // }
 
     // Delete the blog
     await blog.deleteOne()
 
     return res
       .status(200)
-      .json({ message: 'Blog and unused images deleted successfully' })
+      .json({ blog: blog, message: `The blog titled "${blog.title}" is deleted successfully` })
   } catch (error) {
     return res.status(500).json({ message: error.message })
   }
