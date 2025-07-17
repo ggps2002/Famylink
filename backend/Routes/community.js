@@ -43,6 +43,7 @@ router.post('', authMiddleware, async (req, res) => {
     // Save the new community
     await community.save()
     return res.status(201).json({
+      community: { id: community._id, name: community.name },
       message: 'Community created successfully'
     })
   } catch (error) {
@@ -50,7 +51,91 @@ router.post('', authMiddleware, async (req, res) => {
   }
 })
 
+// Fetch all posts with metadata: community name, topic name, all communities, all topics
+router.get("/all-posts", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  if (user.type !== "Admin") {
+    return res.status(403).json({
+      message: "Access denied. Only Admins can access this resource.",
+    });
+  }
+
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Fetch all communities with their topics and posts
+    const communities = await Community.find({}, { name: 1, topics: 1 }).lean();
+
+    const allPosts = [];
+    const allCommunities = [];
+    const allTopics = new Map(); // To avoid duplicates
+
+    for (const community of communities) {
+      allCommunities.push({ id: community._id, name: community.name });
+
+      for (const topic of community.topics || []) {
+        allTopics.set(topic._id.toString(), { id: topic._id, name: topic.name });
+
+        for (const post of topic.posts || []) {
+          allPosts.push({
+            post,
+            topicName: topic.name,
+            communityName: community.name,
+          });
+        }
+      }
+    }
+
+    // Sort all posts by newest
+    const sortedPosts = allPosts.sort(
+      (a, b) => new Date(b.post.createdAt) - new Date(a.post.createdAt)
+    );
+
+    const paginatedPosts = sortedPosts.slice(skip, skip + limit);
+
+    // Optionally populate createdBy user’s first/last name (if needed):
+    const userIds = paginatedPosts.map((p) => p.post.createdBy).filter(Boolean);
+    const usersMap = {};
+
+    const users = await User.find({ _id: { $in: userIds } }, "firstName lastName").lean();
+    for (const u of users) {
+      usersMap[u._id.toString()] = { firstName: u.firstName, lastName: u.lastName };
+    }
+
+    const enrichedPosts = paginatedPosts.map((item) => ({
+      ...item,
+      createdBy:
+        item.post.createdBy && usersMap[item.post.createdBy.toString()]
+          ? usersMap[item.post.createdBy.toString()]
+          : null,
+    }));
+
+    return res.status(200).json({
+      data: enrichedPosts,
+      allCommunities,
+      allTopics: Array.from(allTopics.values()),
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(sortedPosts.length / limit),
+        totalItems: sortedPosts.length,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
 router.post('/:commId/topic', authMiddleware, async (req, res) => {
+  console.log("BODY:", req.body);
   const { commId } = req.params // Community ID from the URL
   const { name, description } = req.body // Topic details from the request body
 
@@ -108,7 +193,7 @@ router.post('/:commId/topic', authMiddleware, async (req, res) => {
 
     return res.status(200).json({
       message: 'Topic added successfully to the community',
-      community
+      topic: { id: newTopic._id, name: newTopic.name }
     })
   } catch (error) {
     console.error('Error adding topic:', error)
@@ -873,11 +958,11 @@ router.post("/:postId/comments/:commentId/replies", authMiddleware, async (req, 
   const { reply, isAnonymous } = req.body;
   const userId = req.userId;
 
-  console.log("Commenting to post with postId:", postId);
-  console.log("Commenting to commentId with commentId:", commentId);
-  console.log("Comment:", reply);
-  console.log("Reply annonymous:", isAnonymous)
-  console
+  // console.log("Commenting to post with postId:", postId);
+  // console.log("Commenting to commentId with commentId:", commentId);
+  // console.log("Comment:", reply);
+  // console.log("Reply annonymous:", isAnonymous)
+  // console
 
   if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
