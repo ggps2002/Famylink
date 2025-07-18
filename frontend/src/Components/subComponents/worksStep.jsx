@@ -4,7 +4,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import { AnimatedWrapper } from "./animation";
 import dot from '../../assets/images/dot.png'
 
-export default function VerticalTimeline({ steps, head, subHead, btn, bg }) {
+export default function VerticalTimeline({ steps, head, subHead, btn, bg, btnText }) {
     const [activeStep, setActiveStep] = useState(0);
     const containerRef = useRef(null);
 
@@ -114,7 +114,7 @@ export default function VerticalTimeline({ steps, head, subHead, btn, bg }) {
             {
                 btn &&
                 <NavLink to='/joinNow' className='flex' onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-                    <button style={{ background: "#85D1F1" }} className='mt-10 mx-auto px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110'>Start Your Nanny Share Today</button>
+                    <button style={{ background: "#85D1F1" }} className='mt-10 mx-auto px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110'>{btnText.length > 0 ? btnText :"Start Your Nanny Share Today"}</button>
                 </NavLink>
             }
         </>

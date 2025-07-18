@@ -10,9 +10,12 @@ export function AnimatedWrapper({
   triggerConfig = {},
 }) {
   const wrapperRef = useRef(null);
+  const hasAnimated = useRef(false); // 👈 prevent re-trigger
 
   useEffect(() => {
+    if (!wrapperRef.current || hasAnimated.current) return;
     // Apply animation using GSAP
+    hasAnimated.current = true;
     const animation = gsap.fromTo(
       wrapperRef.current,
       animationConfig.from || { opacity: 0, y: 50 },

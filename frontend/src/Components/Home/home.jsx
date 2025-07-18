@@ -20,6 +20,10 @@ import { NavLink } from "react-router-dom";
 import { AnimatedWrapper } from "../subComponents/animation";
 import { fireToastMessage } from "../../toastContainer";
 import { api } from "../../Config/api";
+import { Spin, Input } from "antd";
+import { Search } from "lucide-react";
+import NannySharePreview from "../subComponents/nannySharePreview";
+import MetricsSection from "../subComponents/metricsSection";
 
 const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -31,13 +35,15 @@ export default function Home() {
     email: false,
     feedback: false,
   });
+  const [loading, setLoading] = useState(false);
+  const [zipCode, setZipCode] = useState("");
   const [feedback, setFeedback] = useState("");
   const handleEmailSubmit = async () => {
     if (!email.trim()) return alert("Please enter your email");
     if (!isValidEmail(email)) {
       fireToastMessage({
         message: "Please enter a valid email address",
-        type: "error"
+        type: "error",
       });
       return;
     }
@@ -56,6 +62,36 @@ export default function Home() {
     } finally {
       setEmail("");
       setIsLoading((prev) => ({ ...prev, email: false }));
+    }
+  };
+
+  const handleZipValidation = async (zip) => {
+    if (!zip) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      if (!res.ok) throw new Error("Invalid ZIP");
+
+      const data = await res.json();
+      const finalZip = data["post code"];
+      if (finalZip) {
+        setZipCode(finalZip);
+        // form.setFieldsValue({
+        //   zipCode: finalZip,
+        // });
+      } else {
+        throw new Error("Invalid structure");
+      }
+    } catch (err) {
+      setZipCode("");
+      // form.setFieldsValue({ zipCode: "" });
+      fireToastMessage({
+        type: "error",
+        message: "Invalid ZIP code. Please enter a valid U.S. ZIP.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,24 +126,62 @@ export default function Home() {
             }}
           >
             <p className="font-normal uppercase Classico home-sec1-head">
-              Finding the best match for
+              Save $25K+ with Nanny Share
             </p>
           </AnimatedWrapper>
           <p className="my-3 font-normal lg:text-3xl text-2xl Elliana-Samantha">
-            your {`family's`} unique needs
+            Split costs <span className="font-sans">.</span> Share care{" "}
+            <span className="font-sans">.</span> Happy kids.
           </p>
 
-          <NavLink
-            to="joinNow"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            <button
-              style={{ background: "#EFECE6" }}
-              className="mt-6 mb-4 px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110"
+          <div className="relative w-full mt-12">
+            {/* Optional: Wrap Spin over just the input for precise control */}
+            <Spin
+              spinning={loading}
+              size="small"
+              className="absolute z-10 left-3 top-1/2 -translate-y-1/2"
+            />
+
+            <Input
+              name="zipCode"
+              placeholder="Enter your zip code to see families near you"
+              value={zipCode}
+              onChange={(e) => {
+                const zip = e.target.value;
+                setZipCode(zip);
+              }}
+              onBlur={(e) => handleZipValidation(e.target.value.trim())}
+              className="w-full p-4 pr-12 border-none rounded-3xl input-width"
+              maxLength={10}
+            />
+
+            <Search className="absolute right-4 lg:right-[26%] top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
+
+          <div className="flex md:gap-6 flex-col md:flex-row md:justify-center">
+            <NavLink
+              to="joinNow"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              Get Started Today
-            </button>
-          </NavLink>
+              <button
+                style={{ background: "#EFECE6" }}
+                className="mt-6 px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110"
+              >
+                Find Families to Share With
+              </button>
+            </NavLink>
+            <NavLink
+              to="joinNow"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <button
+                // style={{ background: "#EFECE6" }}
+                className="mt-6 mb-4 px-6 py-1 font-normal border border-black text-base"
+              >
+                Browse Caregivers
+              </button>
+            </NavLink>
+          </div>
 
           <p className="hover:opacity-70 font-normal text-base">
             <NavLink
@@ -137,14 +211,18 @@ export default function Home() {
       </div>
 
       <Sec4
-        btn={true}
-        subHead={
-          "Families can link to find anything from nannies and babysitters to tutors, coaches, and  specialized caregivers. We provide a wide range of services to meet your family's unique needs.  Explore our nanny share options and join our vibrant community to connect with other families,  share advice, and find support. Discover how we make childcare easy and personalized for you!"
-        }
+        btn={false}
+        subHead={`Quality childcare shouldn't break the bank. FamyLink connects you with local families to share a nanny, cutting your costs 
+in half while providing your children with built-in playmates. Browse verified nannies, connect with compatible families, and start saving 
+thousands. It's free to browse - you only pay when you hire someone you love.`}
       />
 
       <div className="padd-res">
-        <Sec2 head={"What can we Offer"} />
+        <NannySharePreview head={"Nanny Share Opportunities Near You"} />
+      </div>
+
+      <div className="padd-res">
+        <Sec2 head={"Find the Right Caregiver for Your Family"} />
       </div>
 
       {/* <div className='flex justify-center items-center mt-16 text-center'>
@@ -252,6 +330,8 @@ export default function Home() {
         </div>
       </div>
 
+      <MetricsSection head={"The Numbers Don't Lie"} family={false}/>
+
       <div className="flex flex-col w-full max-lg:px-2 flex-wrap justify-center items-center mt-16 text-center">
         <div>
           <div>
@@ -268,7 +348,7 @@ export default function Home() {
                 }}
                 className="px-3 font-normal lg:leading-[12px] leading-tight uppercase Classico family-font"
               >
-                Join Our Founding Families
+                What our families are saying
               </p>
             </AnimatedWrapper>
             <p className="mx-auto mt-12 mb-14 text-lg home-sec3 line1-20">
@@ -277,60 +357,7 @@ export default function Home() {
             </p>
           </div>
           <div className="bg-white p-8 max-w-4xl mx-auto my-12 ">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-              Join our newsletter for updates, tips, and early access to new
-              features
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Help us shape the future of childcare. We’d love to hear your
-              thoughts!
-            </p>
-
-            {/* Grid for input sections */}
-            <div className="flex flex-col md:flex-row gap-6 md:gap-0 md:justify-around">
-              {/* Newsletter Section */}
-              <div className="flex flex-col">
-                <label className="text-lg font-semibold text-gray-700 mb-2">
-                  → Join Our Newsletter
-                </label>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-64 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#85D1F1] mb-3"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button
-                  disabled={isLoading.email}
-                  className="self-start bg-[#85D1F1] px-5 py-2 rounded-md hover:scale-105 transition"
-                  onClick={handleEmailSubmit}
-                >
-                  {isLoading.email ? "Sending..." : "Join"}
-                </button>
-              </div>
-              <div className="hidden md:block w-px bg-gray-300 mx-4"></div>{" "}
-              {/* vertical on md+ */}
-              {/* Feedback Section */}
-              <div className="flex flex-col">
-                <label className="text-lg font-semibold text-gray-700 mb-2">
-                  → Share Your Thoughts
-                </label>
-                <textarea
-                  placeholder="We'd love your feedback..."
-                  className="w-96 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#85D1F1] mb-3"
-                  rows={4}
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                />
-                <button
-                  disabled={isLoading.feedback}
-                  className="self-start bg-[#85D1F1] px-5 py-2 hover:scale-105 rounded-md transition"
-                  onClick={handleFeedbackSubmit}
-                >
-                  {isLoading.feedback ? "Sending..." : "Share"}
-                </button>
-              </div>
-            </div>
+            <TestimonialSlider/>
           </div>
         </div>
       </div>
