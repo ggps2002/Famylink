@@ -126,12 +126,17 @@ export default function Home() {
             }}
           >
             <p className="font-normal uppercase Classico home-sec1-head">
-              Save $25K+ with Nanny Share
+              Find Your Perfect Childcare Match
+            </p>
+            <p className="font-semibold Classico home-sec1-subHead">
+              Smart matching for nannies, tutors, coaches, and all your family's
+              needs
             </p>
           </AnimatedWrapper>
           <p className="my-3 font-normal lg:text-3xl text-2xl Elliana-Samantha">
-            Split costs <span className="font-sans">.</span> Share care{" "}
-            <span className="font-sans">.</span> Happy kids.
+            Smart matching <span className="font-sans">.</span> Trusted
+            providers <span className="font-sans">.</span> Successful
+            relationships.
           </p>
 
           <div className="relative w-full mt-12">
@@ -155,7 +160,7 @@ export default function Home() {
               maxLength={10}
             />
 
-            <Search className="absolute right-4 lg:right-[26%] top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search className="absolute right-4 lg:right-[32%] top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
 
           <div className="flex md:gap-6 flex-col md:flex-row md:justify-center">
@@ -167,7 +172,7 @@ export default function Home() {
                 style={{ background: "#EFECE6" }}
                 className="mt-6 px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110"
               >
-                Find Families to Share With
+                Find Your Perfect Match
               </button>
             </NavLink>
             <NavLink
@@ -212,13 +217,15 @@ export default function Home() {
 
       <Sec4
         btn={false}
-        subHead={`Quality childcare shouldn't break the bank. FamyLink connects you with local families to share a nanny, cutting your costs 
-in half while providing your children with built-in playmates. Browse verified nannies, connect with compatible families, and start saving 
-thousands. It's free to browse - you only pay when you hire someone you love.`}
+        subHead={`Finding the right childcare shouldn't be guesswork. FamyLink uses smart 
+compatibility matching to connect your family with the perfect providers - whether you 
+need a nanny, tutor, coach, or specialized caregiver. Our proven matching system creates 
+successful long-term relationships while offering cost-sharing opportunities when 
+families want them.`}
       />
 
       <div className="padd-res">
-        <NannySharePreview head={"Nanny Share Opportunities Near You"} />
+        <NannySharePreview head={"Childcare Solutions Matched to Your Family"} />
       </div>
 
       <div className="padd-res">
@@ -330,7 +337,7 @@ thousands. It's free to browse - you only pay when you hire someone you love.`}
         </div>
       </div>
 
-      <MetricsSection head={"The Numbers Don't Lie"} family={false}/>
+      <MetricsSection head={"Why Smart Matching Works Across All Services"} family={false} />
 
       <div className="flex flex-col w-full max-lg:px-2 flex-wrap justify-center items-center mt-16 text-center">
         <div>
@@ -357,7 +364,7 @@ thousands. It's free to browse - you only pay when you hire someone you love.`}
             </p>
           </div>
           <div className="bg-white p-8 max-w-4xl mx-auto my-12 ">
-            <TestimonialSlider/>
+            <TestimonialSlider />
           </div>
         </div>
       </div>

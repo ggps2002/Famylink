@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatedWrapper } from "./animation";
-export default function Sec1({ pic, head, preHead , nannyShare}) {
+export default function Sec1({ pic, head, preHead , btnText}) {
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -30,7 +30,7 @@ export default function Sec1({ pic, head, preHead , nannyShare}) {
             style={{ background: "#EFECE6" }}
             className="mt-10 mb-4 px-6 py-1 font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ... ease-in-out hover:scale-110 margin-btn-acc"
           >
-            {nannyShare ? "Find Nanny Share Opportunities" : "Get Started Today"}
+            {btnText ? btnText : "Get Started Today"}
           </button>
         </NavLink>
 

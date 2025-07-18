@@ -9,25 +9,29 @@ const testimonials = [
   {
     img: img1,
     fallbackImageText: "ER",
-    para: `We were paying 4,300/month for our nanny alone. After connecting with another family through FamyLink, we split the cost and now pay just $2,150 each. We're saving over $25,000 a year — and our kids love having a buddy every day`,
-    name: "Emily R. — San Francisco, CA",
-    relation: "~$2,150 monthly savings",
+    para: `"FamyLink's matching system found us the perfect nanny who shares our values 
+about outdoor play and healthy eating. It's been 2 years and we couldn't be 
+happier with the compatibility!`,
+    name: "Emily R., San Francisco, CA",
+    relation: "Perfect compatibility match",
   },
   {
     img: img2,
     fallbackImageText: "DL",
-    para: `Nanny share always seemed complicated, but FamyLink made it easy to connect with another family nearby. We're saving 
-nearly $1,800/month — it's been life-changing.`,
-    name: "David & Sara L. — Brooklyn, NY",
+    para: `Finding a math tutor who could work with our learning-different son seemed 
+impossible. FamyLink matched us with James who has the exact patience and 
+approach our son needed.`,
+    name: "DavidL., Brooklyn, NY",
     relation: "~$1,800 monthly savings",
   },
   {
     img: img3,
     fallbackImageText: "PM",
-    para: `Before FamyLink, childcare felt out of reach. Now we have quality care and save over $20,000 a year thanks to nanny share. 
-Best decision we've made.`,
-    name: "Priya M. — Chicago, IL",
-    relation: "Over $20,000 annual savings",
+    para: `We needed a piano teacher for our daughter, and FamyLink found someone who 
+matches our family's classical music preferences perfectly. She's been with us for 
+18 months now.`,
+    name: "PriyaM., Chicago, IL",
+    relation: "Long-term relationship success",
   },
   // {
   //   img: img4,
@@ -91,7 +95,7 @@ export function TestimonialSlider() {
             </div>
             <div className="text-right  mt-6">
               <p className="font-medium text-xl">{name}</p>
-              <p className="text-sm text-gray-500">{relation}</p>
+              <p className="text-sm text-gray-500">Highlight: {relation}</p>
             </div>
           </div>
         </div>

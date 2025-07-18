@@ -4,19 +4,19 @@ import { Users, Home, Star } from "lucide-react";
 
 const metricsHome = [
   {
-    range: "1,500 – 2,200",
-    label: "MONTHLY SAVINGS",
-    description: "Typical savings per family using nanny share",
+    range: "2,847",
+    label: "VERIFIED PROVIDERS",
+    description: "Across nannies, tutors, coaches, and specialists",
   },
   {
-    range: "Up to 50%",
-    label: "LOWER COSTS",
+    range: "18 months",
+    label: "AVERAGE RELATIONSHIP",
     description: "Compared to hiring solo",
   },
   {
-    range: "18,000 – 26,000",
-    label: "ANNUAL SAVINGS",
-    description: "Potential yearly savings for families",
+    range: "All Services",
+    label: "ONE PLATFORM",
+    description: "Nannies to tutors to specialized care",
   },
 ];
 

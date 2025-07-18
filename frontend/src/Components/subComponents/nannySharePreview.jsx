@@ -5,66 +5,60 @@ import { Spin, Input } from "antd";
 import { Search, Star } from "lucide-react";
 import { fireToastMessage } from "../../toastContainer";
 
+const jobSeekerOpportunities = [
+  {
+    title: "Nanny Position – Manhattan Family",
+    rate: "$22–25/hour",
+    type: "Full-time",
+    action: "View Details – Sign Up Required",
+  },
+  {
+    title: "Babysitter – Brooklyn",
+    rate: "$18–20/hour",
+    type: "Part-time",
+    action: "View Details – Sign Up Required",
+  },
+  {
+    title: "Nanny Share – Queens",
+    rate: "$40+/hour total earning potential",
+    type: null,
+    action: "View Details – Sign Up Required",
+  },
+];
+
 const nannyShares = [
   {
-    families: "The Patel & Sharma Families",
-    location: "San Jose",
-    price: "$1,400/month per family",
-    savings: "save $1,000+ each",
-    schedule: "Monday–Friday, 9am–5pm",
-    ages: "Ages 1–4",
-    description: "Looking for a bilingual nanny who loves music & crafts.",
-    action: "Contact Families – Sign Up Required",
+    name: "Sarah M.",
+    title: "Experienced Nanny",
+    rating: "★★★★★",
+    rate: "$22–25/hour",
+    availability: "Full-time available",
+    experience: "5 years experience",
+    description: "Warm, nurturing care with focus on outdoor activities...",
+    action: "View Full Profile",
+    profileType: "childcare",
   },
   {
-    families: "The Li & Wang Families",
-    location: "Seattle",
-    price: "$1,100/month per family",
-    savings: "save $900+ each",
-    schedule: "Tuesday–Friday, 8am–3pm",
-    ages: "Ages 2–3",
-    description: "Seeking gentle, Montessori-aligned caregiver.",
-    action: "Contact Families – Sign Up Required",
+    name: "James T.",
+    title: "Math Tutor",
+    rating: "★★★★★",
+    rate: "$45/hour",
+    availability: "After-school availability",
+    experience: "Algebra specialist",
+    description: "Specializes in algebra and geometry for middle schoolers...",
+    action: "View Teaching Profile",
+    profileType: "teaching",
   },
   {
-    families: "The Robinson & Johnson Families",
-    location: "Chicago",
-    price: "$1,250/month per family",
-    savings: "save $1,300+ each",
-    schedule: "Monday–Thursday, 7:30am–5:30pm",
-    ages: "Ages 1–5",
-    description: "Cozy home setup, walkable parks nearby.",
-    action: "Contact Families – Sign Up Required",
-  },
-  {
-    families: "The Nguyen & Tran Families",
-    location: "Austin",
-    price: "$1,300/month per family",
-    savings: "save $1,200+ each",
-    schedule: "Monday–Friday, 8am–6pm",
-    ages: "Ages 3–6",
-    description: "Nanny must love storytime and outdoor play.",
-    action: "Contact Families – Sign Up Required",
-  },
-  {
-    families: "The Garcia & Hernandez Families",
-    location: "Los Angeles",
-    price: "$1,200/month per family",
-    savings: "save $1,100+ each",
-    schedule: "Monday–Friday, 9am–6pm",
-    ages: "Ages 2–4",
-    description: "Warm home near Griffith Park; Spanish-speaking preferred.",
-    action: "Contact Families – Sign Up Required",
-  },
-  {
-    families: "The Cohen & Levy Families",
-    location: "New York City",
-    price: "$1,500/month per family",
-    savings: "save $1,200+ each",
-    schedule: "Monday–Friday, 8am–5pm",
-    ages: "Ages 1–3",
-    description: "Looking for reliable nanny familiar with kosher homes.",
-    action: "Contact Families – Sign Up Required",
+    name: "David L.",
+    title: "Soccer Coach",
+    rating: "★★★★★",
+    rate: "$40/session",
+    availability: "Weekend availability",
+    experience: "Former college player",
+    description: "Former college player, great with ages 6–12...",
+    action: "View Full Profile",
+    profileType: "sports",
   },
 ];
 
@@ -73,7 +67,7 @@ const nannyShareOpportunities = [
     families: "The Johnson & Martinez Families",
     location: "Park Slope",
     rate: "$1,200/month per family",
-    savings: "save $1,200+ each",
+    savings: "Compatible Families",
     schedule: "Monday–Friday, 8am–6pm",
     kids: "4 kids (ages 2–5)",
     description: "Two families seeking warm, experienced nanny...",
@@ -124,8 +118,12 @@ export default function NannySharePreview({ border, head, btn, type }) {
   const [visibleShares, setVisibleShares] = useState([]);
   const [serviceProviders, setServiceProviders] = useState([]);
   const [nannySharePreview, setNannySharePreview] = useState([]);
+  const [jobSeekerPreview, setJobSeekerPreview] = useState([]);
 
   const getRandomShares = () => {
+    if (type === "jobSeeker") {
+      return jobSeekerOpportunities;
+    }
     if (type === "NannyShare") {
       return nannyShareOpportunities;
     }
@@ -152,6 +150,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
         setVisibleShares(getRandomShares()); // 👉 show 3 new cards
         setServiceProviders(getRandomShares());
         setNannySharePreview(getRandomShares());
+        setJobSeekerPreview(getRandomShares());
         // form.setFieldsValue({
         //   zipCode: finalZip,
         // });
@@ -163,6 +162,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
       setVisibleShares([]); // clear cards on error
       setServiceProviders([]);
       setNannySharePreview([]);
+      setJobSeekerPreview([]);
       // form.setFieldsValue({ zipCode: "" });
       fireToastMessage({
         type: "error",
@@ -213,11 +213,11 @@ export default function NannySharePreview({ border, head, btn, type }) {
               maxLength={10}
             />
 
-            <Search className="absolute right-4 lg:right-[26%] top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search className="absolute right-4 lg:right-[30%] top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
         </div>
       </div>
-      <div className="my-6 flex gap-2 flex-wrap">
+      <div className="mt-6 flex gap-2 flex-wrap justify-center">
         {type === "service" ? (
           <div className="py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
             {serviceProviders.map((person, index) => (
@@ -286,33 +286,51 @@ export default function NannySharePreview({ border, head, btn, type }) {
               </button>
             </div>
           ))
-        ) : (
-          visibleShares.map((share, index) => (
-            <div
-              key={index}
-              className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-4"
-            >
-              <h2 className="text-xl font-semibold text-gray-800">
-                {share.families}
-              </h2>
-              <p className="text-lg font-bold text-green-600">
-                {share.price}{" "}
-                <span className="text-sm text-gray-500">({share.savings})</span>
+        ) : type === "jobSeeker" ? (
+          <>
+          jobSeekerPreview.map((job, index) => (
+            <div key={index} className="mb-6 text-sm md:text-base">
+              <p className="font-semibold text-gray-800">{job.title}</p>
+              <p className="text-green-600 font-medium">
+                {job.rate}
+                {job.type && <> • {job.type}</>}
               </p>
-              <p className="text-sm text-gray-600">
-                {share.schedule} • {share.ages}
-              </p>
-              <p className="text-gray-700">{share.description}</p>
               <NavLink
                 to="joinNow"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               >
-                <button className="bg-[#85D1F1] text-base px-4 py-1 rounded-full hover:scale-105 transition">
-                  {share.action}
+                <button className="mt-1 underline text-[#0077b6] hover:text-[#023e8a] text-sm">
+                  [{job.action}]
                 </button>
               </NavLink>
             </div>
           ))
+          </>
+        ) : (
+          <div>
+            {visibleShares.map((provider, index) => (
+              <div key={index} className="mb-6 text-sm md:text-base">
+                <p className="font-semibold text-gray-800">
+                  {provider.name} – {provider.title} {provider.rating}
+                </p>
+                <p className="text-green-600 font-medium">
+                  {provider.rate} • {provider.availability} •{" "}
+                  {provider.experience}
+                </p>
+                <p className="italic text-gray-700">"{provider.description}"</p>
+                <NavLink
+                  to="joinNow"
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  <button className="mt-1 underline text-[#0077b6] hover:text-[#023e8a] text-sm">
+                    [{provider.action}]
+                  </button>
+                </NavLink>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       {type !== "service" ||

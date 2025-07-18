@@ -1,8 +1,8 @@
 import React from "react";
 
 const successStories = [
-  "Rodriguez & Kim families found their nanny share last week",
-  "The Thompson & Lee families have been sharing for 2 years",
+  "Rodriguez & Kim families: Perfect schedule and values match, 18 months strong",
+  "Thompson & Lee families: Compatible parenting styles, 2 years of successful sharing",
   "Sarah M. just started her nanny share position with two families",
 ];
 

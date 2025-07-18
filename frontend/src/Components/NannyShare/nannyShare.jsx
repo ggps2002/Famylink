@@ -26,13 +26,14 @@ import NannySharePreview from "../subComponents/nannySharePreview";
 import AvailableNanniesSharing from "../subComponents/availableNanniesSharing";
 import InventoryNumbers from "../subComponents/nannyShareInventoryNumbers";
 import SuccessStories from "../subComponents/successStories";
+import SavingsCalculator from "../subComponents/savingsCalculator";
 
 export default function NannyShare() {
   const benefits = [
     {
       icon: ns1,
-      title: "Save $18,000-$26,000 Per Year",
-      description: "Split nanny costs and save thousands annually.",
+      title: "Smart Family Matching ",
+      description: "Compatible families create successful long-term arrangements. Save $18,000-$26,000 annually.",
     },
     {
       icon: ns2,
@@ -121,9 +122,9 @@ export default function NannyShare() {
       <div className="padd-res">
         <Sec1
           pic={img}
-          head={"Save $25,000+ Per Year with Nanny Share"}
-          preHead={"Split costs, share care, happy families"}
-          nannyShare={true}
+          head={"Find Your Perfect Nanny Share Match"}
+          preHead={"Smart family compatibility for successful partnerships"}
+          btnText={"Find Nanny Share Opportunities"}
         />
 
         <div className=" bg-white py-12">
@@ -147,6 +148,8 @@ export default function NannyShare() {
         <div className="bg-white mt-12 py-12">
           <Benefits benefits={benefits} head={"BENEFITS OF NANNY SHARING"} />
         </div>
+
+        <SavingsCalculator head={"Estimate Your Savings"}/>
 
         <div className="bg-white mt-12 py-12">
           <ShareNanny />
