@@ -80,6 +80,138 @@ router.get("/getAllData", authMiddleware, async (req, res) => {
   }
 });
 
+// List of valid position options for filtering
+const allOptions = [
+  "nanny",
+  "privateEducator",
+  "specializedCaregiver",
+  "sportsCoaches",
+  "musicInstructor",
+  "swimInstructor",
+  "houseManager",
+  "babysitter",
+];
+
+
+router.get('/service-providers/:zipCode', async (req, res) => {
+  const { zipCode } = req.params;
+
+  try {
+    const users = await User.find({
+      zipCode,
+      type: "Nanny",
+      status: "Active",
+    });
+
+    const formatted = [];
+
+    for (const user of users) {
+
+      const positionInfo = user.additionalInfo?.find(
+        (info) => info.key === "interestedPosi"
+      );
+
+      if (!positionInfo || !Array.isArray(positionInfo.value.option)) continue;
+
+
+      const positions = positionInfo.value.option.filter((pos) =>
+        allOptions.includes(pos)
+      );
+
+
+      if (positions.length === 0) continue;
+
+      const salaryExp = user.additionalInfo?.find((info) => info.key === "salaryExp")?.value;
+
+      const minMaxRate = (() => {
+        if (!salaryExp || typeof salaryExp !== "object") return null;
+
+        const rates = Object.values(salaryExp)
+          .map((val) => parseFloat(val))
+          .filter((val) => !isNaN(val));
+
+        if (rates.length === 0) return null;
+
+        const min = Math.min(...rates);
+        const max = Math.max(...rates);
+        return `$${min} - $${max}/hour`;
+      })();
+
+
+      for (const role of positions) {
+
+        formatted.push({
+          name: user.name,
+          role: roleDisplay(role),
+          rating: user.reviews?.length > 0
+            ? Number(
+              (
+                user.reviews.reduce((sum, r) => sum + r.rating, 0) /
+                user.reviews.length
+              ).toFixed(1)
+            )
+            : 5,
+          rate:
+            minMaxRate ||
+            "$25/hour",
+          availability:
+            user.additionalInfo?.find((info) => info.key === "avaiForWorking")
+              ?.value || "Availability not specified",
+          experience:
+            user.additionalInfo?.find((info) => info.key === "experience")
+              ?.value || "Experience not specified",
+          description: user.additionalInfo?.find((info) => info.key === "jobDescription")?.value || "No description provided.",
+          service: roleService(role),
+          cta: roleCTA(role),
+        });
+      }
+    }
+
+    return res.json({ success: true, data: formatted });
+  } catch (error) {
+    console.error("Error fetching service providers:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server Error", error });
+  }
+});
+
+// Helpers
+function roleDisplay(role) {
+  const map = {
+    nanny: "Nanny",
+    privateEducator: "Private Educator",
+    specializedCaregiver: "Specialized Caregiver",
+    sportsCoaches: "Sports Coach",
+    musicInstructor: "Music Instructor",
+    swimInstructor: "Swim Instructor",
+    houseManager: "House Manager",
+    babysitter: "Babysitter",
+  };
+  return map[role] || "Service Provider";
+}
+
+function roleService(role) {
+  const map = {
+    nanny: "Full-time childcare",
+    privateEducator: "Academic instruction",
+    specializedCaregiver: "Care for special needs",
+    sportsCoaches: "Sports training",
+    musicInstructor: "Music education",
+    swimInstructor: "Swimming lessons",
+    houseManager: "Household management",
+    babysitter: "Part-time childcare",
+  };
+  return map[role] || "General support";
+}
+
+function roleCTA(role) {
+  if (role === "musicInstructor" || role === "privateEducator") {
+    return "View Teaching Profile";
+  }
+  return "View Full Profile";
+}
+
 router.get("/getFiltered", authMiddleware, async (req, res) => {
   const id = req.userId;
 

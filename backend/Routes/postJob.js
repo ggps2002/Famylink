@@ -365,6 +365,63 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/job-seeker-opportunities/:zipCode", async (req, res) => {
+  const { zipCode } = req.params;
+
+  try {
+    // Step 1: Get all users in the zipCode
+    const users = await User.find({ zipCode }).select("_id format_location");
+
+    const userMap = {};
+    users.forEach((u) => {
+      userMap[u._id.toString()] = u.format_location || "Local Family";
+    });
+
+    const userIds = Object.keys(userMap);
+
+    // Step 2: Fetch all job posts by those users
+    const jobs = await postJob.find({ user: { $in: userIds } });
+
+    const formatted = jobs.map((job) => {
+      const jobType = job.jobType;
+      const jobData = job[jobType] || {}; // e.g., job["musicInstructor"]
+
+      // Title based on job type
+      const jobTypeName = jobType
+        .replace(/([A-Z])/g, " $1") // camelCase to spaced
+        .replace(/^./, (c) => c.toUpperCase()); // Capitalize first letter
+
+      const title = `${jobTypeName} – ${userMap[job.user.toString()]}`;
+
+      // Rate extraction
+      const min = jobData.hourlyRate?.min || null;
+      const max = jobData.hourlyRate?.max || null;
+
+      let rate = "Rate not specified";
+      if (min && max && min !== max) {
+        rate = `$${min}–$${max}/hour`;
+      } else if (min) {
+        rate = `$${min}/hour`;
+      }
+
+      const type = jobData.preferredSchedule || null;
+
+      return {
+        title,
+        rate,
+        type,
+        action: "View Details – Sign Up Required",
+      };
+    });
+
+    return res.json({ success: true, data: formatted });
+  } catch (err) {
+    console.error("Error fetching job seeker opportunities:", err);
+    return res.status(500).json({ success: false, message: "Server error", err });
+  }
+});
+
+
 
 router.get("/user-jobs", authMiddleware, async (req, res) => {
   const userId = req.userId;
