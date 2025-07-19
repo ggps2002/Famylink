@@ -92,7 +92,7 @@ export default function JobSeekers() {
           />
         </div>
         <div className="bg-white py-6">
-          <NannySharePreview head={"See Available Jobs"} border={"false"}/>
+          <NannySharePreview head={"See Available Jobs"} border={"false"} type={"jobSeeker"}/>
         </div>
         <div className="bg-white  mt-12 py-12 px-1">
           <Sec2 head={"Types of Job Opportunities"} border={true} btn={true} />

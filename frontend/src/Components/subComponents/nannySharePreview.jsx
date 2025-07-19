@@ -4,6 +4,7 @@ import { AnimatedWrapper } from "./animation";
 import { Spin, Input } from "antd";
 import { Search, Star } from "lucide-react";
 import { fireToastMessage } from "../../toastContainer";
+import { api } from "../../Config/api";
 
 const jobSeekerOpportunities = [
   {
@@ -120,18 +121,69 @@ export default function NannySharePreview({ border, head, btn, type }) {
   const [nannySharePreview, setNannySharePreview] = useState([]);
   const [jobSeekerPreview, setJobSeekerPreview] = useState([]);
 
-  const getRandomShares = () => {
+  const getRandomShares = async (zip) => {
     if (type === "jobSeeker") {
-      return jobSeekerOpportunities;
+      try {
+        const { data } = await api.get(`postJob/job-seeker-opportunities/${zip}`);
+        console.log("jobs", data);
+        const response = data?.data || [];
+        const shuffled = [...response].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+      } catch (error) {
+        console.error("Error fetching service providers:", error);
+        fireToastMessage({
+          type: "error",
+          message: "Could not load service providers. Try again later.",
+        });
+        return [];
+      }
     }
     if (type === "NannyShare") {
-      return nannyShareOpportunities;
+         try {
+        const { data } = await api.get(`nannyShare/nanny-share-opportunities/${zip}`);
+        console.log("jobs", data);
+        const response = data?.data || [];
+        const shuffled = [...response].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+      } catch (error) {
+        console.error("Error fetching service providers:", error);
+        fireToastMessage({
+          type: "error",
+          message: "Could not load service providers. Try again later.",
+        });
+        return [];
+      }
     }
     if (type === "service") {
-      return serviceProvidersDetails;
+      try {
+        const { data } = await api.get(`userData/service-providers/${zip}`);
+        const response = data?.data || [];
+        const shuffled = [...response].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+      } catch (err) {
+        console.error("Error fetching service providers:", err);
+        fireToastMessage({
+          type: "error",
+          message: "Could not load service providers. Try again later.",
+        });
+        return [];
+      }
+      // return serviceProvidersDetails;
+    } else {
+      try {
+        const { data } = await api.get(`userData/service-providers/${zip}`);
+        const response = data?.data || [];
+        const shuffled = [...response].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+      } catch (err) {
+        console.error("Error fetching service providers:", err);
+        fireToastMessage({
+          type: "error",
+          message: "Could not load service providers. Try again later.",
+        });
+        return [];
+      }
     }
-    const shuffled = [...nannyShares].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 3);
   };
 
   const handleZipValidation = async (zip) => {
@@ -143,14 +195,13 @@ export default function NannySharePreview({ border, head, btn, type }) {
 
       if (!res.ok) throw new Error("Invalid ZIP");
       const data = await res.json();
-      console.log("Zip", data);
       const finalZip = data["post code"];
       if (finalZip) {
         setZipCode(finalZip);
-        setVisibleShares(getRandomShares()); // 👉 show 3 new cards
-        setServiceProviders(getRandomShares());
-        setNannySharePreview(getRandomShares());
-        setJobSeekerPreview(getRandomShares());
+        setVisibleShares(await getRandomShares(finalZip)); // 👉 show 3 new cards
+        setServiceProviders(await getRandomShares(finalZip));
+        setNannySharePreview(await getRandomShares(finalZip));
+        setJobSeekerPreview(await getRandomShares(finalZip));
         // form.setFieldsValue({
         //   zipCode: finalZip,
         // });
@@ -217,7 +268,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
           </div>
         </div>
       </div>
-      <div className="mt-6 flex gap-2 flex-wrap justify-center">
+      <div className="mt-6 flex justify-center">
         {type === "service" ? (
           <div className="py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
             {serviceProviders.map((person, index) => (
@@ -243,11 +294,12 @@ export default function NannySharePreview({ border, head, btn, type }) {
                   </div>
 
                   <p className="mt-2 text-sm text-gray-700">
-                    {person.rate} • {person.availability} • {person.experience}
+                    {person.rate} • {person.availability?.option} •{" "}
+                    {person.experience?.option || "Experience not specified"}
                   </p>
 
                   <p className="italic text-gray-600 mt-2">
-                    "{person.description}"
+                    "{person.description.slice(0, 20)}..."
                   </p>
 
                   <p className="mt-2 text-sm text-blue-800 font-medium">
@@ -255,9 +307,16 @@ export default function NannySharePreview({ border, head, btn, type }) {
                   </p>
                 </div>
 
-                <button className="mt-auto bg-[#85D1F1] text-base px-4 py-1 rounded-full hover:scale-105 transition">
-                  {person.cta}
-                </button>
+                <NavLink
+                  to="joinNow"
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  <button className="mt-auto bg-[#85D1F1] text-base px-4 py-1 rounded-full hover:scale-105 transition">
+                    {person.cta}
+                  </button>
+                </NavLink>
               </div>
             ))}
           </div>
@@ -287,37 +346,14 @@ export default function NannySharePreview({ border, head, btn, type }) {
             </div>
           ))
         ) : type === "jobSeeker" ? (
-          <>
-          jobSeekerPreview.map((job, index) => (
-            <div key={index} className="mb-6 text-sm md:text-base">
-              <p className="font-semibold text-gray-800">{job.title}</p>
-              <p className="text-green-600 font-medium">
-                {job.rate}
-                {job.type && <> • {job.type}</>}
-              </p>
-              <NavLink
-                to="joinNow"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                <button className="mt-1 underline text-[#0077b6] hover:text-[#023e8a] text-sm">
-                  [{job.action}]
-                </button>
-              </NavLink>
-            </div>
-          ))
-          </>
-        ) : (
-          <div>
-            {visibleShares.map((provider, index) => (
+          <div className="flex md:gap-6 gap-2 flex-col md:flex-row">
+            {jobSeekerPreview.map((job, index) => (
               <div key={index} className="mb-6 text-sm md:text-base">
-                <p className="font-semibold text-gray-800">
-                  {provider.name} – {provider.title} {provider.rating}
-                </p>
+                <p className="font-semibold text-gray-800">{job.title}</p>
                 <p className="text-green-600 font-medium">
-                  {provider.rate} • {provider.availability} •{" "}
-                  {provider.experience}
+                  {job.rate}
+                  {job.type && `• ${job.type}`}
                 </p>
-                <p className="italic text-gray-700">"{provider.description}"</p>
                 <NavLink
                   to="joinNow"
                   onClick={() =>
@@ -325,7 +361,42 @@ export default function NannySharePreview({ border, head, btn, type }) {
                   }
                 >
                   <button className="mt-1 underline text-[#0077b6] hover:text-[#023e8a] text-sm">
-                    [{provider.action}]
+                    [{job.action}]
+                  </button>
+                </NavLink>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>
+            {visibleShares.map((provider, index) => (
+              <div key={index} className="mb-6 text-sm md:text-base">
+                <p className="font-semibold text-gray-800">
+                  {provider.name} – {provider.role}{" "}
+                  <div className="flex items-center text-yellow-500 mt-1">
+                    {[...Array(provider.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 fill-yellow-400 stroke-yellow-400"
+                      />
+                    ))}
+                  </div>
+                </p>
+                <p className="text-green-600 font-medium">
+                  {provider.rate} • {provider.availability?.option} •{" "}
+                  {provider.experience?.option}
+                </p>
+                <p className="italic text-gray-700">
+                  "{provider.description.slice(0, 20)}..."
+                </p>
+                <NavLink
+                  to="joinNow"
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  <button className="mt-1 underline text-[#0077b6] hover:text-[#023e8a] text-sm">
+                    [{provider.cta}]
                   </button>
                 </NavLink>
               </div>
