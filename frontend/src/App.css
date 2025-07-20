@@ -1,4 +1,25 @@
 @font-face {
+  font-family: 'Livvic';
+  src: url('/fonts/Livvic/Livvic-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Livvic-Bold';
+  src: url('/fonts/Livvic/Livvic-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Livvic-SemiBold';
+  src: url('/fonts/Livvic/Livvic-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Livvic-Medium';
+  src: url('/fonts/Livvic/Livvic-Medium.ttf') format('truetype');
+}
+
+
+@font-face {
   font-family: Belleza;
   src: url('./assets/fonts/Belleza/Belleza-Regular.ttf');
 }
@@ -22,6 +43,28 @@
   margin: 0;
   font-family: Belleza;
 }
+
+.Livvic {
+  font-family: 'Livvic', sans-serif !important;
+}
+
+.Livvic-Bold {
+    font-family: 'Livvic-Bold', sans-serif !important;
+}
+
+.Livvic-SemiBold {
+    font-family: 'Livvic-SemiBold', sans-serif !important;
+}
+
+.Livvic-Medium {
+    font-family: 'Livvic-Medium', sans-serif !important;
+}
+
+.clip-bottom-curve {
+  clip-path: ellipse(100% 15% at 50% 100%);
+}
+
+
 
 ::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */

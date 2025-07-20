@@ -19,6 +19,7 @@ export default {
           0px 79px 128px 0px #C0C0C017,
           0px -4px 4px 0px #C0C0C017
         `,
+        'soft': '0 0 12px 0 rgba(0, 0, 0, 0.08)',
       },
       screens: {
         "2xl": "1920px", // existing by default (you can override or keep it)

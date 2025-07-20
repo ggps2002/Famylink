@@ -170,9 +170,9 @@ export default function PageLayout() {
     <>
       {pathsWithHeaderFooter.some((p) => isDynamicPath(pathname, p)) && (
         <>
-          <Header />
+          {/* <Header /> */}
           <Outlet />
-          <Footer />
+          {/* <Footer /> */}
         </>
       )}
       {pathsWithHeader.some((p) => isDynamicPath(pathname, p)) && (

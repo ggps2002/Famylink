@@ -1,0 +1,91 @@
+import { Plus, Minus } from "lucide-react";
+import React, { useState } from "react";
+
+const faqs = [
+  {
+    question:
+      "Can I hire someone who also teaches a skill, like piano or Spanish?",
+    answer:
+      "FamyLink helps families connect with a variety of caregivers, including private educators, swim instructors, music teachers, and household managers. Whether you need a full-time nanny, a part-time tutor, or a weekend babysitter, you can find the right fit for your needs.",
+  },
+  {
+    question: "Is this platform only for nannies?",
+    answer:
+      "Absolutely! Many caregivers on FamyLink offer additional skills beyond childcare. You can specify your preferences when posting a job or searching for candidates.",
+  },
+  {
+    question: "Can I see caregiver pricing before messaging?",
+    answer:
+      "Yes! Caregiver profiles display their hourly rates, availability, and any additional services they offer, helping you make an informed decision before reaching out.",
+  },
+  {
+    question: "What if I hire someone and it doesn’t work out?",
+    answer:
+      "If you need to make a change, FamyLink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
+  },
+  {
+    question: "Can I find someone for part-time or after-school hours?",
+    answer:
+      "Yes! You can filter candidates based on availability, including part-time and after-school care options.",
+  },
+  {
+    question: "Are background checks included or optional?",
+    answer:
+      "Background checks are optional and can be requested through our platform during the hiring process.",
+  },
+  {
+    question: "Can I favorite or save caregivers I’m interested in?",
+    answer:
+      "Yes, you can save profiles to revisit later and keep track of your favorite caregivers.",
+  },
+];
+
+function FAQ() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div className="container my-24 px-4">
+      <div className="flex justify-center items-center">
+        <div className="flex flex-col items-center w-full max-w-[60rem]">
+          <div className="rounded-full border-2 border-[#EEEEEE] Livvic-SemiBold text-lg w-fit py-2 px-6 mx-auto">
+            FAQ
+          </div>
+          <h1 className="Livvic-Bold text-5xl leading-[16px] mt-12 text-center">
+            Frequently Asked Questions
+          </h1>
+
+          <div className="mt-16 w-full">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className={`my-4 ${ openIndex === i ? "rounded-[20px]" : "rounded-full"} p-6 shadow-soft  w-[60rem]`}
+              >
+                <button
+                  className="w-full flex justify-between items-center text-left"
+                  onClick={() => toggleFAQ(i)}
+                >
+                  <p className="Livvic-SemiBold leading-[16px]">
+                    {faq.question}
+                  </p>
+                  {openIndex === i ? <Minus size={20} /> : <Plus size={20} />}
+                </button>
+
+                {openIndex === i && (
+                  <div className="pb-6 mt-6 text-[#5C6566] Livvic text-base">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default FAQ;

@@ -20,6 +20,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { api } from "../../../Config/api";
 import Blogs from "../../Blogs/Blogs";
+import { Loader2 } from "lucide-react";
 
 const dateFormatting = (date) => {
   const createdAtDate = new Date(date);
@@ -37,7 +38,7 @@ const dateFormatting = (date) => {
   return `${formattedDate} @ ${formattedTime}`;
 };
 
-const PaginationComm = ({ category }) => {
+const PaginationComm = ({ category, searchQuery }) => {
   const dispatch = useDispatch();
   const { data: communities, isLoading } = useSelector(
     (state) => state.community
@@ -58,7 +59,9 @@ const PaginationComm = ({ category }) => {
   const [postCreators, setPostCreators] = useState({});
   const [localCommunities, setLocalCommunities] = useState([]);
   const [deleteCommentId, setDeleteCommentId] = useState(null);
+  const [deletePostId, setDeletePostId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
 
   const handleCreatePost = async () => {
     if (!postContent.trim() || !selectedTopic) return;
@@ -100,6 +103,23 @@ const PaginationComm = ({ category }) => {
       setDeleteCommentId(null);
     } catch (error) {
       console.error("Error deleting comment:", error);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!deletePostId) return;
+
+    try {
+      setIsDeletingPost(true);
+      await api.delete(`/community/${deletePostId}`);
+
+      setPosts((prev) => prev.filter((p) => p._id !== deletePostId));
+      setIsDeleteDialogOpen(false);
+      setDeletePostId(null);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    } finally {
+      setIsDeletingPost(false);
     }
   };
 
@@ -169,6 +189,13 @@ const PaginationComm = ({ category }) => {
       console.error("Error fetching community or user data:", err);
     }
   }, [dispatch]);
+
+    const filteredPosts = posts?.filter((post) => (
+        // eslint-disable-next-line react/prop-types
+        post.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        // eslint-disable-next-line react/prop-types
+        post.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )) || [];
 
   useEffect(() => {
     if (user?._id) {
@@ -398,7 +425,7 @@ const PaginationComm = ({ category }) => {
           {/* LEFT SIDEBAR */}
           <div className="lg:col-span-3">
             <div className="space-y-6 h-[80vh] overflow-y-auto pr-2">
-              {posts.map((post) => (
+              {filteredPosts.map((post) => (
                 <div
                   key={post._id}
                   className="bg-white border border-gray-200 rounded-2xl p-6"
@@ -436,33 +463,45 @@ const PaginationComm = ({ category }) => {
                     Posted on: {dateFormatting(post.createdAt)}
                   </div>
                   <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <img
                         src={Like}
                         alt="like"
-                        className="cursor-pointer"
+                        className="cursor-pointer w-4 h-4"
                         onClick={() => handleLike(post._id)}
                       />
                       <span>{post.likes?.length || 0}</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <img
                         src={Dislike}
                         alt="dislike"
-                        className="cursor-pointer"
+                        className="cursor-pointer w-4 h-4"
                         onClick={() => handleDislike(post._id)}
                       />
                       <span>{post.dislikes?.length || 0}</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <img
                         src={Reply}
                         alt="reply"
-                        className="cursor-pointer"
+                        className="cursor-pointer w-4 h-4"
                         onClick={() => setActivePostId(post._id)}
                       />
                       <span>Reply</span>
                     </div>
+                    {currentUserId === post.createdBy && (
+                      <div
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => {
+                          setDeleteCommentId(null);
+                          setDeletePostId(post._id);
+                          setIsDeleteDialogOpen(true);
+                        }}
+                      >
+                        <span>Delete</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -705,6 +744,7 @@ const PaginationComm = ({ category }) => {
                                       <div
                                         className="text-red-500 cursor-pointer"
                                         onClick={() => {
+                                          setDeletePostId(null);
                                           setDeleteCommentId(reply._id);
                                           setIsDeleteDialogOpen(true);
                                         }}
@@ -891,8 +931,9 @@ const PaginationComm = ({ category }) => {
                     Confirm Delete
                   </Dialog.Title>
                   <p className="mt-4 text-gray-700">
-                    Are you sure you want to delete this comment? This action
-                    cannot be undone.
+                    {`Are you sure you want to delete this 
+                    ${deleteCommentId ? "comment" : "post"}? This action cannot
+                    be undone.`}
                   </p>
                   <div className="mt-6 flex justify-end gap-4">
                     <button
@@ -902,10 +943,22 @@ const PaginationComm = ({ category }) => {
                       Cancel
                     </button>
                     <button
-                      onClick={handleDeleteComment}
+                      disabled={isDeletingPost}
+                      onClick={() =>
+                        deleteCommentId
+                          ? handleDeleteComment()
+                          : handleDeletePost()
+                      }
                       className="px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
                     >
-                      Yes, Delete
+                      {isDeletingPost ? (
+                        <div className="flex justify-center items-center gap-2">
+                          <Loader2 className="animate-spin w-4 h-4" />
+                          <p>Deleting</p>
+                        </div>
+                      ) : (
+                        "Yes, Delete"
+                      )}
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -916,7 +969,7 @@ const PaginationComm = ({ category }) => {
       </Transition.Root>
     </div>
   ) : (
-    <Blogs category={category} />
+    <Blogs category={category} searchQuery={searchQuery}/>
   );
 };
 

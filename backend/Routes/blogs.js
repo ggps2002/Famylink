@@ -108,7 +108,7 @@ router.post("/create", authMiddleware, async (req, res) => {
       excerpt,
       content,
       category,
-      isDraft,
+      isDraft: true,
       featuredImage,
     });
 

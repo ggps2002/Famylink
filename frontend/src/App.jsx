@@ -76,6 +76,7 @@ import { NannyShareView } from './Components/LoginAsFamily/PostANannyShare/detai
 import { useNotifications } from './Config/useNotification'
 import Pricing from './Components/Price/pricing'
 import CommunityPost from './Components/subComponents/community' 
+import NewHome from './NewComponents/Home/Home'
 
 function App() {
   const { user } = useSelector(s => s.auth) // Fetching user from Redux state
@@ -98,7 +99,7 @@ function App() {
         {/* Common routes */}
         {!user?.type && (
           <>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={<NewHome />} />
             <Route path='/login' element={<Login />} />
             <Route path='/pricing' element={<Pricing />} />
             <Route path='/forgetPass' element={<ForgetPass />} />

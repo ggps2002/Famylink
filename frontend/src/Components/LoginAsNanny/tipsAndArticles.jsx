@@ -7,8 +7,9 @@ import { Drawer } from "antd";
 import menuIcon from "../../assets/images/menu.png";
 import { navItemsArticles } from "../../Config/helpFunction";
 export default function TipsAndArticlesNanny() {
+  const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = (searchValue) => {
-    "Search Value:", searchValue; // Use the search value here
+    setSearchQuery(searchValue); // Use the search value here
   };
   const location = useLocation();
   const { v } = location.state || {};
@@ -87,7 +88,7 @@ export default function TipsAndArticlesNanny() {
           </div>
           <div className="pt-4 pb-10 px-6">
             <div className="pt-4 pb-10 px-6">
-              <PagComm category={val} nanny={true} />
+              <PagComm category={val} nanny={true} searchQuery={searchQuery}/>
             </div>
           </div>
         </div>

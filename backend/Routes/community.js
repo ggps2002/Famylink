@@ -355,11 +355,11 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
     }
 
     // Check if the logged-in user is an admin
-    if (user.type !== 'Admin') {
-      return res
-        .status(403)
-        .json({ message: 'Access denied. Only Admins can delete posts.' })
-    }
+    // if (user.type !== 'Admin') {
+    //   return res
+    //     .status(403)
+    //     .json({ message: 'Access denied. Only Admins can delete posts.' })
+    // }
 
     // Remove the post from the topic
     topic.posts.pull(postId)

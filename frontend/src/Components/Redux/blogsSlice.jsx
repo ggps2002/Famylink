@@ -18,7 +18,7 @@ export const fetchAllBlogThunk = createAsyncThunk(
   'blog/fetchAll',
   async ({ page, limit, category = '' } = {}, { rejectWithValue }) => {
     try {
-      const { data } = await api.get(`/blog`, {
+      const { data } = await api.get(`/blogs`, {
         params: {
           page,
           limit,
@@ -51,7 +51,7 @@ export const fetchBlogByCategoryThunk = createAsyncThunk(
   'blogs/fetchByCategory',
   async (category, { rejectWithValue }) => {
     try {
-      const { data } = await api.get(`/blog`, {
+      const { data } = await api.get(`/blogs`, {
         params: { category }
       });
       return { category, blogs: data.data }; // include category
