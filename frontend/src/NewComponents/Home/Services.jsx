@@ -53,15 +53,18 @@ const services = [
 
 function Services() {
   return (
-    <div className="container">
-      <h1 className="Livvic-Bold text-5xl leading-[80px]">
-        Care Options That Fit Your Life
-      </h1>
-      <h2 className="Livvic text-[#00000099] text-xl">
-        Every family has different needs. We help you find care that actually
-        fits yours.
-      </h2>
-      <div className="flex flex-wrap gap-6 mt-12">
+    <div className="container px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="sm:text-left max-w-4xl mx-auto sm:mx-0">
+        <h1 className="Livvic-Bold text-4xl sm:text-4xl md:text-5xl leading-tight sm:leading-[50px] md:leading-[60px] lg:leading-[80px] mb-4 sm:mb-6">
+          Care Options That Fit Your Life
+        </h1>
+        <h2 className="Livvic text-[#00000099] text-lg sm:text-xl max-w-2xl mx-auto sm:mx-0 mb-8 sm:mb-10 lg:mb-12">
+          Every family has different needs. We help you find care that actually
+          fits yours.
+        </h2>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {services.map((service) => (
           <ServicesCard
             key={service.title}

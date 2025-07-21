@@ -44,6 +44,26 @@
   font-family: Belleza;
 }
 
+/* Scrollbar styles for horizontal scroll */
+.scrollbar-custom::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 9999px;
+}
+
+.scrollbar-custom {
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+  scrollbar-width: thin;
+}
+
+
 .Livvic {
   font-family: 'Livvic', sans-serif !important;
 }

@@ -19,7 +19,7 @@ const faqs = [
       "Yes! Caregiver profiles display their hourly rates, availability, and any additional services they offer, helping you make an informed decision before reaching out.",
   },
   {
-    question: "What if I hire someone and it doesn’t work out?",
+    question: "What if I hire someone and it doesn't work out?",
     answer:
       "If you need to make a change, FamyLink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
   },
@@ -34,7 +34,7 @@ const faqs = [
       "Background checks are optional and can be requested through our platform during the hiring process.",
   },
   {
-    question: "Can I favorite or save caregivers I’m interested in?",
+    question: "Can I favorite or save caregivers I'm interested in?",
     answer:
       "Yes, you can save profiles to revisit later and keep track of your favorite caregivers.",
   },
@@ -48,13 +48,13 @@ function FAQ() {
   };
 
   return (
-    <div className="container my-24 px-4">
+    <div className="container mx-auto my-16 sm:my-20 lg:my-24 px-4 sm:px-6 lg:px-8">
       <div className="flex justify-center items-center">
         <div className="flex flex-col items-center w-full max-w-[60rem]">
           <div className="rounded-full border-2 border-[#EEEEEE] Livvic-SemiBold text-lg w-fit py-2 px-6 mx-auto">
             FAQ
           </div>
-          <h1 className="Livvic-Bold text-5xl leading-[16px] mt-12 text-center">
+          <h1 className="Livvic-Bold text-4xl sm:text-5xl lg:leading-[16px] mt-12 text-center">
             Frequently Asked Questions
           </h1>
 
@@ -62,16 +62,16 @@ function FAQ() {
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`my-4 ${ openIndex === i ? "rounded-[20px]" : "rounded-full"} p-6 shadow-soft  w-[60rem]`}
+                className={`my-4 ${ openIndex === i ? "rounded-[20px]" : "rounded-full"} p-4 sm:p-6 shadow-soft w-full`}
               >
                 <button
                   className="w-full flex justify-between items-center text-left"
                   onClick={() => toggleFAQ(i)}
                 >
-                  <p className="Livvic-SemiBold leading-[16px]">
+                  <p className="Livvic-SemiBold leading-[16px] pr-4">
                     {faq.question}
                   </p>
-                  {openIndex === i ? <Minus size={20} /> : <Plus size={20} />}
+                  {openIndex === i ? <Minus size={20} className="flex-shrink-0" /> : <Plus size={20} className="flex-shrink-0" />}
                 </button>
 
                 {openIndex === i && (

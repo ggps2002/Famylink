@@ -50,22 +50,8 @@ function NewHome() {
         <Testimonial />
       </div>
       <FAQ />
-      <div className="relative pt-[127.5px] ">
-        {" "}
-        {/* same as SVG height */}
-        {/* Top Curve */}
-        <svg
-          className="absolute top-0 left-0 w-full transform scale-y-[-1]"
-          viewBox="0 0 1440 120"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path fill="#001243" d="M0,0 C360,100 1080,100 1440,0" />
-        </svg>
-        {/* Footer content */}
-        <div className="relative pt-12 z-10 bg-[#001243] text-white">
-          <Footer />
-        </div>
-      </div>
+
+      <Footer />
     </>
   );
 }
