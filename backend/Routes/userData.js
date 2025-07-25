@@ -93,6 +93,25 @@ const allOptions = [
 ];
 
 
+// DELETE /users/:userId
+router.delete("/users/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({ message: "User deleted successfully.", user: deletedUser });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ message: "Server error." });
+  }
+});
+
+
 router.get('/service-providers/:zipCode', async (req, res) => {
   const { zipCode } = req.params;
 

@@ -131,6 +131,31 @@ router.put('/password', authMiddleware, async (req, res) => {
     }
 });
 
+router.put('/text-notifications', authMiddleware, async (req, res) => {
+  const id = req.userId;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const { sms } = req.body;
+    if (typeof sms !== 'boolean') {
+      return res.status(400).json({ message: "Invalid sms value" });
+    }
+
+    user.notifications.sms = sms;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Text notification preference updated successfully",
+      sms: user.notifications.sms,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
 router.put('/phone', authMiddleware, async (req, res) => {
     const id = req.userId;
 

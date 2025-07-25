@@ -49,7 +49,6 @@ const chatSocket = (io) => {
       socket.leave(chatId);
     });
 
-    // Handle incoming messages
     socket.on("sendMessage", async ({ content }) => {
       const message = new Message({
         chatId: content.chatId,
@@ -57,14 +56,20 @@ const chatSocket = (io) => {
         content: content.content,
         type: content.type,
       });
+
       await message.save();
+
       await Chat.findByIdAndUpdate(content.chatId, {
         lastMessage: content.content,
         type: content.type,
       });
+
       const populatedMessage = await Message.findById(message._id)
         .populate("sender")
         .exec();
+
+      // ✅ EMIT to user
+      io.to(content.chatId).emit("newMessage", populatedMessage);
     });
 
     // Handle message seen
@@ -136,39 +141,39 @@ const chatSocket = (io) => {
       }
     });
 
-    socket.on("sendNotificationToAdmin", async ({ content }) => {
-      try {
-        console.log("Notification content received:", content); // Add this
-        const adminUser = await User.findOne({ type: "Admin" }).select("_id");
+   socket.on("sendNotificationToAdmin", async ({ content }, callback) => {
+  try {
+    console.log("Notification content received:", content);
+    const adminUser = await User.findOne({ type: "Admin" }).select("_id");
 
-        if (!adminUser) {
-          console.error("Admin user not found.");
-          return;
-        }
+    if (!adminUser) {
+      console.error("Admin user not found.");
+      return;
+    }
 
-        const notificationData = {
-          senderId: content.senderId,
-          receiverId: adminUser._id,
-          type: content.type,
-          content: content.content,
-        };
+    const notificationData = {
+      senderId: content.senderId,
+      receiverId: adminUser._id,
+      type: content.type,
+      content: content.content,
+    };
 
-        const notification = new Notification(notificationData);
-        await notification.save();
+    const notification = new Notification(notificationData);
+    await notification.save();
 
-        const populatedNotification = await Notification.findById(
-          notification._id
-        ).populate("senderId", "email name imageUrl type _id");
+    const populatedNotification = await Notification.findById(
+      notification._id
+    ).populate("senderId", "email name imageUrl type _id");
 
-        console.log("Emitting to admin room:", adminUser._id.toString()); // Add this
-        io.to(adminUser._id.toString()).emit(
-          "newNotification",
-          populatedNotification
-        );
-      } catch (error) {
-        console.error("Error sending notification:", error);
-      }
-    });
+    console.log("Emitting to admin room:", adminUser._id.toString());
+    io.to(adminUser._id.toString()).emit("newNotification", populatedNotification);
+
+    if (callback) callback(); // ✅ Acknowledge the emit
+  } catch (error) {
+    console.error("Error sending notification:", error);
+  }
+});
+
 
     socket.on("notificationSeen", async ({ notificationId }) => {
       try {

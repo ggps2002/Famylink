@@ -6,6 +6,7 @@ import { createPublicUrlForFile } from '../Services/utils/upload.js'
 import { authMiddleware } from '../Services/utils/middlewareAuth.js'
 import { fileURLToPath } from 'url'
 import { sendEmail } from '../Services/email/email.js'
+import uploadImage from '../Services/utils/uplaodImage.js'
 
 const router = express.Router()
 
@@ -42,8 +43,8 @@ router.post(
       const frontImage = req.files.frontImage[0]
       const backImage = req.files.backImage[0]
 
-      const frontImageUrl = createPublicUrlForFile(req, frontImage)
-      const backImageUrl = createPublicUrlForFile(req, backImage)
+      const frontImageUrl = await uploadImage(frontImage.buffer, user.email, "front_image_id")
+      const backImageUrl = await uploadImage(backImage.buffer, user.email, "back_image_id")
 
       const verificationRecord = new Verify({
         user: id,
