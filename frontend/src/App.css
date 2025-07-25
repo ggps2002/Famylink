@@ -41,8 +41,31 @@
 * {
   padding: 0;
   margin: 0;
-  font-family: Belleza;
+  font-family: Livvic;
 }
+
+/* Minimalist scrollbar styling */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
+}
+.thin-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #ccc transparent;
+}
+
+/* Add this to your global CSS or tailwind config */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 
 /* Scrollbar styles for horizontal scroll */
 .scrollbar-custom::-webkit-scrollbar {
@@ -62,7 +85,6 @@
   scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
   scrollbar-width: thin;
 }
-
 
 .Livvic {
   font-family: 'Livvic', sans-serif !important;
@@ -106,6 +128,20 @@
 
 /* styles.css */
 
+/* global.css or App.css */
+.ant-input::placeholder {
+  font-family: 'Livvic-Medium', sans-serif !important;
+  color: #777777 !important;
+}
+
+input::placeholder{
+  color: #777777 !important;
+}
+
+.ant-input {
+   font-family: 'Livvic-Medium', sans-serif !important;
+}
+
 .pagination-custom .ant-pagination-item {
   background: transparent;
   color: black !important;
@@ -123,6 +159,10 @@
 }
 .sh {
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important;
+}
+
+.ant-select {
+  padding: "1.8rem 0.75rem";
 }
 
 .sec1-pic {
@@ -483,6 +523,7 @@ input::-webkit-inner-spin-button {
   bottom: 0;
   margin-bottom: 16px;
 }
+
 .fre-family {
   background-image: url('assets/images/frebg.png');
   background-repeat: no-repeat;
@@ -905,3 +946,4 @@ input::-webkit-inner-spin-button {
     display: block;
   }
 }
+

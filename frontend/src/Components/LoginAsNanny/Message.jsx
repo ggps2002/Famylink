@@ -19,7 +19,7 @@ export default function MessageFrameNanny() {
   }, [dispatch]);
 
   return (
-    <div className="padding-navbar1 Quicksand relative py-6">
+    <div className="Quicksand relative">
       {/* ❌ Blur + Lock Box */}
       {!isSubscribed && (
         <div className="absolute inset-0 bg-white/30 backdrop-blur-sm z-20 flex items-center justify-center">
@@ -39,11 +39,8 @@ export default function MessageFrameNanny() {
           </div>
         </div>
       )}
-      <div className="shadow border-[1px] border-[#D6DDEB] bg-white rounded-xl relative z-0">
-        <p className="lg:text-3xl text-2xl font-bold edit-padding">Messages</p>
-        <div className="padding-sub pb-10">
+      <div className=" bg-white relative z-0">
           <ChatInterface />
-        </div>
       </div>
     </div>
   );

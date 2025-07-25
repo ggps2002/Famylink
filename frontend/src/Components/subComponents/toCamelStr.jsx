@@ -114,45 +114,35 @@ export function formatTimeDate(isoString, timeZone) {
 }
 
 export function timeAgo(isoString) {
-    const now = new Date();
-    const pastDate = new Date(isoString);
+  const now = new Date();
+  const past = new Date(isoString);
 
-    // Difference in milliseconds
-    const diffInMs = now - pastDate;
+  const diffInSeconds = Math.floor((now - past) / 1000);
 
-    // Convert to time units
-    const diffInSeconds = Math.floor(diffInMs / 1000);
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30); // Approximate month
-    const diffInYears = Math.floor(diffInDays / 365); // Approximate year
+  if (diffInSeconds < 10) return "Now";
 
-    // Handle "Now"
-    if (diffInSeconds <= 10) {
-        return "Now";
-    }
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return diffInMinutes === 1 ? "1 min ago" : `${diffInMinutes} mins ago`;
+  }
 
-    // Handle "Today"
-    if (diffInDays === 0) {
-        return "Today";
-    }
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return diffInHours === 1 ? "1 hour ago" : `${diffInHours} hours ago`;
+  }
 
-    // Handle "Yesterday"
-    if (diffInDays === 1) {
-        return "Yesterday";
-    }
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return "Yesterday";
+  if (diffInDays === 0) return "Today";
+  if (diffInDays < 7) return `${diffInDays} days ago`;
+  if (diffInDays < 14) return "1 week ago";
+  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
 
-    // Handle days < 30
-    if (diffInDays < 30) {
-        return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
-    }
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return diffInMonths === 1 ? "1 month ago" : `${diffInMonths} months ago`;
+  }
 
-    // Handle months < 12
-    if (diffInMonths < 12) {
-        return `${diffInMonths} month${diffInMonths === 1 ? '' : 's'} ago`;
-    }
-
-    // Handle years
-    return `${diffInYears} year${diffInYears === 1 ? '' : 's'} ago`;
+  const diffInYears = Math.floor(diffInDays / 365);
+  return diffInYears === 1 ? "1 year ago" : `${diffInYears} years ago`;
 }

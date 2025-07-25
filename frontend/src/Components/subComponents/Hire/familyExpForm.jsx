@@ -86,7 +86,7 @@ const FamilyExperienceForm = ({ formRef }) => {
     }, [formRef, form]);
     return (
         <div>
-            <p className='font-normal Classico px-3 mt-5 mb-10 offer-font text-center leading-6'>
+            <p className='text-primary Livvic-Bold text-4xl text-center mb-6 width-form mx-auto'>
                 Experience Entry for Nanny and Babysitter
             </p>
             <div>
@@ -95,7 +95,7 @@ const FamilyExperienceForm = ({ formRef }) => {
             <Form className='flex justify-center' layout="vertical" form={form}>
                 <div>
                     <div className='flex flex-wrap justify-center gap-x-12 margin-2 '>
-                        <InputDa name={'Family Identifier/Nickname (Optional)'} placeholder={'Enter family name'} />
+                        <InputDa name={'Family Identifier/Nickname (Optional)'} labelText='Family name'/>
                         <Form.Item name='typeOfCareProvided' rules={[{ required: true, message: '' }]}>
                             <SelectComponent opt={opt} onSelectChange={(value) => {
                                 setSelectedValue(value); // Update local state

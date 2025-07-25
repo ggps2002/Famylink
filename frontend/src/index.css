@@ -1,7 +1,64 @@
+@import './App.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .container {
   @apply mx-auto px-4 max-w-7xl py-2;
+}
+
+.onboarding-head {
+  @apply text-4xl text-[#001243];
+  font-family: 'Livvic-Bold', sans-serif;
+}
+
+.onboarding-subHead {
+  @apply text-lg;
+  font-family: 'Livvic-SemiBold', sans-serif
+}
+
+.onboarding-para {
+  @apply text-sm text-[#555555];
+  font-family: 'Livvic', sans-serif
+}
+
+.onboarding-foot {
+  @apply text-sm;
+  font-family: 'Livvic', sans-serif
+}
+
+.onboarding-foot-action {
+  @apply text-sm underline;
+  font-family: 'Livvic-SemiBold', sans-serif
+}
+
+.onboarding-form-label {
+  @apply text-sm;
+  font-family: 'Livvic-Medium', sans-serif
+}
+
+.onboarding-form-input {
+  @apply text-lg text-[#001243];
+  font-family: 'Livvic-SemiBold', sans-serif
+}
+
+.onboarding-box {
+  @apply p-6 rounded-3xl border-2 border-[#EEEEEE]
+}
+
+.text-primary {
+  @apply text-[#001243]
+}
+
+.text-tertiary  {
+  @apply text-[#025747]
+}
+
+.text-secondary {
+  @apply text-[#777777]
+}
+
+.bg-primary {
+  @apply bg-[#AEC4FF]
 }

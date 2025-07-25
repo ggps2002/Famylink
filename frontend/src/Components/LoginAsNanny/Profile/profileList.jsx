@@ -7,7 +7,20 @@ import { toCamelCase } from "../../subComponents/toCamelStr";
 import { convertAgeRanges } from "../../../Config/helpFunction";
 import Loader from "../../subComponents/loader";
 import { fetchAllPostJobThunk } from "../../Redux/postJobSlice";
+import { format, isToday, isYesterday, parseISO } from "date-fns";
 // ProfileList component
+
+export function formatRelativeTime(dateString) {
+  const date = parseISO(dateString);
+  if (isToday(date)) {
+    return `Today ${format(date, "hh:mmaaa")}`; // e.g. "Today 10:50AM"
+  }
+  if (isYesterday(date)) {
+    return `Yesterday ${format(date, "hh:mmaaa")}`; // e.g. "Yesterday 10:50AM"
+  }
+  return format(date, "dd MMM yyyy hh:mmaaa"); // fallback e.g. "11 Jul 2025 10:50AM"
+}
+
 export default function ProfileList({
   location,
   priceRange,
@@ -76,32 +89,29 @@ export default function ProfileList({
 
   return (
     <div className="flex flex-col w-full px-0 lg:px-4 2xl:px-8">
-      <div
-        className={
-          "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4"
-        }
-      >
+      <div className="flex justify-between flex-wrap">
+        <h1 className="Livvic-SemiBold text-3xl">{total} Results</h1>
+      </div>
+      <div className={"flex flex-col gap-4 mt-6"}>
         {isLoading ? (
           <Loader />
         ) : data?.length > 0 ? (
           data.map((profile) => (
-            <NavLink
+            <ProfileCard1
               key={profile._id}
-              to={`jobDescription/${profile._id}`}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              <ProfileCard1
-                img={profile.user.imageUrl}
-                name={profile.user.name}
-                intro={profile?.[profile?.jobType]?.jobDescription || "N/A"}
-                loc={profile?.user.location}
-                hr={profile?.user?.noOfChildren?.length}
-                rate={profile?.user?.averageRating}
-                time={profile?.[profile?.jobType]?.preferredSchedule}
-                nanny={true}
-                zipCode={profile?.user?.zipCode}
-              />
-            </NavLink>
+              id={profile?._id}
+              img={profile.user.imageUrl}
+              name={profile.user.name}
+              intro={profile?.[profile?.jobType]?.jobDescription || "N/A"}
+              loc={profile?.user.location}
+              hr={profile?.user?.noOfChildren?.length}
+              rate={profile?.user?.averageRating}
+              time={profile?.[profile?.jobType]?.preferredSchedule}
+              nanny={true}
+              zipCode={profile?.user?.zipCode}
+              jobType={profile?.jobType}
+              created={formatRelativeTime(profile?.createdAt)}
+            />
           ))
         ) : (
           <div className="col-span-full text-start text-gray-600">
@@ -114,11 +124,11 @@ export default function ProfileList({
       <div className="mt-6 w-full flex justify-end">
         {!isLoading && data?.length !== 0 && (
           <div className="flex items-center space-x-4">
-            <p className="text-sm font-medium text-gray-500 Quicksand">
+            <p className="Livvic-Medium text-sm">
               Showing {startItem}-{endItem} from {total}
             </p>
             <Pagination
-              className="font-bold pagination-custom Quicksand"
+              className="Livvic-Medium"
               current={currentPage}
               pageSize={pageSize}
               total={total}

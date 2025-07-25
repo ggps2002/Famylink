@@ -9,6 +9,8 @@ import { fireToastMessage } from "../../toastContainer";
 import { editUserThunk } from "../Redux/authSlice";
 import Autocomplete from "react-google-autocomplete";
 import { api } from "../../Config/api";
+import OptionSelector from "../subComponents/LanguageSelector";
+import { number } from "prop-types";
 
 export default function EditProfileNanny() {
   const { TextArea } = Input;
@@ -19,7 +21,14 @@ export default function EditProfileNanny() {
   const [zipCode, setZipCode] = useState("");
   const [coordinates, setCoordinates] = useState(null);
   const [form] = Form.useForm();
-  const options = ["english", "bilingual", "spanish", "french", "mandarin"];
+  const options = [
+    "English",
+    "Spanish",
+    "French",
+    "Mandarin",
+    "Cantonese",
+    "Arabic",
+  ];
   const languageSkills = user?.additionalInfo?.find(
     (info) => info.key === "language"
   )?.value;
@@ -464,19 +473,17 @@ export default function EditProfileNanny() {
     }
   }, [zipCode, form]);
   return (
-    <div className="padding-navbar1 Quicksand">
-      <div className="shadow border-[1px] border-[#D6DDEB] bg-white my-10 rounded-xl">
-        <p className="font-bold lg:text-3xl text-2xl edit-padding">
-          Edit Profile
-        </p>
-        <div className="pb-10 padding-sub">
+    <div className="padding-navbar1">
+      <div className=" bg-white my-10">
+        <p className="Livvic-SemiBold lg:text-3xl text-2xl ">Edit Profile</p>
+        <div className="mt-6">
           <div className="relative w-24">
             {/* Profile Picture */}
             {image ? (
               <img
                 src={image}
                 alt="Profile"
-                className="rounded-full w-24 h-24 object-cover"
+                className="rounded-full w-32 h-32 object-cover"
               />
             ) : (
               <Avatar
@@ -500,7 +507,9 @@ export default function EditProfileNanny() {
               <img src={cameraIcons} alt="cameraIcons" />
             </label>
           </div>
-          <p className="my-5 font-bold text-2xl">My Information</p>
+          <p className="my-5 Livvic-SemiBold text-lg text-primary">
+            Basic Information
+          </p>
           <div>
             <Form
               onFinish={onFinish}
@@ -513,58 +522,44 @@ export default function EditProfileNanny() {
               }}
             >
               <div className="flex flex-wrap gap-6">
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Full Name
-                  </p>
+                {/* Full Name */}
+                <div className="relative w-72">
                   <Form.Item
                     style={{ margin: 0, padding: 0 }}
                     name="fullName"
                     initialValue={user?.name}
                   >
                     <Input
+                      id="fullName"
                       type="text"
-                      style={{ borderColor: "#D6DDEB" }}
                       defaultValue={user?.name}
-                      className="border-2 py-2 rounded-3xl"
+                      className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Full Name"
                     />
                   </Form.Item>
+                  <label
+                    htmlFor="fullName"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Full Name
+                  </label>
                 </div>
 
-                {/* <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Zip Code
-                  </p>
-                  <Form.Item
-                    style={{ margin: 0, padding: 0 }}
-                    name="zipCode"
-
-                    initialValue={zipCode}
-                  >
-                    <Input
-                      type="text"
-                      style={{ borderColor: "#D6DDEB" }}
-                      defaultValue={zipCode}
-                      className="border- border-2 py-2 rounded-3xl"
-                    />
-                  </Form.Item>
-                </div> */}
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Address
-                  </p>
+                {/* Address */}
+                <div className="relative w-72">
                   <Form.Item
                     name="location"
+                    initialValue={user?.location}
                     rules={[{ required: true, message: "Address is required" }]}
                   >
                     <Spin spinning={loading} size="small">
                       <Autocomplete
-                      className="input-width"
+                        className="peer"
                         apiKey={import.meta.env.VITE_GOOGLE_KEY}
                         style={{
                           width: "100%",
-                          borderRadius: "1.5rem",
-                          padding: "0.75rem",
+                          borderRadius: "10px",
+                          padding: "1.7rem 0.75rem 0.75rem 0.75rem",
                           border: "1px solid #D6DDEB",
                         }}
                         value={location || ""}
@@ -622,61 +617,51 @@ export default function EditProfileNanny() {
                       />
                     </Spin>
                   </Form.Item>
+                  <label
+                    htmlFor="address"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Address
+                  </label>
                 </div>
 
-                <div>
-                  <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
+                {/* Gender */}
+                <div className="relative w-72">
                   <Form.Item
-                    name="zipCode"
-                    value={zipCode}
-                    rules={[
-                      { required: true, message: "ZIP code is required" },
-                    ]}
-                  >
-                    <Spin spinning={loading} size="small">
-                      <Input
-                        name="zipCode"
-                        placeholder="Enter ZIP code"
-                        value={zipCode}
-                        onChange={(e) => {
-                          const zip = e.target.value;
-                          setZipCode(zip);
-                          form.setFieldsValue({ zipCode: zip });
-                        }}
-                        onBlur={(e) =>
-                          handleZipValidation(e.target.value.trim())
-                        }
-                        className="border rounded-3xl"
-                        maxLength={10}
-                      />
-                    </Spin>
-                  </Form.Item>
-                </div>
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Gender
-                  </p>
-                  <Form.Item
-                    initialValue={user?.gender}
-                    style={{ margin: 0, padding: 0, width: 200 }}
                     name="gender"
+                    initialValue={user?.gender}
+                    style={{ margin: 0, padding: 0 }}
                   >
                     <Select
-                      style={{
-                        borderColor: "#D6DDEB",
-                        borderRadius: "100px", // Adjust height
-                      }}
-                      className="custom-select1 rounded-full w-full"
-                      placeholder="Select Gender"
+                      bordered={false}
                       defaultValue={user?.gender}
+                      className="peer w-full pt-6 pb-2 px-2 border border-[#EEEEEE] rounded-[10px]"
+                      style={{
+                        height: "64px",
+                      }}
+                      placeholder="Gender"
                     >
-                      <Select.Option value="Male">Male</Select.Option>
-                      <Select.Option value="Female">Female</Select.Option>
+                      <Select.Option value="Male">
+                        {" "}
+                        <span className="Livvic-SemiBold text-sm text-primary">
+                          Male
+                        </span>
+                      </Select.Option>
+                      <Select.Option value="Female">
+                        {" "}
+                        <span className="Livvic-SemiBold text-sm text-primary">
+                          Female
+                        </span>
+                      </Select.Option>
                     </Select>
                   </Form.Item>
+                  <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                    Gender
+                  </label>
                 </div>
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">Age</p>
+
+                {/* Age */}
+                <div className="relative w-72">
                   <Form.Item
                     style={{ margin: 0, padding: 0 }}
                     name="age"
@@ -684,40 +669,40 @@ export default function EditProfileNanny() {
                   >
                     <Input
                       type="number"
-                      style={{ borderColor: "#D6DDEB" }}
                       defaultValue={user?.age}
-                      className="border- border-2 py-2 rounded-3xl"
+                      className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Age"
                     />
                   </Form.Item>
-                </div>
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Language
-                  </p>
-                  <Form.Item
-                    style={{ margin: 0, padding: 0 }}
-                    name="language"
-                    initialValue={defaultCheckedValues} // Default checked values for form submission
+                  <label
+                    htmlFor="age"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
                   >
-                    <Checkbox.Group
-                      options={options}
-                      defaultValue={defaultCheckedValues} // Set default checked values
-                      className="py-2 rounded-3xl"
-                      style={{ borderColor: "#D6DDEB" }}
-                    />
-                  </Form.Item>
+                    Age
+                  </label>
                 </div>
+              </div>
+              <div>
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
+                  Language
+                </p>
+                <OptionSelector
+                  options={options}
+                  form={form}
+                  defaultCheckedValues={defaultCheckedValues}
+                  name="language"
+                />
               </div>
               <div className="">
                 <div>
-                  <p className="my-5 font-bold text-2xl capitalize">
+                  <p className="my-5 Livvic-SemiBold text-lg text-primary">
                     Weekly Schedule
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-2">
                   {daysOfWeek.map((day) => (
                     <div className="flex mb-4" key={day}>
-                      <div>
+                      <div className="p-4 border border-[#EEEEEE] rounded-[10px]">
                         <Checkbox
                           checked={daysState[day]?.checked || false}
                           onChange={() => handleCheckboxChange(day)}
@@ -725,7 +710,7 @@ export default function EditProfileNanny() {
                         >
                           <span className="font-semibold text-lg">{day}</span>
                         </Checkbox>
-
+                        <hr className="my-2" />
                         <div className="flex items-center gap-4 mt-2">
                           <TimePicker
                             value={
@@ -739,9 +724,9 @@ export default function EditProfileNanny() {
                             }
                             disabled={!daysState[day].checked}
                             format="h:mm A"
-                            className="rounded-lg date-picker1"
+                            className="rounded-lg border-none"
                           />
-                          <span className="font-medium text-base">to</span>
+                          <span className="w-px h-6 bg-gray-300 block"></span>
                           <TimePicker
                             value={
                               daysState[day].end
@@ -754,7 +739,7 @@ export default function EditProfileNanny() {
                             }
                             disabled={!daysState[day].checked}
                             format="h:mm A"
-                            className="rounded-lg date-picker1"
+                            className="rounded-lg border-none"
                           />
                         </div>
                       </div>
@@ -764,7 +749,9 @@ export default function EditProfileNanny() {
               </div>
 
               <div>
-                <p className="my-5 font-bold text-2xl capitalize">Services</p>
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
+                  Services
+                </p>
                 <div className="flex flex-wrap gap-4">
                   {[
                     "firstChild",
@@ -772,115 +759,132 @@ export default function EditProfileNanny() {
                     "thirdChild",
                     "fourthChild",
                     "fiveOrMoreChild",
-                  ].map((v, i) => (
-                    <div key={v}>
-                      <p className="mb-2 font-bold text-lg capitalize Quicksand">
-                        {i + 1 === 5
-                          ? `${i + 1} Child or more`
-                          : `${i + 1} Child`}
-                      </p>
-                      <Form.Item
-                        style={{ margin: 0, padding: 0 }}
-                        name={v}
-                        initialValue={salaryExp?.[v] || ""} // Safely access property or fallback to an empty string
-                      >
-                        <Input
-                          type="number"
-                          style={{ borderColor: "#D6DDEB" }}
-                          defaultValue={salaryExp?.[v] || ""} // Safely access property or fallback to an empty string
-                          className="border-2 py-2 rounded-3xl"
-                        />
-                      </Form.Item>
-                    </div>
-                  ))}
+                  ].map((v, i) => {
+                    console.log(salaryExp);
+                    return (
+                      <div key={i} className="relative w-72">
+                        <Form.Item
+                          name={v}
+                          style={{ margin: 0 }}
+                          initialValue={salaryExp?.[v] ?? ""}
+                        >
+                          <div className="relative">
+                            {/* $ Prefix */}
+                            <span className="Livvic-Semibold text-md text-primary absolute left-[5%] top-[66%] -translate-y-1/2  z-10">
+                              $
+                            </span>
+
+                            {/* Input Field */}
+                            <Input
+                              id={v}
+                              type="number"
+                              defaultValue={
+                                salaryExp?.[v] !== undefined &&
+                                salaryExp?.[v] !== null
+                                  ? salaryExp[v]
+                                  : ""
+                              }
+                              className="peer pl-6 pr-8 border border-[#EEEEEE] rounded-[10px] pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                              placeholder="Hourly Rate"
+                            />
+
+                            {/* /h Suffix */}
+                            <span className="Livvic-Semibold text-md text-primary absolute right-[55%] top-[65%] -translate-y-1/2  z-10">
+                              /h
+                            </span>
+                          </div>
+                        </Form.Item>
+
+                        {/* Fixed Top Label */}
+                        <label
+                          htmlFor={v}
+                          className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                        >
+                          {i + 1 === 5
+                            ? `${i + 1} Child or more`
+                            : `${i + 1} Child`}
+                        </label>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               <div>
-                <p className="my-5 font-bold text-2xl capitalize">
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
                   Resume Details
                 </p>
                 <div className="flex flex-wrap gap-6">
-                  <div>
-                    <p className="mb-2 font-semibold text-lg capitalize">
-                      Availability
-                    </p>
+                  {/* Availability */}
+                  <div className="relative w-72">
                     <Form.Item
-                      style={{ margin: 0, padding: 0 }}
                       name="avaiForWorking"
-                      rules={[
-                        {
-                          required: false,
-                          message: "",
-                        },
-                      ]}
-                      initialValue={defaultCheckedValues2} // Default selected values for form submission
+                      initialValue={defaultCheckedValues2}
+                      style={{ margin: 0, padding: 0 }}
                     >
                       <Select
-                        placeholder="availability"
-                        defaultValue={defaultCheckedValues2} // Set default selected values
-                        options={options2} // Dropdown options
-                        className="rounded-3xl w-48 dropdown-width"
-                        style={{ borderColor: "#D6DDEB", borderRadius: "50px" }} // Full width for the dropdown
+                        bordered={false}
+                        defaultValue={defaultCheckedValues2}
+                        options={options2}
+                        className="peer w-full pt-6 pb-2 px-4 border border-[#EEEEEE] rounded-[10px]"
+                        style={{ height: "64px" }}
+                        placeholder="Availability"
                       />
                     </Form.Item>
+                    <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                      Availability
+                    </label>
                   </div>
-                  <div>
-                    <p className="mb-2 font-semibold text-lg capitalize">
-                      Start
-                    </p>
+
+                  {/* Start */}
+                  <div className="relative w-72">
                     <Form.Item
-                      style={{ margin: 0, padding: 0 }}
                       name="availability"
-                      rules={[
-                        {
-                          required: false,
-                          message: "",
-                        },
-                      ]}
-                      initialValue={defaultCheckedValues3} // Default selected values for form submission
-                    >
-                      <Select
-                        placeholder="Start"
-                        defaultValue={defaultCheckedValues3} // Set default selected values
-                        options={options3} // Dropdown options
-                        className="rounded-3xl dropdown-width"
-                        style={{ borderColor: "#D6DDEB", borderRadius: "50px" }} // Full width for the dropdown
-                      />
-                    </Form.Item>
-                  </div>
-                  <div>
-                    <p className="mb-2 font-semibold text-lg capitalize">
-                      Work Experience
-                    </p>
-                    <Form.Item
+                      initialValue={defaultCheckedValues3}
                       style={{ margin: 0, padding: 0 }}
-                      name="experience"
-                      rules={[
-                        {
-                          required: false,
-                          message: "",
-                        },
-                      ]}
-                      initialValue={defaultCheckedValues4} // Default selected values for form submission
                     >
                       <Select
-                        placeholder="experience"
-                        defaultValue={defaultCheckedValues4} // Set default selected values
-                        options={options4} // Dropdown options
-                        className="rounded-3xl dropdown-width"
-                        style={{ borderColor: "#D6DDEB", borderRadius: "50px" }} // Full width for the dropdown
+                        bordered={false}
+                        defaultValue={defaultCheckedValues3}
+                        options={options3}
+                        className="peer w-full pt-6 pb-2 px-4 border border-[#EEEEEE] rounded-[10px]"
+                        style={{ height: "64px" }}
+                        placeholder="Start"
                       />
                     </Form.Item>
+                    <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                      Start
+                    </label>
+                  </div>
+
+                  {/* Work Experience */}
+                  <div className="relative w-72">
+                    <Form.Item
+                      name="experience"
+                      initialValue={defaultCheckedValues4}
+                      style={{ margin: 0, padding: 0 }}
+                    >
+                      <Select
+                        bordered={false}
+                        defaultValue={defaultCheckedValues4}
+                        options={options4}
+                        className="peer w-full pt-6 pb-2 px-4 border border-[#EEEEEE] rounded-[10px]"
+                        style={{ height: "64px" }}
+                        placeholder="Experience"
+                      />
+                    </Form.Item>
+                    <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                      Work Experience
+                    </label>
                   </div>
                 </div>
               </div>
 
               <div>
-                <p className="my-5 font-bold text-2xl capitalize">
-                  Age group experince
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
+                  Age group experience
                 </p>
-                <Form.Item
+                {/* <Form.Item
                   style={{ margin: 0, padding: 0 }}
                   name="ageGroupsExp"
                   rules={[
@@ -897,52 +901,65 @@ export default function EditProfileNanny() {
                     className="rounded-3xl custom-checkbox-group" // Add a custom class
                     style={{ borderColor: "#D6DDEB", margin: 0, padding: 0 }}
                   />
-                </Form.Item>
+                </Form.Item> */}
+                <OptionSelector
+                  options={options5}
+                  defaultCheckedValues={defaultCheckedValues5}
+                  form={form}
+                  name={"ageGroupsExp"}
+                />
               </div>
 
               <div>
-                <p className="mt-5 mb-3 font-bold text-2xl capitalize">
-                  Description
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
+                  About me
                 </p>
-                <Form.Item
-                  style={{ margin: 0, padding: 0 }}
-                  name="jobDescription"
-                  initialValue={
-                    user?.additionalInfo.find(
-                      (info) => info.key === "jobDescription"
-                    )?.value
-                  }
-                  rules={[
-                    {
-                      required: false,
-                      message: "",
-                    },
-                  ]}
-                >
-                  <p className="font-semibold text-lg">About me</p>
-                  <TextArea
-                    placeholder="Enter detail"
-                    defaultValue={
+                <div className="relative w-full">
+                  <Form.Item
+                    style={{ margin: 0, padding: 0 }}
+                    name="jobDescription"
+                    initialValue={
                       user?.additionalInfo.find(
                         (info) => info.key === "jobDescription"
                       )?.value
                     }
-                    rows={6} // Specify the number of rows (height) for the textarea
-                    className="py-2 rounded-3xl"
-                    style={{
-                      borderColor: "#D6DDEB",
-                      width: "100%",
-                      resize: "none",
-                    }} // Full width for the textarea
-                  />
-                </Form.Item>
+                    rules={[
+                      {
+                        required: false,
+                        message: "",
+                      },
+                    ]}
+                  >
+                    <TextArea
+                      id="jobDescription"
+                      placeholder="Enter detail"
+                      defaultValue={
+                        user?.additionalInfo.find(
+                          (info) => info.key === "jobDescription"
+                        )?.value
+                      }
+                      rows={6}
+                      className="peer border border-[#D6DDEB] rounded-3xl px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      style={{
+                        width: "100%",
+                        resize: "none",
+                      }}
+                    />
+                  </Form.Item>
+                  <label
+                    htmlFor="jobDescription"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    About Me
+                  </label>
+                </div>
               </div>
 
               <div>
-                <p className="my-5 font-bold text-2xl capitalize">
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
                   Additional Details
                 </p>
-                <Form.Item
+                {/* <Form.Item
                   style={{ margin: 0, padding: 0 }}
                   name="additionalDetails"
                   initialValue={defaultCheckedValues6} // Default checked values for form submission
@@ -953,23 +970,29 @@ export default function EditProfileNanny() {
                     className="rounded-3xl custom-checkbox-group" // Add a custom class
                     style={{ borderColor: "#D6DDEB", margin: 0, padding: 0 }}
                   />
-                </Form.Item>
+                </Form.Item> */}
+                <OptionSelector
+                  options={options6}
+                  defaultCheckedValues={defaultCheckedValues6}
+                  form={form}
+                  name={"additionalDetails"}
+                />
               </div>
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-end mt-10">
                 <Form.Item className="m-0 p-0">
                   <Button
-                    style={{ color: "#38AEE3", border: "1px solid #38AEE3" }}
-                    className="bg-[#FFFFFF] rounded-3xl"
+                    style={{ border: "1px solid #EEEEEE" }}
+                    className="font-semibold ml-4 px-12 py-6 rounded-[35px] text-[#555555]"
                   >
-                    Cancel
+                    Discard Changes
                   </Button>
                   <Button
                     type="primary"
                     loading={loading}
                     htmlType="submit"
-                    className="bg-[#38AEE3] ml-4 px-6 rounded-3xl text-white"
+                    className="bg-[#AEC4FF] font-semibold ml-4 px-12 py-6 rounded-[35px] text-[#001243]"
                   >
-                    Save
+                    Save Changes
                   </Button>
                 </Form.Item>
               </div>

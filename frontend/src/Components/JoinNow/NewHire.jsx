@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { api } from "../../Config/api";
 import { registerThunk, userCheckThunk } from "../Redux/authSlice";
+import Button from "../../NewComponents/Button";
 
 export default function NewHireForm() {
   const navigate = useNavigate();
@@ -202,20 +203,11 @@ export default function NewHireForm() {
     <div className="padd-res">
       <div
         className="px-4 py-4 rounded-3xl"
-        style={{
-          background:
-            "linear-gradient(174.22deg, rgba(158, 220, 225, 0.5) 0%, rgba(218, 244, 239, 0.4) 69.71%, rgba(239, 236, 230, 0.3) 100%)",
-        }}
       >
-        <div className="flex justify-end">
-          <button onClick={() => navigate("/joinNow")}>
-            <CloseOutlined style={{ fontSize: "24px" }} />
-          </button>
-        </div>
         <div className="flex justify-center">
           <div>
             {step === 1 && (
-              <HireStep1 formRef={hireStep1FormRef} head={"Welcome Parents"} />
+              <HireStep1 formRef={hireStep1FormRef} head={"Welcome, Let’s create your account"} />
             )}
             {step === 2 && (
               <NannyNoStep2
@@ -234,24 +226,26 @@ export default function NewHireForm() {
               />
             )}
 
-            <div className="my-5 text-center">
-              <button
+            <div className="my-5 space-x-6 text-center">
+              {/* <button
                 style={{ border: "1px solid #38AEE3" }}
                 className="bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base"
                 onClick={handleBack}
               >
                 Back
-              </button>
+              </button> */}
+              <Button action={() => handleBack()} btnText={"Back"} className="border border-[#FFFFFF] text-[#555555]"/>
 
               {step > 0 && step <= 3 && (
-                <button
-                  style={{ background: "#85D1F1" }}
-                  className="mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
-                  onClick={handleNext}
-                  disabled={loading}
-                >
-                  {loading ? "Loading..." : "Continue"}
-                </button>
+                // <button
+                //   style={{ background: "#85D1F1" }}
+                //   className="mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
+                //   onClick={handleNext}
+                //   disabled={loading}
+                // >
+                //   {loading ? "Loading..." : "Continue"}
+                // </button>
+                <Button btnText={"Continue"} action={() => handleNext()} className="bg-[#AEC4FF] text-primary" isLoading={loading} loadingBtnText="Loading..."/>
               )}
 
               {step === 0 && (

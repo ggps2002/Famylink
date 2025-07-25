@@ -1,106 +1,151 @@
-import { CloseOutlined } from '@ant-design/icons'
-import { Input, Button, Form } from 'antd'
-import { useNavigate, NavLink } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { loginThunk } from '../Redux/authSlice'
-import { fireToastMessage } from '../../toastContainer'
+import { CloseOutlined } from "@ant-design/icons";
+import { Input, Button, Form } from "antd";
+import CustomButton from "../../NewComponents/Button";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginThunk } from "../Redux/authSlice";
+import { fireToastMessage } from "../../toastContainer";
 export default function Login() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { isLoading } = useSelector(state => state.auth)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
   const handleGoBack = () => {
-    navigate(-1) // Navigate back in history
-  }
-  const handleSubmit = async values => {
+    navigate(-1); // Navigate back in history
+  };
+  const handleSubmit = async (values) => {
     try {
-      const { user, status } = await dispatch(loginThunk(values)).unwrap()
+      const { user, status } = await dispatch(loginThunk(values)).unwrap();
       if (status == 200) {
-        if (user.type == 'Nanny') {
-          navigate('/nanny')
-        } else if (user.type == 'Parents') {
-          navigate('/family')
+        if (user.type == "Nanny") {
+          navigate("/nanny");
+        } else if (user.type == "Parents") {
+          navigate("/family");
         } else {
-          fireToastMessage({ type: 'error', message: 'This is not for admin' })
+          fireToastMessage({ type: "error", message: "This is not for admin" });
         }
-      } 
+      }
     } catch (error) {
-      fireToastMessage({ type: 'error', message: error.message })
+      fireToastMessage({ type: "error", message: error.message });
     }
-  }
+  };
 
   return (
-    <div className='padd-res'>
-      <div
-        className='px-4 py-4 rounded-3xl'
-        style={{
-          background:
-            'linear-gradient(174.22deg, rgba(158, 220, 225, 0.5) 0%, rgba(218, 244, 239, 0.4) 69.71%, rgba(239, 236, 230, 0.3) 100%)'
-        }}
-      >
-        <div className='flex justify-end'>
+    <div className="padd-res bg-[#F6F3EE] w-sceen min-h-screen overflow-x-hidden flex justify-center items-center">
+      <div className="px-4 py-4">
+        <div className="flex justify-end">
           <button onClick={handleGoBack}>
-            <CloseOutlined style={{ fontSize: '24px' }} />
+            <CloseOutlined style={{ fontSize: "24px" }} />
           </button>
         </div>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <div>
-            <p className='px-3 width-form font-normal text-center Classico offer-font'>
+            <div className="top-0 z-50 sticky flex items-center justify-center mb-3 w-full h-20">
+              <NavLink
+                to="/"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                <div className="flex gap-1 items-center">
+                  <img
+                    src="/logo.svg"
+                    alt="logo"
+                    className="w-6 h-6 sm:w-8 sm:h-8"
+                  />
+                  <p className="font-bold text-lg sm:text-xl Livvic-Bold">
+                    FamilyLink
+                  </p>
+                </div>
+              </NavLink>
+            </div>
+            <p className="px-3 width-form text-center Livvic-Bold text-3xl text-[#08428D]">
               Log in to your Account
             </p>
-            <div className='flex justify-center mt-10'>
-              <Form name='loginForm' layout='vertical' onFinish={handleSubmit}>
+            <div className="flex flex-col items-center mt-10">
+              <div className="bg-white flex gap-2 justify-center Livvic-SemiBold text-sm text-primary w-96 py-4 mb-4 rounded-[6px]">
+                <img src="/google-icon.svg" alt="google" /> Continue with Google
+              </div>
+              <div className="bg-white flex gap-2 justify-center Livvic-SemiBold text-sm text-primary w-96 mb-4 rounded-[6px] py-4">
+                <img src="/apple-icon.svg" alt="apple" /> Continue with Apple
+              </div>
+              <div className="flex items-center my-3 w-96">
+                <div className="flex-grow h-px bg-gray-300" />
+                <span className="mx-4 text-sm text-gray-500">or</span>
+                <div className="flex-grow h-px bg-gray-300" />
+              </div>
+
+              <Form name="loginForm" layout="vertical" onFinish={handleSubmit}>
                 <div>
-                  <p className='mb-1 text-xl capitalize Classico'>Email</p>
+                  <p className="mb-1 text-sm Livvic-SemiBold text-[#555555]">
+                    Your email
+                  </p>
                   <Form.Item
-                    name='email'
-                    rules={[{ required: true, message: '' }]}
+                    name="email"
+                    rules={[{ required: true, message: "" }]}
                   >
                     <Input
-                      type={'email'}
-                      placeholder={'Enter you email'}
-                      className='py-4 border-none rounded-3xl input-width'
+                      type={"email"}
+                      placeholder={"Enter email"}
+                      className="py-4 border-none rounded-[6px] w-96"
                     />
                   </Form.Item>
                 </div>
 
                 <div>
-                  <p className='mb-1 text-xl capitalize Classico'>Password</p>
+                  <p className="mb-1 text-sm Livvic-SemiBold text-[#555555]">
+                    Password
+                  </p>
                   <Form.Item
-                    name='password'
-                    rules={[{ required: true, message: '' }]}
+                    name="password"
+                    rules={[{ required: true, message: "" }]}
                     style={{ margin: 0 }}
                   >
                     <Input.Password
-                      placeholder='Enter you password'
-                      className='py-4 border-none rounded-3xl input-width'
+                      placeholder="Enter password"
+                      className="py-4 border-none rounded-[6px]"
                     />
                   </Form.Item>
-                  <p className='font-normal text-end mr-2 mt-2'>
-                    <NavLink to='/forgetPass' onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-                      <span className='hover:text-blue-600 underline transition-colors duration-300 cursor-pointer'>
+                  <p className="font-normal text-end mr-2 mt-2">
+                    <NavLink
+                      to="/forgetPass"
+                      onClick={() =>
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      }
+                    >
+                      <span className="hover:text-blue-600 underline transition-colors duration-300 cursor-pointer">
                         Forgot password?
                       </span>
                     </NavLink>
                   </p>
                 </div>
 
-                <div className='my-5 text-center'>
-                  <Button
-                    type='primary'
-                    htmlType='submit'
+                <div className="my-5 text-center">
+                  {/* <Button
+                    type="primary"
+                    htmlType="submit"
                     loading={isLoading}
-                    className='mx-auto my-0 px-6 py-2 rounded-full w-48 font-normal text-base text-white transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110'
-                    style={{ background: '#38AEE3', border: 'none' }}
+                    className="mx-auto my-0 px-6 py-2 rounded-full w-48 font-normal text-base text-white transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
+                    style={{ background: "#38AEE3", border: "none" }}
                   >
                     Login
-                  </Button>
-                  <p className='mt-2 mb-10 font-normal text-base already-acc'>
-                    New to Famylink? <NavLink to='/joinNow' onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-                      <span className='hover:text-blue-600 underline transition-colors duration-300 cursor-pointer'>
+                  </Button> */}
+                  <CustomButton
+                    btnText={"Sign In"}
+                    htmlType="submit"
+                    isLoading={isLoading}
+                    loadingBtnText="Signing In..."
+                    className="bg-[#AEC4FF] w-full !py-3"
+                  />
+                  <p className="mt-2 mb-10 font-normal text-base already-acc">
+                    New to Famylink?{" "}
+                    <NavLink
+                      to="/joinNow"
+                      onClick={() =>
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      }
+                    >
+                      <span className="hover:text-blue-600 underline transition-colors duration-300 cursor-pointer">
                         Sign Up
                       </span>
                     </NavLink>
-
                   </p>
                 </div>
               </Form>
@@ -109,5 +154,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }

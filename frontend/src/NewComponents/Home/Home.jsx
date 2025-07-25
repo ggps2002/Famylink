@@ -8,7 +8,7 @@ import Community from "./Community";
 import Featurres from "./Features";
 import Testimonial from "./Testimonial";
 import FAQ from "./FAQ";
-import Footer from "./Footer";
+import Footer from "../Footer/Footer";
 
 function NewHome() {
   return (
@@ -50,8 +50,6 @@ function NewHome() {
         <Testimonial />
       </div>
       <FAQ />
-
-      <Footer />
     </>
   );
 }

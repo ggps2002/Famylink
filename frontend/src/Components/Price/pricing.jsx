@@ -10,6 +10,7 @@ import {
   getSubscriptionStatusThunk,
 } from "../Redux/cardSlice";
 import { fireToastMessage } from "../../toastContainer";
+import { NavLink } from "react-router-dom";
 
 const Card = ({ head, price, data, buy, nanny, showBuyButton, cancelAt }) => {
   const dispatch = useDispatch();
@@ -63,21 +64,23 @@ const Card = ({ head, price, data, buy, nanny, showBuyButton, cancelAt }) => {
   };
 
   return (
-    <div className="lg:w-96 w-full min-h-[543px] bg-white rounded-3xl p-6 flex flex-col shadow-lg">
+    <div className="lg:w-96 w-full min-h-[543px] bg-white rounded-[20px] p-6 flex flex-col border border-[#EEEEEE]">
       {/* Header */}
-      <div className="mb-6 Classico">
-        <p className="text-2xl text-[#050A30]">{head}</p>
-        <p className="text-5xl mt-2">
+      <div className="mb-6">
+        <p className="text-xl Livvic-Medium text-[#666B7A]">{head}</p>
+        <p className="text-5xl mt-2 Livvic-SemiBold text-primary">
           ${price}
-          <sub className="text-2xl font-normal text-black">/mo</sub>
+          <sub className="text-xl Livvic-Medium text-primary">/mo</sub>
         </p>
       </div>
+
+      <hr className="border-b border-b-[#EEEEEE] -mx-6" />
 
       {/* Features List */}
       <div className="flex-1 flex flex-col gap-8 mt-4">
         {data?.map((v, i) => (
-          <div key={i} className="flex items-start gap-3">
-            <div className="p-1.5 bg-[#38AEE3] rounded-full">
+          <div key={i} className="flex items-center gap-3">
+            <div className="p-1.5 bg-[#555555] rounded-full">
               <Check className="text-white size-3" />
             </div>
             <p className="text-lg text-[#050A30]">{v}</p>
@@ -101,12 +104,13 @@ const Card = ({ head, price, data, buy, nanny, showBuyButton, cancelAt }) => {
 
       {/* CTA Button Logic */}
       {showBuyButton && !showPayment && (
-        <button
-          onClick={() => setShowPayment(true)}
-          className="mt-8 bg-[#38AEE3] hover:opacity-80 text-white font-medium w-52 mx-auto h-10 rounded-full transition-all duration-300 ease-in-out"
+        <NavLink
+          to="/nanny/setting?option=Billing"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="mt-8 bg-[#D6FB9A] hover:opacity-80 text-[#025747] font-medium h-10 rounded-full transition-all duration-300 ease-in-out flex items-center justify-center px-6"
         >
-          Buy
-        </button>
+          Upgrade Now
+        </NavLink>
       )}
 
       {!showBuyButton && head !== "Free" && (
@@ -154,7 +158,7 @@ const Card = ({ head, price, data, buy, nanny, showBuyButton, cancelAt }) => {
       {!showBuyButton && head === "Free" && (
         <button
           disabled
-          className="mt-8 bg-[#38AEE380] text-white font-medium w-52 mx-auto h-10 rounded-full cursor-not-allowed"
+          className="mt-8 text-[#025747] border border-[#D6FB9A] font-medium h-10 rounded-full cursor-not-allowed"
         >
           Already Using
         </button>
@@ -209,39 +213,37 @@ export default function Pricing({ nanny }) {
             "Post a job",
             "Post a nanny share",
             "Browse Caregiver profile",
-            "Message Caregiver",
+            "Message Caregiver", 8
           ],
       buy: isActive,
       showBuyButton: !isActive,
       cancelAt: isCanceling
-        ? new Date(periodEnd * 1000).toLocaleDateString()
+        ? new Date(periodEnd * 1000).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
         : null,
     },
   ];
 
   return (
-    <div
-      className={`lg:py-12 py-6 px-1 bg-gradient-to-b ${
-        nanny
-          ? "from-[#FFEE8C] to-[#fdf8ea]"
-          : "from-[#9EDCE1] via-[#DAF4EF] to-[#EFECE6]"
-      }`}
-    >
-      <div className="padd-res">
+    <div className={`lg:py-12 py-6 px-1 `}>
+      <div className="">
         <AnimatedWrapper
           animationConfig={{
             from: { opacity: 0, y: -50 },
             to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
           }}
         >
-          <p className="Classico !font-normal lg:text-6xl text-3xl">
+          <p className="Livvic-Bold text-center text-primary lg:text-5xl text-3xl">
             Subscription Plans
           </p>
         </AnimatedWrapper>
       </div>
 
       <div className="flex justify-center">
-        <div className="inline-flex items-start justify-center rounded-full lg:my-16 my-8 bg-white mx-auto shadow-md"></div>
+        <div className="inline-flex items-start justify-center rounded-full my-4 bg-white mx-auto shadow-md"></div>
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mx-2">

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import CardForInfo from "../LoginAsFamily/subcomponents/cardForInfo";
 import Reviews from "../LoginAsFamily/subcomponents/Reviews";
 import Ra from "../subComponents/rate";
@@ -10,6 +11,8 @@ import { format, parseISO } from "date-fns";
 import { customFormat } from "../subComponents/toCamelStr";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { fireToastMessage } from "../../toastContainer";
+import { ChevronLeft, ChevronRight, HeartIcon, Info, Link } from "lucide-react";
+import Button from "../../NewComponents/Button";
 
 export default function Profile() {
   const { user } = useSelector((s) => s.auth);
@@ -54,20 +57,47 @@ export default function Profile() {
     (info) => info.key === "salaryExp"
   )?.value;
 
+  const ratingCount = user?.reviews?.reduce((acc, review) => {
+    const rating = Math.floor(review.rating);
+    acc[rating] = (acc[rating] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalReviews = user?.reviews?.length || 0;
+
+  const ratingPercentages = [5, 4, 3, 2, 1].map((num) => {
+    const count = ratingCount?.[num] || 0;
+    const pro = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+    return { num, pro };
+  });
+
+  const scrollRef = useRef(null);
+  const scrollAmount = 300; // adjust scroll distance as needed
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
   return (
-    <div className="padding-navbar1 Quicksand">
-      <div className="shadow-xl border-[1px] border-[#D6DDEB] bg-white my-8 px-6 py-4 rounded-2xl text-center">
-        <div className="flex items-center justify-center">
-          <div>
+    <div className="flex flex-col lg:flex-row gap-4 md:gap-6 p-3 md:py-6 md:px-12  w-full justify-center">
+      {/* Left Sidebar */}
+      <div className="w-full lg:w-1/4 xl:w-1/3 2xl:w-1/4">
+        {/* Profile Card */}
+        <div className="shadow-soft p-4 md:p-6 lg:p-9 rounded-[20px]">
+          <div className="flex flex-col items-center">
             {user?.imageUrl ? (
               <img
-                className="mx-auto rounded-full w-24 object-contain"
+                className="mx-auto rounded-[16px] w-20 md:w-24 object-contain"
                 src={user?.imageUrl}
                 alt="img"
               />
             ) : (
               <Avatar
-                className="rounded-full text-black"
+                className="rounded-[16px] text-black"
                 size="96"
                 color={"#38AEE3"}
                 name={user?.name
@@ -76,306 +106,339 @@ export default function Profile() {
                   .join(" ")}
               />
             )}
-            <p className="my-2 font-bold lg:text-3xl text-2xl">{user.name}</p>
+
+            <div className="flex gap-2">
+              <p className="my-2 text-primary Livvic-SemiBold text-xl md:text-2xl text-center">
+                {user.name}
+              </p>
+            </div>
             {user?.location && (
-              <p className="font-semibold text-lg">
+              <p className="text-[#555555] text-center text-sm md:text-md Livvic-Medium">
                 {user?.location?.format_location}
               </p>
             )}
-
-            <div className="mt-4 mb-2">
+            <div className="mt-4 md:mt-6 w-full">
               <NavLink
-                to={"/nanny/edit"}
+                to="/nanny/edit"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               >
-                <button
-                  style={{ border: "1px solid #38AEE3", color: "#38AEE3" }}
-                  className="bg-white mx-4 my-0 mt-2 px-6 py-2 rounded-full font-normal text-base hover:-translate-y-1 duration-700 delay-150 hover:scale-110"
-                >
-                  Edit Profile
-                </button>
+                {" "}
+                <Button
+                  btnText={"Edit Profile"}
+                  className="bg-primary w-full py-2 text-sm md:text-base"
+                />
               </NavLink>
-            </div>
-            <div
-              style={{ border: "1px solid #38AEE3", color: "#38AEE3" }}
-              className="flex items-center gap-2 mb-4 pl-4 rounded-full max-w-full md:max-w-[500px]"
-            >
-              <p
-                className="font-normal text-16-12 truncate overflow-hidden whitespace-nowrap flex-grow"
-                title={`${location}/profile/${user?._id}`}
-              >
-                {location}/profile/{user?._id}
-              </p>
-
-              <button
-                style={{
-                  background: "#38AEE3",
-                  borderRadius: "0px 50px 50px 0px",
-                  flexShrink: 0, // prevents the button from shrinking
-                }}
-                className="hover:opacity-60 px-2 py-2 font-normal text-16-12 text-white duration-700 delay-150"
-                onClick={() => {
-                  const textToCopy = `${location}/profile/${user?._id}`;
-                  navigator.clipboard
-                    .writeText(textToCopy)
-                    .then(() => {
-                      fireToastMessage({ message: "Link copied successfully" });
-                    })
-                    .catch((err) => {
-                      fireToastMessage({ type: "error", message: err });
-                    });
-                }}
-              >
-                Copy Link
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl">
-        <p className="mb-2 font-bold text-2xl">Weekly Schedule</p>
-
-        <div className="flex flex-wrap justify-left gap-x-10 gap-y-5">
-          {days.map((day, index) => {
-            const dayData = user?.additionalInfo.find(
-              (info) => info.key === "specificDaysAndTime"
-            )?.value[day];
-            return (
-              <div
-                key={index}
-                className={`pr-8 ${
-                  index < days.length - 1 ? "schdule-Border" : ""
-                }`}
-              >
-                <p className="font-semibold text-lg">{day}</p>
-                {dayData && dayData.checked ? (
-                  <>
-                    <p>
-                      Start{" "}
-                      <span className="font-bold">
-                        {new Date(dayData.start).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
+              <div className="relative w-full">
+                <Button
+                  btnText={
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                      <Link className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-[#555555]" />
+                      <span
+                        className="text-[
+#555555] Livvic-Medium text-sm md:text-base"
+                      >
+                        Copy Profile Link
                       </span>
-                    </p>
-                    <p>
-                      End{" "}
-                      <span className="font-bold">
-                        {new Date(dayData.end).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </span>
-                    </p>
-                  </>
-                ) : (
-                  <p className="w-28">I don't work on {day}</p>
-                )}
+                    </div>
+                  }
+                  className="w-full py-2 sm:py-2.5 md:py-3 mt-2 border border-gray-200 text-[#555555] Livvic-Medium text-xs sm:text-sm md:text-base lg:text-lg"
+                />
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="border-[1px] border-[#D6DDEB] bg-white my-8 p-4 rounded-2xl">
-        <p className="mb-2 font-bold text-2xl">Hourly Rate</p>
-
-        <div className="flex flex-wrap justify-between gap-x-10 gap-y-5">
-          {Object.entries(salaryExp || {}).map(([key, value], i) => (
-            <div
-              key={key} // Ensure you provide a unique key for each child
-              className="flex justify-between border-2 px-4 py-1 rounded-3xl w-72 text-gray-500 cursor-pointer"
-            >
-              <p className="text-lg">{i + 1} Child</p>
-              <p className="font-bold text-black text-lg">${value}/hr</p>
+              <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
+                <Info className="text-yellow-400" size={20} />
+                <p className="text-yellow-400">working on copy feature</p>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-6 w-full">
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-div">
-          <p className="mb-2 font-bold text-2xl">About Me</p>
-          <p className="leading-5">{jobDescriptionValue}</p>
-        </div>
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-2div">
-          <p className="mb-2 font-bold text-2xl">Looking For</p>
+        {/* Additional Info Card */}
+        <div className="mt-4 md:mt-6 p-4 md:p-6 shadow-soft rounded-[20px]">
+          {/* <div>
+            <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+              Education
+            </p>
+            <ul className="list-disc pl-4 md:pl-6 space-y-2 mt-2">
+              <li className="text-[#888888] text-sm md:text-base">
+                <span className="text-[#555555] Livvic-Medium">
+                  B.A. in Early Childhood Education –
+                </span>
+                <br /> University of Washington, 2020
+              </li>
+              <li className="text-[#888888] text-sm md:text-base">
+                <span className="text-[#555555] Livvic-Medium">
+                  Child Development Associate (CDA) Credential –
+                </span>
+                <br /> Council for Professional Recognition, 2021
+              </li>
+            </ul>
+          </div>
+          <hr className="my-4" /> */}
           <div>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">
-                Availability:
-              </span>{" "}
-              {
-                user?.additionalInfo.find(
-                  (info) => info.key === "avaiForWorking"
-                )?.value.option
-              }
+            <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+              Language
             </p>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">Start:</span>{" "}
-              {
-                user?.additionalInfo.find((info) => info.key === "availability")
-                  ?.value.option
-              }
+            <div className="mt-2">
+              <p className="text-[#555555] Livvic-Medium text-sm md:text-base">
+                {user.additionalInfo
+                  .find((info) => info.key === "language")
+                  ?.value?.option?.map(
+                    (lang) =>
+                      lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()
+                  )
+                  .join(", ")}
+              </p>
+            </div>
+          </div>
+          <hr className="my-4" />
+          <div>
+            <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+              Additional Details
             </p>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">
-                Age group:
-              </span>{" "}
-              {user?.additionalInfo
-                .find((info) => info.key === "ageGroupsExp")
-                ?.value.option.map((v, i, arr) => (
-                  <span key={i}>
-                    {customFormat(v).split(" ")[0]}
-                    {i < arr.length - 1 ? ", " : ""}
+            <div className="mt-2">
+              <ul className="list-disc pl-4 md:pl-6 space-y-2">
+                {
+                  user.additionalInfo.find((info) => info.key === "additionalDetails").value?.option?.map((det, i) => (
+  <li key={i} className="text-[#555555] Livvic-Medium text-sm md:text-base">
+                  {det.charAt(0).toUpperCase() + det.slice(1, det.length - 1)}
+                </li>
+                  ))
+                }
+{/*               
+                <li className="text-[#555555] Livvic-Medium text-sm md:text-base">
+                  Does not smoke
+                </li> */}
+              </ul>
+            </div>
+          </div>
+          <hr className="my-4" />
+          <div>
+            <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+              Verifications
+            </p>
+            <div className="mt-2 w-full">
+              <ul className="space-y-2 w-full">
+                <li className="flex gap-2 justify-between text-primary Livvic-SemiBold text-xs md:text-sm w-full onboarding-box">
+                  <span className="text-primary Livvic-SemiBold text-sm">
+                    Background Check
                   </span>
-                ))}
-            </p>
+                  {user?.additionalInfo.find(
+                    (info) => info.key === "backgroundCheck"
+                  )?.value?.option.length > 0 && (
+                    <img src="/check-circle.svg" alt="verified" />
+                  )}
+                </li>
+                <li className="flex gap-2 justify-between text-primary Livvic-SemiBold text-xs md:text-sm w-full onboarding-box">
+                  <span className="text-primary Livvic-SemiBold text-sm">
+                    Phone Number Verification
+                  </span>
+                  {/* {user?.verified.phoneNumber !== "false" && <img src="/check-circle.svg" alt="verified" />} */}
+                </li>
+                <li className="flex gap-2 justify-between text-primary Livvic-SemiBold text-xs md:text-sm w-full onboarding-box">
+                  <span className="text-primary Livvic-SemiBold text-sm">
+                    National ID
+                  </span>
+                  {user?.verified.nationalIDVer !== "false" && (
+                    <img src="/check-circle.svg" alt="verified" />
+                  )}
+                </li>
+                <li className="flex gap-2 justify-between text-primary Livvic-SemiBold text-xs md:text-sm w-full onboarding-box">
+                  <span className="text-primary Livvic-SemiBold text-sm">
+                    Passport
+                  </span>
+                  {/* <img src="/check-circle.svg" alt="verified" /> */}
+                </li>
+                <li className="flex gap-2 justify-between text-primary Livvic-SemiBold text-xs md:text-sm w-full onboarding-box">
+                  <span className="text-primary Livvic-SemiBold text-sm">
+                    Driving License
+                  </span>
+                  {/* <img src="/check-circle.svg" alt="verified" /> */}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-6 my-8 w-full">
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-div">
-          <p className="mb-2 font-bold text-2xl">Qualifications</p>
-          <div>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">
-                Certifications:{" "}
-              </span>
-              {user.additionalInfo
-                .find((info) => info.key === "certification")
-                ?.value.option.map((v, i) => (
-                  <span key={i}>
-                    {customFormat(v)}
-                    {i <
-                    user.additionalInfo.find(
-                      (info) => info.key === "certification"
-                    )?.value.option.length -
-                      1
-                      ? ", "
-                      : ""}
-                  </span>
-                ))}
-            </p>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">
-                Languages:{" "}
-              </span>
-              {user.additionalInfo
-                .find((info) => info.key === "language")
-                ?.value.option.map((v, i) => (
-                  <span key={i}>
-                    {customFormat(v)}
-                    {i <
-                    user.additionalInfo.find((info) => info.key === "language")
-                      ?.value.option.length -
-                      1
-                      ? ", "
-                      : ""}
-                  </span>
-                ))}
-            </p>
-            <p className="text-base">
-              <span className="font-semibold text-lg Quicksand">Others:</span>{" "}
-              {`${customFormat(
-                user.additionalInfo.find((info) => info.key === "ableToCook")
-                  ?.value?.option || ""
-              )}, ${customFormat(
-                user.additionalInfo.find(
-                  (info) => info.key === "helpWithHousekeeping"
-                )?.value?.option || ""
-              )}`}
-            </p>
-          </div>
-        </div>
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-2div">
-          <p className="mb-2 font-bold text-2xl">Work Experience</p>
-          <div>
-            <p className="font-semibold text-lg Quicksand">
-              {
-                user?.additionalInfo.find((info) => info.key === "experience")
-                  ?.value.option
-              }{" "}
-              of experience caring for:
-            </p>
+      {/* Main Content */}
+      <div className="w-full lg:w-2/3 xl:w-2/3 2xl:w-1/2 space-y-4 md:space-y-6">
+        {/* About Me Section */}
+        <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            About Me
+          </p>
+          <p className="Livvic text-sm md:text-md text-[#555555] mt-2">
+            {
+              user.additionalInfo.find((info) => info.key === "jobDescription")
+                .value
+            }
+          </p>
+          <hr className="my-4" />
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Work Experience -{" "}
+            {
+              user.additionalInfo.find((info) => info.key === "experience")
+                .value?.option
+            }
+          </p>
+          <ul className="mt-2 space-y-2">
             {user.additionalInfo
               .find((info) => info.key === "ageGroupsExp")
               ?.value.option.map((v, i) => (
-                <p className="text-base">
-                  <span className="font-semibold text-lg Quicksand">
-                    {customFormat(v).split(" ")[0]}:
+                <p
+                  key={i}
+                  className="Livvic-Medium text-sm md:text-md text-[#555555]"
+                >
+                  <span className="Livvic-Medium text-sm md:text-md text-[#555555]">
+                    {customFormat(v).split(" ")[0]}
                   </span>{" "}
                   {customFormat(v).split(" ").slice(1).join(" ")}
                 </p>
               ))}
-          </div>
+          </ul>
+          <hr className="my-4" />
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Looking For
+          </p>
+          <ul className="mt-2 space-y-2">
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              Availability:{" "}
+              {
+                user.additionalInfo.find(
+                  (info) => info.key === "avaiForWorking"
+                ).value?.option
+              }
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              Start:{" "}
+              {
+                user.additionalInfo.find((info) => info.key === "availability")
+                  .value?.option
+              }
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              Age Group:{" "}
+              <span className="text-[#555555] Livvic-Medium">
+                {user.additionalInfo
+                  .find((info) => info.key === "ageGroupsExp")
+                  ?.value?.option?.map((v) => v.split(" (")[0])
+                  .join(", ")}
+              </span>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-6 my-8 w-full">
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-div">
-          <p className="mb-2 font-bold text-2xl">Reviews</p>
+
+        {/* Hourly Rate Section */}
+        <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Hourly Rate
+          </p>
+          <ul className="mt-2 space-y-2">
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              1 Child: $
+              {
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  .value?.firstChild
+              }
+              /h
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              2 Child: $
+              {
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  .value?.secChild
+              }
+              /h
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              3 Child: $
+              {
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  .value?.thirdChild
+              }
+              /h
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              4 Child: $
+              {
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  .value?.fourthChild
+              }
+              /h
+            </li>
+            <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
+              5 Child Or More: $
+              {
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  .value?.fiveOrMoreChild
+              }
+              /h
+            </li>
+          </ul>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Reviews
+          </p>
           {user?.reviews && user?.reviews.length > 0 ? (
-            <div>
-              <div className="flex gap-4">
-                <div>
-                  <p className="font-bold text-4xl text-center Quicksand">
-                    {user?.averageRating}
-                  </p>
-                  <Ra points={user?.averageRating} size={8} />
-                  <p style={{ fontSize: 8 }}>{user?.reviews.length} Reviews</p>
+            <div className="mt-4">
+              <div className="flex flex-col items-center md:flex-row justify-between gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="space-y-2 text-center sm:text-left">
+                    <p className="Livvic-Bold text-3xl md:text-4xl">
+                      {user?.averageRating}
+                    </p>
+                    <Ra points={user?.averageRating} size={20} />
+                    <p className="Livvic-SemiBold text-sm">
+                      {user?.reviews.length} Reviews
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    {ratingPercentages.map(({ num, pro }, i) => (
+                      <Prog key={i} num={num} pro={pro} color={"#029E76"} />
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <Prog num={5} pro={100} color={"#029E76"} />
-                  <Prog num={4} pro={70} color={"#029E76"} />
-                  <Prog num={3} pro={60} color={"#FEA500"} />
-                  <Prog num={2} pro={40} color={"#FF5269"} />
-                  <Prog num={1} pro={30} color={"#FF5269"} />
+                <div className="flex self-center md:self-end gap-2 md:gap-4 justify-center">
+                  <div
+                    onClick={scrollLeft}
+                    className="p-2 rounded-full border border-[#EEEEEE] cursor-pointer hover:bg-gray-50"
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+                  </div>
+                  <div
+                    onClick={scrollRight}
+                    className="p-2 rounded-full border border-[#EEEEEE] cursor-pointer hover:bg-gray-50"
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+                  </div>
                 </div>
               </div>
-
-              <div className="mt-10 pr-10 max-h-48 overflow-auto">
-                {user?.reviews?.map((v, i) => (
-                  <Reviews
-                    size={8}
-                    points={v?.rating}
-                    para={v?.msg}
-                    name={v?.userId?.name}
-                    img={v?.userId?.imageUrl}
-                    hr={i !== user?.reviews.length - 1} // Only add <hr> if it's not the last item
-                  />
-                ))}
+              <div className="flex justify-center md:justify-start">
+                <div
+                  ref={scrollRef}
+                  className="mt-6 md:mt-10 flex flex-nowrap gap-3 md:gap-4 overflow-x-hidden scroll-smooth snap-x snap-mandatory overflow-y-hidden"
+                >
+                  {user?.reviews?.map((v, i) => (
+                    <Reviews
+                      key={i}
+                      size={13.5}
+                      points={v?.rating}
+                      para={v?.msg}
+                      name={v?.userId?.name}
+                      img={v?.userId?.imageUrl}
+                      hr={i !== user?.reviews.length - 1}
+                      created={v?.createdAt} // Only add <hr> if it's not the last item
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
-            <p>No reviews available</p>
+            <p className="text-sm md:text-base">No reviews available</p>
           )}
-        </div>
-
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl h-40 width-2div">
-          <p className="mb-2 font-bold text-2xl">Verified Info</p>
-          <div className="flex">
-            <p className="w-52 font-semibold text-lg Quicksand">Phone Number</p>
-            {user.phoneNo ? <CheckOutlined /> : <CloseOutlined />}
-          </div>
-
-          <div className="flex">
-            <p className="w-52 font-semibold text-lg Quicksand">National ID</p>
-            {user?.verified?.nationalIDVer == "true" ? (
-              <CheckOutlined />
-            ) : (
-              <CloseOutlined />
-            )}
-          </div>
-
-          <div className="flex">
-            <p className="w-52 font-semibold text-lg Quicksand">Email</p>
-            {user?.verified?.emailVer ? <CheckOutlined /> : <CloseOutlined />}
-          </div>
         </div>
       </div>
     </div>

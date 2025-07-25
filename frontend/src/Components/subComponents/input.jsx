@@ -2,7 +2,15 @@ import { Form, Input, Select, Row, Col, Radio } from "antd";
 import { toCamelCase } from "./toCamelStr";
 
 const { Option } = Select;
-export function InputDa({ name, val, req, type, placeholder, defaultValue }) {
+export function InputDa({
+  name,
+  val,
+  req,
+  type,
+  placeholder,
+  defaultValue,
+  labelText = "",
+}) {
   const rules = [
     {
       required: req ? false : true,
@@ -19,16 +27,25 @@ export function InputDa({ name, val, req, type, placeholder, defaultValue }) {
   }
   return (
     <div>
-      <div>
-        <p className="mb-2 text-xl capitalize Classico">{name}</p>
-        <Form.Item name={val ? val : toCamelCase(name)} rules={rules}>
+      <div className="relative w-full">
+        <Form.Item
+          style={{ margin: 0, padding: 0 }}
+          name={val ? val : toCamelCase(name)}
+          rules={rules}
+          initialValue={defaultValue}
+        >
           <Input
-            defaultValue={defaultValue}
             type={type}
             placeholder={placeholder}
-            className="py-4 border-none rounded-3xl input-width"
+            className="peer border text-primary border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </Form.Item>
+        <label
+          htmlFor={name}
+          className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+        >
+          {labelText}
+        </label>
       </div>
     </div>
   );
@@ -36,10 +53,24 @@ export function InputDa({ name, val, req, type, placeholder, defaultValue }) {
 
 export function InputPassword() {
   return (
-    <div>
-      <div className="flex flex-wrap justify-center gap-x-6">
-        <div>
-          <p className="mb-2 text-xl capitalize Classico">Password</p>
+    <div className="flex flex-col items-center gap-y-6 w-full">
+      <div className="w-full mt-6">
+        {/* <div className="relative w-full">
+              <Form.Item style={{ margin: 0, padding: 0 }} name="email">
+                <Input
+                  type="email"
+                  className="peer border text-primary border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Email"
+                />
+                <label
+                  htmlFor="fullName"
+                  className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+                >
+                  Your Email
+                </label>
+              </Form.Item>
+            </div> */}
+        <div className="relative w-full">
           <Form.Item
             name="password"
             rules={[
@@ -55,13 +86,19 @@ export function InputPassword() {
             hasFeedback
           >
             <Input.Password
-              placeholder="Enter you password"
-              className="py-4 border-none rounded-3xl input-width"
+              className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full  placeholder-transparent focus:outline-none "
+              placeholder="Enter your password"
             />
           </Form.Item>
+          <label
+            htmlFor="password"
+            className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+          >
+            Password
+          </label>
         </div>
-        <div>
-          <p className="mb-2 text-xl capitalize Classico">Confirm Password</p>
+
+        <div className="relative w-full">
           <Form.Item
             name="confirm"
             dependencies={["password"]}
@@ -82,10 +119,16 @@ export function InputPassword() {
             ]}
           >
             <Input.Password
+              className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full  placeholder-transparent focus:outline-none"
               placeholder="Enter password again"
-              className="py-4 border-none rounded-3xl input-width"
             />
           </Form.Item>
+          <label
+            htmlFor="confirm password"
+            className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+          >
+            Confirm Password
+          </label>
         </div>
       </div>
     </div>
@@ -115,10 +158,9 @@ export function InputDOB() {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 101 }, (_, i) => currentYear - i);
   return (
-    <div>
-      <p className="mb-2 text-xl capitalize Classico">Date of Birth</p>
+    <div className="relative">
       <Form.Item required>
-        <div className="grid lg:grid-cols-3  gap-2">
+        <div className="grid grid-cols-3 gap-2 px-4 pt-7 pb-2  border border-[#EEEEEE] rounded-[10px]">
           <Col>
             <Form.Item
               name="month"
@@ -167,25 +209,36 @@ export function InputDOB() {
           </Col>
         </div>
       </Form.Item>
+      <label
+        htmlFor="fullName"
+        className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+      >
+        Date of birth
+      </label>
     </div>
   );
 }
 
 export function InputRadio({ name, val, value, onRadioChange }) {
-  // // console.log(name, val, value)
+  const isChecked = value === val;
+
   return (
     <div
-      className="bg-white px-4 py-4 rounded-3xl input-width"
+      className="bg-white px-4 py-4 rounded-[10px] input-width cursor-pointer shadow-soft"
       onClick={() => onRadioChange(val)}
     >
-      <div className="flex justify-between">
-        <p>{name}</p>
-        <Radio checked={value === val}></Radio>{" "}
-        {/* Radio will check based on whether value matches the passed val */}
+      <div className="flex justify-between items-center">
+        <p className="Livvic-SemiBold text-sm">{name}</p>
+        <div
+          className={`w-5 h-5 rounded-full border-4 transition-colors duration-200 ${
+            isChecked ? "border-[#AEC4FF]" : "border-[#EEEEEE]"
+          }`}
+        />
       </div>
     </div>
   );
 }
+
 export function SelectComponent({
   opt,
   selectedValue,
@@ -193,46 +246,85 @@ export function SelectComponent({
   placeholder,
 }) {
   return (
-    <div>
-      <p className="mb-2 text-xl capitalize Classico">{placeholder}</p>
+    // <div>
+    //   <p className="mb-2 text-xl capitalize Classico">{placeholder}</p>
+    //   <Select
+    //     className="custom-select h-12" // Apply custom class here
+    //     value={selectedValue}
+    //     placeholder={placeholder}
+    //     onChange={onSelectChange}
+    //     dropdownClassName="custom-dropdown" // Add custom dropdown styles if needed
+    //   >
+    //     {opt.map((opt) => (
+    //       <Option key={opt} value={opt}>
+    //         {opt}
+    //       </Option>
+    //     ))}
+    //   </Select>
+    <div className="relative w-72">
       <Select
-        className="custom-select h-12" // Apply custom class here
         value={selectedValue}
-        placeholder={placeholder}
+        bordered={false}
         onChange={onSelectChange}
-        dropdownClassName="custom-dropdown" // Add custom dropdown styles if needed
+        className="peer w-full pt-6 pb-2 px-2 border border-[#EEEEEE] rounded-[10px]"
+        style={{
+          height: "64px",
+        }}
+        placeholder={placeholder}
       >
         {opt.map((opt) => (
-          <Option key={opt} value={opt}>
-            {opt}
-          </Option>
+          <Select.Option key={opt} value={opt}>
+            <span className="Livvic-SemiBold text-sm text-primary">{opt}</span>
+          </Select.Option>
         ))}
       </Select>
+      <label className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10">
+        {placeholder}
+      </label>
     </div>
   );
 }
 
-export function InputTextArea({ name, req, placeholder, head, rows, grid }) {
+export function InputTextArea({
+  name,
+  req,
+  placeholder,
+  head,
+  rows,
+  grid,
+  labelText,
+}) {
   return (
     <div>
-      <p className="mb-2 text-xl Classico input-text line1-20">{head}</p>
-      <Form.Item
-        name={head ? toCamelCase(head) : toCamelCase(name)}
-        rules={[
-          {
-            required: req ? true : false,
-            message: "",
-          },
-        ]}
-      >
-        <Input.TextArea
-          placeholder={placeholder}
-          rows={rows ? rows : 6}
-          className={`py-4 border-none rounded-3xl ${
-            !grid && "input-width"
-          } no-resize`}
-        />
-      </Form.Item>
+      <div className="relative w-full">
+        <Form.Item
+          style={{ margin: 0, padding: 0 }}
+          name={name} // ✅ always use explicit `name`
+          rules={[
+            {
+              required: req ? true : false,
+              message: "",
+            },
+          ]}
+        >
+          <Input.TextArea
+            placeholder={placeholder}
+            rows={rows || 6}
+            className={`peer border text-primary border-[#EEEEEE] rounded-[10px] px-4 pt-8 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary ${
+              !grid && "input-width"
+            } no-resize`}
+          />
+        </Form.Item>
+        {labelText && (
+          <label
+            htmlFor={name}
+            className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+          >
+            {labelText}
+          </label>
+        )}
+      </div>
     </div>
   );
 }
+

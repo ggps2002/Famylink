@@ -51,7 +51,7 @@ export default function Nanny() {
       {!isChildRoute && (
         <div className="padding-navbar1 Quicksand">
           <div className="lg:flex flex-wrap justify-between items-center">
-            <p className="lg:my-8 mb-8 font-semibold text-4xl">Find your Perfect Job</p>
+            {/* <p className="lg:my-8 mb-8 font-semibold text-4xl">Find your Perfect Job</p> */}
             {/* <div className="flex justify-end max-lg:mb-4">
               <CustomSelect
                 placeholder="Recently Posted"

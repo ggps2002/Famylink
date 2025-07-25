@@ -1,5 +1,23 @@
+import { Heart } from "lucide-react";
+import { HeartFilled } from "@ant-design/icons";
 import star from "../../assets/images/star.png";
 import Avatar from "react-avatar";
+import { addOrRemoveFavouriteThunk } from "../Redux/favouriteSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { refreshTokenThunk } from "../Redux/authSlice";
+import { NavLink } from "react-router-dom";
+
+function formatJobTitle(jobType) {
+  if (!jobType) return "Job Needed";
+
+  const withSpaces = jobType.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const capitalized = withSpaces
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return `${capitalized} Needed`;
+}
+
 
 export default function ProfileCard({
   nanny,
@@ -94,6 +112,7 @@ export default function ProfileCard({
 }
 
 export function ProfileCard1({
+  id,
   nanny,
   img,
   name,
@@ -105,85 +124,64 @@ export function ProfileCard1({
   imageNot,
   jobType,
   zipCode,
+  created,
+  fav
 }) {
+  const { user, accessToken } = useSelector((state) => state.auth);
+  const isFavorited = user.favourite?.includes(id);
+  const dispatch = useDispatch();
+  const favourite = async () => {
+    await dispatch(
+      addOrRemoveFavouriteThunk({ favouriteUserId: id, accessToken })
+    );
+    await dispatch(refreshTokenThunk());
+  };
   return (
-    <div
-      className={`flex flex-col justify-between shadow-custom-shadow border-[#D6DDEB] w-full ${
-        imageNot ? `` : `lg:min-h-96`
-      } bg-white p-4 rounded-2xl Quicksand `}
+    <NavLink
+      to={fav ? `/nanny/jobDescription/${id}` : `jobDescription/${id}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
-      <div className="max-lg:w-full">
-        <div className="flex items-start justify-between">
-          {img ? (
-            <img
-              className="bg-black rounded-full w-20 h-20 object-contain"
-              src={img}
-              alt="img"
-            />
-          ) : (
-            !imageNot && (
-              <Avatar
-                className="rounded-full text-black"
-                size="80"
-                color={"#38AEE3"}
-                name={name
-                  ?.split(" ") // Split by space
-                  .slice(0, 2) // Take first 1–2 words
-                  .join(" ")}
-              />
-            )
-          )}
-          {imageNot && <p className=" font-bold text-2xl">{jobType}</p>}
-          {time && (
-            <p
-              style={{ background: "#E7F6FD" }}
-              className="px-2 py-1 rounded-lg text-sm"
-            >
-              {time}
-            </p>
-          )}
-        </div>
-        <p className="my-2 font-bold text-2xl">{name}</p>
-      </div>
-
-      <p className="font-medium flex-1">
-        {intro.length > 300 ? `${intro.substring(0, 300)}...` : intro}
-      </p>
-
-      <div>
-        {loc && (
-          <p className="my-2 font-semibold text-lg">{loc?.format_location}</p>
-        )}
-        {/* {zipCode && (
-          <p className="my-2 font-semibold text-lg">Zip Code: {zipCode}</p>
-        )} */}
-        <div className="flex justify-between items-center">
-          {!nanny ? (
-            <p>
-              {hr && (
-                <span className="font-semibold">
-                  {hr} <span className="font-normal">kids</span>
-                </span>
-              )}
-            </p>
-          ) : (
-            <p>
-              <span className="font-semibold">
-                {hr} <span className="font-normal">kids</span>
-              </span>
-            </p>
-          )}
-          {Number(rate) > 0 && (
+      <div className="onboarding-box">
+        <div className="flex justify-between">
+          <h1 className="onboarding-subHead">{formatJobTitle(jobType)}</h1>
+          <div className="flex gap-2 items-center">
+            {time && (
+              <p
+                style={{ background: "#E7F6FD" }}
+                className="Livvic-SemiBold text-primary bg-primary px-4 py-2 rounded-full text-sm"
+              >
+                {time}
+              </p>
+            )}
             <div
-              style={{ background: "#FBF5DE" }}
-              className="flex gap-x-1 px-2 rounded-xl"
+              className="p-2 h-9 flex justify-center items-center w-9 rounded-full bg-[#F6F3EE]"
+              onClick={(e) => {
+                e.stopPropagation(); // ← prevent bubbling to NavLink
+                e.preventDefault(); // ← prevent navigation if inside a <NavLink>
+                favourite();
+              }}
             >
-              <p>{rate}</p>
-              <img className="object-contain" src={star} alt="star" />
+              {isFavorited ? (
+                <HeartFilled className="text-tertiary" />
+              ) : (
+                <Heart className="text-tertiary" height={20} width={20} />
+              )}
             </div>
-          )}
+          </div>
         </div>
+        <p className="Livvic text-md text-secondary mt-4">
+          {intro.length > 300 ? `${intro.substring(0, 300)}...` : intro}
+        </p>
+        <p className="onboarding-form-label mt-4 flex flex-wrap items-center gap-x-2 text-[#555555]">
+          <span className="onboarding-form-label underline">{name}</span>
+          <span className="onboarding-form-label">|</span>
+          <span className="onboarding-form-label">{hr} kids</span>
+          <span className="onboarding-form-label">|</span>
+          <span className="onboarding-form-label">{loc?.format_location}</span>
+          <span className="onboarding-form-label">|</span>
+          <span className="onboarding-form-label">{created}</span>
+        </p>
       </div>
-    </div>
+    </NavLink>
   );
 }

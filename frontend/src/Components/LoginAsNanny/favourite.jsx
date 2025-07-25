@@ -11,6 +11,7 @@ export default function Favorites({ nanny }) {
   const { isLoading, data, pagination } = useSelector(
     (state) => state.favouriteData
   );
+  const { user, accessToken } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4; // Set your desired limit per page
@@ -36,28 +37,34 @@ export default function Favorites({ nanny }) {
     return <Loader />; // You can customize this loading message or spinner
   }
   return (
-    <div className="padding-navbar1 Quicksand">
-      <p className="font-bold lg:text-3xl text-2xl mb-8 Classico">Favorite</p>
+    <div className="padding-navbar1 min-h-screen max-w-7xl mx-auto">
+      <p className="Livvic-SemiBold text-3xl mb-6">Favorite</p>
       <div className="flex max-lg:flex-col gap-6">
         {data.length > 0 ? (
-          data.map((v) => (
-            <NavLink
-              key={v._id}
-              to={`/nanny/jobDescription/${v._id}`}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              <ProfileCard1
-                img={v.user.imageUrl}
-                name={v.user.name}
-                intro={v?.[v?.jobType]?.jobDescription || 'N/A'}
-                loc={v?.user.location}
-                hr={v?.user?.noOfChildren?.length}
-                rate={v?.user?.averageRating}
-                time={v?.[v?.jobType]?.preferredSchedule}
-                nanny={true}
-              />
-            </NavLink>
-          ))
+          data.map((v) => {
+            console.log("Data", data);
+            return (
+              <NavLink
+                key={v._id}
+                to={`/nanny/jobDescription/${v._id}`}
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                <ProfileCard1
+                  id={v._id}
+                  img={v.user.imageUrl}
+                  name={v.user.name}
+                  intro={v?.[v?.jobType]?.jobDescription || "N/A"}
+                  loc={v?.user.location}
+                  hr={v?.user?.noOfChildren?.length}
+                  rate={v?.user?.averageRating}
+                  time={v?.[v?.jobType]?.preferredSchedule}
+                  nanny={true}
+                  jobType={v?.jobType}
+                  fav={true}
+                />
+              </NavLink>
+            );
+          })
         ) : (
           <div className="col-span-full text-start text-gray-600">
             <p>
@@ -77,7 +84,7 @@ export default function Favorites({ nanny }) {
             Showing {startItem}-{endItem} from {total}
           </p>
           <Pagination
-            className="font-bold pagination-custom Quicksand"
+            className="font-bold Quicksand"
             current={currentPage}
             pageSize={pageSize}
             total={total}

@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "../Button";
 import ZipInput from "../ZipInput";
+import { NavLink } from "react-router-dom";
 
 function Hero() {
   return (
@@ -14,8 +15,18 @@ function Hero() {
             </p>
           </div>
           <div className="flex gap-2 sm:gap-4">
-            <Button btnText="Log in" className="text-white text-sm sm:text-base"/>
-            <Button btnText={"Join now"} className="bg-[#AEC4FF] text-sm sm:text-base"/>
+            <NavLink to="login">
+              <Button
+                btnText="Log in"
+                className="text-white text-sm sm:text-base"
+              />
+            </NavLink>
+            <NavLink to="joinNow">
+              <Button
+                btnText={"Join now"}
+                className="bg-[#AEC4FF] text-sm sm:text-base"
+              />
+            </NavLink>
           </div>
         </div>
       </header>
@@ -34,7 +45,10 @@ function Hero() {
           <div className="flex-1 sm:flex-initial">
             <ZipInput />
           </div>
-          <Button btnText="Find a Match" className="bg-[#AEC4FF] w-full sm:w-auto"/>
+          <Button
+            btnText="Find a Match"
+            className="bg-[#AEC4FF] w-full sm:w-auto"
+          />
         </div>
       </div>
     </div>

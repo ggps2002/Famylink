@@ -353,11 +353,7 @@ export default function Tutor() {
     <>
       <div className="padd-res">
         <div
-          className="rounded-3xl py-4 px-4"
-          style={{
-            background:
-              "linear-gradient(174.22deg, #FFCADA 0%, rgba(246, 238, 233, 0.4) 69.71%, #FFF1F5 100%)",
-          }}
+          className="py-4 px-4"
         >
           <div className="flex justify-end">
             <button onClick={handleGoBack}>

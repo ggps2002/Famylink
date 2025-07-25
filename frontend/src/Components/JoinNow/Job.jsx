@@ -13,10 +13,11 @@ import { clearFamilyExp, updateFamilyExp } from "../Redux/setFamilyExp";
 import HireStep1 from "../subComponents/Hire/step1";
 import { InputDa, InputTextArea } from "../subComponents/input";
 import Step5 from "../subComponents/Hire/step5";
-import { cleanFormData1 } from "../subComponents/toCamelStr";
+import { cleanFormData1, toCamelCase } from "../subComponents/toCamelStr";
 import { addOrUpdateAdditionalInfo, updateForm } from "../Redux/formValue";
 import { registerThunk, userCheckThunk } from "../Redux/authSlice";
 import { api } from "../../Config/api";
+import CustomButton from "../../NewComponents/Button";
 
 export default function Job() {
   const [step, setStep] = useState(0);
@@ -104,29 +105,37 @@ export default function Job() {
   const step1Data = [
     {
       name: "Nanny",
+      subText: "Full-time, part-time, or live-in care.",
     },
     {
       name: "Babysitter",
+      subText: "Occasional or regular childcare.",
     },
     {
       name: "Private Educator/Tutor",
       val: "privateEducator",
+      subText: "Full-time, part-time, or live-in care.",
     },
     {
       name: "Specialized Caregiver",
+      subText: "Occasional or regular childcare.",
     },
     {
       name: "Sports Coach",
       val: "sportsCoaches",
+      subText: "Full-time, part-time, or live-in care.",
     },
     {
       name: "Music Instructor",
+      subText: "Occasional or regular childcare.",
     },
     {
       name: "Swim Instructor",
+      subText: "Full-time, part-time, or live-in care.",
     },
     {
       name: "House Manager",
+      subText: "Occasional or regular childcare.",
     },
   ];
   const step2Data = [
@@ -384,6 +393,7 @@ export default function Job() {
         .validateFields()
         .then((values) => {
           // Check if the 'option' field has at least one selection
+          console.log(values);
           if (Array.isArray(values.option) && values.option.length > 0) {
             // If form is valid, submit it and move to the next step
             const allOptions = [
@@ -439,8 +449,11 @@ export default function Job() {
           }
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
 
       // setStep(prevStep => prevStep + 1);
@@ -1300,7 +1313,12 @@ export default function Job() {
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"What type of position are you interested in?"}
+            head={
+              <>
+                What type of position are
+                <br /> you interested in?
+              </>
+            }
             data={step1Data}
             checkBox={true}
             inputName={"Type here..."}
@@ -1311,21 +1329,21 @@ export default function Job() {
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"What type of childcare are you interested in providing?"}
             data={step2Data}
             inputName={"Type here..."}
             textAreaHead={"Other Preferences"}
-            subHead1={"What type of childcare are you interested in providing?"}
+            // subHead1={"What type of childcare are you interested in providing?"}
           />
         );
       case 2:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"What is your availability?"}
             data={step3Data}
             inputNot={true}
-            subHead1={"What is your availability?"}
+            // subHead1={"What is your availability?"}
           />
         );
       case 3:
@@ -1333,71 +1351,73 @@ export default function Job() {
           <HireStep3
             daysState={daysState}
             setDaysState={updateDaysState}
-            head={"Nanny/Babysitter"}
-            subHead={"Specific availability"}
+            head={"Specific availability"}
+            // subHead={"Specific availability"}
           />
         );
       case 4:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"What age groups are you most experienced with?"}
             data={step18Data}
             checkBox={true}
             inputNot={true}
-            subHead1={"What age groups are you most experienced with?"}
+            // subHead1={"What age groups are you most experienced with?"}
           />
         );
       case 5:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Are you willing and able to cook?"}
             data={step4Data}
             inputNot={true}
-            subHead1={"Are you willing and able to cook?"}
+            // subHead1={"Are you willing and able to cook?"}
           />
         );
       case 6:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Will you cook for:"}
             data={step5Data}
             inputNot={true}
-            subHead1={"Will you cook for:"}
+            // subHead1={"Will you cook for:"}
           />
         );
       case 7:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Can you help with housekeeping?"}
             data={step6Data}
             inputNot={true}
-            subHead1={"Can you help with housekeeping?"}
+            // subHead1={"Can you help with housekeeping?"}
           />
         );
       case 8:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Are you willing to help with housekeeping for"}
             data={step7Data}
             inputNot={true}
-            subHead1={"Are you willing to help with housekeeping for"}
+            // subHead1={"Are you willing to help with housekeeping for"}
           />
         );
       case 9:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
-            data={step8Data}
-            checkBox={true}
-            subHead1={
+            head={
               "Do you have any formal training or certifications in childcare?"
             }
+            data={step8Data}
+            checkBox={true}
+            // subHead1={
+            //   "Do you have any formal training or certifications in childcare?"
+            // }
             inputName={"Type here..."}
             textAreaHead={"Please Specify"}
           />
@@ -1414,22 +1434,26 @@ export default function Job() {
             inputText={true}
             inputName={"Type here..."}
             textAreaHead={"Please Specify"}
-            head={"Nanny/Babysitter"}
-            subHead={
+            head={
               "What is your approach to discipline and child behavior management?"
             }
+            // subHead={
+            //   "What is your approach to discipline and child behavior management?"
+            // }
           />
         );
       case 11:
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
-            data={step9Data}
-            checkBox={true}
-            subHead1={
+            head={
               "Are you willing to use your personal car to transport the children if needed?"
             }
+            data={step9Data}
+            checkBox={true}
+            // subHead1={
+            //   "Are you willing to use your personal car to transport the children if needed?"
+            // }
             inputNot={true}
           />
         );
@@ -1437,12 +1461,12 @@ export default function Job() {
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Are you comfortable watching children when they are sick?"}
             data={step10Data}
             checkBox={true}
-            subHead1={
-              "Are you comfortable watching children when they are sick?"
-            }
+            // subHead1={
+            //   "Are you comfortable watching children when they are sick?"
+            // }
             inputNot={true}
           />
         );
@@ -1450,11 +1474,13 @@ export default function Job() {
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
-            data={step11Data}
-            subHead1={
+            head={
               "Can you provide references from previous childcare positions?"
             }
+            data={step11Data}
+            // subHead1={
+            //   "Can you provide references from previous childcare positions?"
+            // }
             inputNot={true}
           />
         );
@@ -1462,20 +1488,21 @@ export default function Job() {
         return (
           <HireStep4
             formRef={jobStepFormRef}
-            head={"Nanny/Babysitter"}
+            head={"Are you willing to undergo a background check?"}
             data={step12Data}
-            subHead1={"Are you willing to undergo a background check?"}
+            // subHead1={"Are you willing to undergo a background check?"}
             inputNot={true}
           />
         );
       case 15:
         return (
           <div>
-            <p className="mt-5 mb-10 px-3 font-normal text-center leading-6 Classico offer-font">
-              Experience Entry for Nanny and Babysitter
+            <p className="mt-5 mb-10 px-3 text-center Livvic-Bold text-primary text-4xl">
+              Please describe any additional skills or
+              <br /> services you can provide
             </p>
             <div className="flex justify-center">
-              <p className="w-96 text-xl Classico">
+              <p className="w-96 text-lg text-[#666666] Livvic-Medium">
                 Your experience helps families trust and choose the right nanny
                 for their children. Please add details of your previous roles,
                 responsibilities, and the skills you've gained. This will help
@@ -1565,7 +1592,12 @@ export default function Job() {
           </div>
         );
       case 18:
-        return <HireStep1 formRef={jobStepFormRef} head={"Welcome Nanny"} />;
+        return (
+          <HireStep1
+            formRef={jobStepFormRef}
+            head={"Welcome, Let’s create your account"}
+          />
+        );
       case 19:
         return (
           <HireStep4
@@ -1612,7 +1644,7 @@ export default function Job() {
       case 23:
         return (
           <div>
-            <p className="px-3 width-form font-normal text-center Classico offer-font">
+            <p className="px-3 width-form text-center Livvic-Bold text-4xl">
               What are your salary expectations?
             </p>
             <Step5 formRef={jobStepFormRef} />
@@ -1652,21 +1684,23 @@ export default function Job() {
       case 27:
         return (
           <div>
-            <p className="px-3 width-form font-normal text-center Classico offer-font">
+            <p className="px-3 width-form text-center Livvic-Bold text-4xl">
               Please describe any additional skills or hobbies that might be
               relevant to your job application.
             </p>
             <div
-              style={{ marginBottom: "-40px" }}
+              // style={{ marginBottom: "-40px" }}
               className="flex justify-center mt-10"
             >
               <Form form={form} name="validateOnly" autoComplete="off">
                 <InputTextArea
                   rows={8}
+                  name={toCamelCase("Describe Skills")}
                   head={"Describe Skills"}
                   placeholder={
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                   }
+                  labelText={"Additional skills"}
                 />
               </Form>
             </div>
@@ -1697,23 +1731,12 @@ export default function Job() {
   };
   return (
     <div className="padd-res">
-      <div
-        className="px-4 py-4 rounded-3xl"
-        style={{
-          background: "linear-gradient(to bottom, #FFEE8C, #fdf8ea)",
-        }}
-      >
-        <div className="flex justify-end gap-4">
-          {/* <p>Skip for now</p> */}
-          <button onClick={handleGoBack}>
-            <CloseOutlined style={{ fontSize: "24px" }} />
-          </button>
-        </div>
+      <div className="px-4 py-4 rounded-3xl">
         <div className="flex justify-center">
-          <div>
+          <div className="flex flex-col justify-between min-h-[calc(100vh-6rem)]">
             {renderStepContent()}
 
-            <div className="my-10 text-center">
+            <div className="my-10 text-center space-x-4">
               {/* {
                                 step === 11 && nannyShare === 'no' ? (
                                     <button
@@ -1734,58 +1757,85 @@ export default function Job() {
                                 )
                             } */}
               {step != 15 && step != 16 && step != 17 && (
-                <button
-                  style={{ border: "1px solid #38AEE3" }}
-                  className="bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base"
-                  onClick={handleBack}
-                >
-                  Back
-                </button>
+                // <button
+                //   style={{ border: "1px solid #38AEE3" }}
+                //   className="bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base"
+                //   onClick={handleBack}
+                // >
+                //   Back
+                // </button>
+                <CustomButton
+                  action={() => handleBack()}
+                  btnText={"Back"}
+                  className="border border-[#FFFFFF] text-[#555555]"
+                />
               )}
               {step == 17 && (
-                <button
-                  style={{
-                    background: "white",
-                    color: "#38AEE3",
-                    border: "1px solid #38AEE3",
-                  }}
-                  className="bg-white mx-6 my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
-                  onClick={handleBack}
-                >
-                  Add Family Experience
-                </button>
+                // <button
+                //   style={{
+                //     background: "white",
+                //     color: "#38AEE3",
+                //     border: "1px solid #38AEE3",
+                //   }}
+                //   className="bg-white mx-6 my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
+                //   onClick={handleBack}
+                // >
+                //   Add Family Experience
+                // </button>
+                   <CustomButton
+                  action={() => handleBack()}
+                  btnText={"Add Family Experience"}
+                  className="border border-[#FFFFFF] text-[#555555]"
+                />
               )}
 
               {step != 15 && step != 16 && (
-                <Button
-                  style={{ background: "#85D1F1" }}
-                  loading={loading}
-                  className="mx-auto my-0 px-6 py-5 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
-                  onClick={handleNext}
-                >
-                  Continue
-                </Button>
+                // <Button
+                //   style={{ background: "#85D1F1" }}
+                //   loading={loading}
+                //   className="mx-auto my-0 px-6 py-5 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
+                //   onClick={handleNext}
+                // >
+                //   Continue
+                // </Button>
+                <CustomButton
+                  btnText={"Continue"}
+                  action={() => handleNext()}
+                  className="bg-[#AEC4FF] text-primary"
+                  isLoading={loading}
+                  loadingBtnText="Loading..."
+                />
               )}
               {(step == 15 || step == 16) && (
-                <button
-                  style={{ background: "#85D1F1" }}
-                  className="mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
-                  onClick={handleNext}
-                >
-                  Add Family Experience
-                </button>
+                // <button
+                //   style={{ background: "#85D1F1" }}
+                //   className="mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out margin-2 hover:scale-110"
+                //   onClick={handleNext}
+                // >
+                //   Add Family Experience
+                // </button>
+                <CustomButton
+                  btnText={"Add Family Experience"}
+                  action={() => handleNext()}
+                  className="bg-[#AEC4FF] text-primary"
+                />
               )}
               {step != 0 &&
                 step != 4 &&
                 step != 18 &&
                 step != 19 &&
                 step != 27 && (
-                  <p
-                    onClick={() => setStep((prevStep) => prevStep + 1)}
-                    className="pt-2 text-blue-400 cursor-pointer transition-colors duration-300 hover:text-blue-600"
-                  >
-                    Skip for now
-                  </p>
+                  // <p
+                  //   onClick={() => setStep((prevStep) => prevStep + 1)}
+                  //   className="pt-2 text-blue-400 cursor-pointer transition-colors duration-300 hover:text-blue-600"
+                  // >
+                  //   Skip for now
+                  // </p>
+                  <CustomButton
+                    action={() => setStep((prevStep) => prevStep + 1)}
+                    btnText={"Skip for now"}
+                    className="border border-[#FFFFFF] text-[#555555]"
+                  />
                 )}
             </div>
           </div>

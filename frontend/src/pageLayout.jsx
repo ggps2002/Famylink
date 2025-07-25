@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./Components/Navbars/navbar";
 import Navbar1 from "./Components/Navbars/navbar1";
-import Footer from "./Components/Footer/footer";
+import Footer from "./NewComponents/Footer/Footer";
 import { api } from "./Config/api";
 import { refreshTokenThunk, logout } from "./Components/Redux/authSlice";
 
@@ -162,7 +162,7 @@ export default function PageLayout() {
     specificDaysAndTime &&
     Object.keys(specificDaysAndTime).length > 0 &&
     salaryExp &&
-    Object.values(salaryExp).every((val) => val && val.trim() !== "") &&
+    Object.values(salaryExp).every((val) => val && val !== "") &&
     Array.isArray(ageGroupsExp) &&
     ageGroupsExp.length > 0;
 
@@ -172,12 +172,12 @@ export default function PageLayout() {
         <>
           {/* <Header /> */}
           <Outlet />
-          {/* <Footer /> */}
+          <Footer />
         </>
       )}
       {pathsWithHeader.some((p) => isDynamicPath(pathname, p)) && (
         <>
-          <Header join={true} />
+          {!pathname.startsWith("/login") && <Header join={true} />}
           <Outlet />
         </>
       )}
@@ -209,9 +209,13 @@ export default function PageLayout() {
         <>
           <Navbar1 nanny={true} />
           <div
-            className={`bg-gradient-to-b from-[#FFEE8C] to-[#fdf8ea] py-8 ${
+            className={`${
               pathname.startsWith("/nanny/pricing") ||
-              (pathname.startsWith("/nanny/message") && "py-0")
+              pathname.startsWith("/nanny/message") ||
+              pathname.startsWith("/nanny/setting") ||
+              pathname.startsWith("/family/setting")
+                ? "py-0"
+                : "py-8"
             }`}
           >
             {pathname !== "/nanny/community" &&
@@ -221,14 +225,14 @@ export default function PageLayout() {
               pathname !== "/nanny/message" &&
               !isProfileComplete && (
                 <NavLink to={"/nanny/edit"}>
-                  <p className="padding-navbar1 max-lg:pb-4 cursor-pointer animate-glow transition-colors duration-300 hover:text-gray-500 lg:text-2xl font-bold  tracking-wide inline-block">
+                  {/* <p className="padding-navbar1 max-lg:pb-4 cursor-pointer animate-glow transition-colors duration-300 hover:text-gray-500 lg:text-2xl font-bold  tracking-wide inline-block">
                     Setting Up Profile
-                  </p>
+                  </p> */}
                 </NavLink>
               )}
             <Outlet />
           </div>
-          <Footer />
+          {!pathname.startsWith("/nanny/message") && <Footer />}
         </>
       )}
     </>

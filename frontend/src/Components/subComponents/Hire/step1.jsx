@@ -121,9 +121,20 @@ export default function HireStep1({ formRef, head, comm }) {
 
   return (
     <div>
-      <p className="px-3 width-form font-normal text-center uppercase Classico offer-font">
-        {head}
+      <p className="px-3 width-form text-center text-primary Livvic-Bold text-4xl">
+        <p className="px-3 width-form text-center text-primary Livvic-Bold text-4xl">
+          {head.includes("Let’s create") || head.includes("Let's create") ? (
+            <>
+              {head.split(/Let[’']s create/)[0]}Let’s create
+              <br />
+              {head.split(/Let[’']s create/)[1]}
+            </>
+          ) : (
+            head
+          )}
+        </p>
       </p>
+
       <div className="flex justify-center my-10">
         <Form
           form={form}
@@ -131,122 +142,143 @@ export default function HireStep1({ formRef, head, comm }) {
           autoComplete="off"
           onFinish={onFinish}
         >
-          <div className="flex flex-wrap justify-center gap-x-6">
+          <div className="flex flex-col w-full gap-y-6">
+            {/* Full Name */}
             <InputDa
               type={"text"}
               name={"name"}
               placeholder={"Enter your name"}
+              labelText={"Full name"}
             />
+
             <InputDa
               type={"email"}
               name={"email"}
               placeholder={"Enter your email"}
+               labelText={"Your email"}
             />
           </div>
-
-          <div>
+          
+          <div className="w-full">
+            {" "}
             <InputPassword />
           </div>
 
-          <div className="flex flex-wrap justify-start gap-x-6">
+          <div className="gap-y-6">
             <InputDOB />
 
             <div>
-              <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
-              <Form.Item
-                name="zipCode"
-                rules={[{ required: true, message: "ZIP code is required" }]}
-              >
-                <Spin spinning={loading} size="small">
-                  <Input
-                    name="zipCode"
-                    placeholder="Enter ZIP code"
-                    value={zipCode}
-                    onChange={(e) => {
-                      const zip = e.target.value;
-                      setZipCode(zip);
-                      form.setFieldsValue({ zipCode: zip });
-                    }}
-                    onBlur={(e) => handleZipValidation(e.target.value.trim())}
-                    className="p-4 border-none rounded-3xl input-width"
-                    maxLength={10}
-                  />
-                </Spin>
-              </Form.Item>
+              <div className="relative">
+                <Form.Item
+                  name="zipCode"
+                  rules={[{ required: true, message: "ZIP code is required" }]}
+                >
+                  <Spin spinning={loading} size="small">
+                    <Input
+                      name="zipCode"
+                      placeholder="Enter ZIP code"
+                      value={zipCode}
+                      onChange={(e) => {
+                        const zip = e.target.value;
+                        setZipCode(zip);
+                        form.setFieldsValue({ zipCode: zip });
+                      }}
+                      onBlur={(e) => handleZipValidation(e.target.value.trim())}
+                      className="px-4 pt-7 pb-2 border border-[#EEEEEE] rounded-[10px]"
+                      maxLength={10}
+                    />
+                  </Spin>
+                </Form.Item>
+                <label
+                  htmlFor="zip code"
+                  className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                >
+                  Zip Code
+                </label>
+              </div>
             </div>
           </div>
 
           <div>
-            <p className="mb-2 text-xl capitalize Classico">Address</p>
-            <Form.Item
-              name="location"
-              rules={[{ required: true, message: "Address is required" }]}
-            >
-              <Spin spinning={loading} size="small">
-                <Autocomplete
-                  className="input-width"
-                  apiKey={import.meta.env.VITE_GOOGLE_KEY}
-                  style={{
-                    width: "100%",
-                    borderRadius: "1.5rem",
-                    padding: "0.75rem",
-                    border: "1px solid #D6DDEB",
-                  }}
-                  value={location || ""}
-                  onPlaceSelected={(place) => {
-                    const address = place.formatted_address;
-                    const components = place?.address_components || [];
+            {/* Address */}
+            <div className="relative">
+              <Form.Item
+                name="location"
+                // initialValue={user?.location}
+                rules={[{ required: true, message: "Address is required" }]}
+              >
+                <Spin spinning={loading} size="small">
+                  <Autocomplete
+                    className="peer"
+                    apiKey={import.meta.env.VITE_GOOGLE_KEY}
+                    style={{
+                      width: "100%",
+                      borderRadius: "10px",
+                      padding: "1.7rem 0.75rem 0.75rem 0.75rem",
+                      border: "1px solid #D6DDEB",
+                    }}
+                    value={location || ""}
+                    onPlaceSelected={(place) => {
+                      const address = place.formatted_address;
+                      const components = place?.address_components || [];
 
-                    const zipObj = components.find((comp) =>
-                      comp.types.includes("postal_code")
-                    );
-                    const zip = zipObj ? zipObj.long_name : "";
+                      const zipObj = components.find((comp) =>
+                        comp.types.includes("postal_code")
+                      );
+                      const zip = zipObj ? zipObj.long_name : "";
 
-                    if (!zip) {
-                      fireToastMessage({
-                        message:
-                          "Zip code is not available for the selected location. Please try another location.",
-                        type: "error",
+                      if (!zip) {
+                        fireToastMessage({
+                          message:
+                            "Zip code is not available for the selected location. Please try another location.",
+                          type: "error",
+                        });
+                        setLocation("");
+                        setZipCode("");
+                        form.setFieldsValue({ location: "", zipCode: "" });
+                        return;
+                      }
+
+                      const lat = place?.geometry?.location?.lat();
+                      const lng = place?.geometry?.location?.lng();
+
+                      if (lat && lng) {
+                        setCoordinates({
+                          lat,
+                          lng,
+                          formatted: address,
+                        });
+                      }
+
+                      setLocation(address);
+                      setZipCode(zip);
+
+                      form.setFieldsValue({
+                        location: address,
+                        zipCode: zip,
                       });
-                      setLocation("");
-                      setZipCode("");
-                      form.setFieldsValue({ location: "", zipCode: "" });
-                      return;
-                    }
 
-                    const lat = place?.geometry?.location?.lat();
-                    const lng = place?.geometry?.location?.lng();
-
-                    if (lat && lng) {
-                      setCoordinates({
-                        lat,
-                        lng,
-                        formatted: address,
-                      });
-                    }
-
-                    setLocation(address);
-                    setZipCode(zip);
-
-                    form.setFieldsValue({
-                      location: address,
-                      zipCode: zip,
-                    });
-
-                    setLoading(false);
-                  }}
-                  onChange={(e) => {
-                    setLocation(e.target.value);
-                    setLoading(e.target.value.length > 0);
-                  }}
-                  onBlur={() => setLoading(false)}
-                  options={{
-                    types: ["address"],
-                    componentRestrictions: { country: "us" },
-                  }}
-                />
-              </Spin>
-            </Form.Item>
+                      setLoading(false);
+                    }}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      setLoading(e.target.value.length > 0);
+                    }}
+                    onBlur={() => setLoading(false)}
+                    options={{
+                      types: ["address"],
+                      componentRestrictions: { country: "us" },
+                    }}
+                  />
+                </Spin>
+              </Form.Item>
+              <label
+                htmlFor="address"
+                className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+              >
+                Address
+              </label>
+            </div>
           </div>
 
           <div className="flex flex-wrap justify-start gap-x-6">
