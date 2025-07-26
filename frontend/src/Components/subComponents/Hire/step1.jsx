@@ -32,7 +32,9 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
       console.log("Name:", decoded.name);
       console.log("Picture:", decoded.picture);
       try {
-        const res = dispatch(userCheckThunk({ email: decoded.email }));
+        const res = await dispatch(
+          userCheckThunk({ email: decoded.email })
+        ).unwrap();
 
         if (res.message === "Email already exists") {
           fireToastMessage({
@@ -42,14 +44,7 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
           return;
         }
 
-        // Prefill and move forward
-        // form.setFieldsValue({
-        //   name:decoded.name,
-        //   email:decoded.email,
-        //   imageUrl: decoded.picture,
-        //   registeredVia: "google",
-        // });
-
+        // Prefill and proceed
         formRef.current = {
           name: decoded.name,
           email: decoded.email,
@@ -61,22 +56,18 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
           updateForm({
             name: decoded.name,
             email: decoded.email,
-            imageUrl: decoded.picture, // optional
+            imageUrl: decoded.picture,
             registeredVia: "google",
           })
         );
 
-        // form.setFieldsValue({
-        //   name: decoded.name,
-        //   email: decoded.email,
-        //   imageUrl: decoded.picture,
-        //   registeredVia: "google",
-        // });
-
         handleNext();
       } catch (err) {
         console.error("Google signup callback error:", err);
-        // alert("There was an error signing up with Google.");
+        fireToastMessage({
+          message: err.message || "Something went wrong",
+          type: "error",
+        });
       }
     };
 
