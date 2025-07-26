@@ -608,7 +608,7 @@ export default function Job() {
         .validateFields()
         .then((values) => {
           // Check if the preferredLocation (or whatever your field is) has been set
-          if (Array.isArray(values.option) && values.option?.length > 0) {
+          if (Array.isArray(values?.option) && values.option?.length > 0) {
             // If form is valid, submit it and move to the next step
 
             dispatch(
@@ -626,8 +626,9 @@ export default function Job() {
           }
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          const firstError =
+            errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed";
+          fireToastMessage({ type: "error", message: firstError });
         });
     } else if (step == 5) {
       jobStepFormRef.current
@@ -1597,7 +1598,7 @@ export default function Job() {
             formRef={jobStepFormRef}
             head={"Welcome, Let’s create your account"}
             type="Nanny"
-         handleNext={() => setStep((prev) => prev + 1)}
+            handleNext={() => setStep((prev) => prev + 1)}
           />
         );
       case 19:
@@ -1784,7 +1785,7 @@ export default function Job() {
                 // >
                 //   Add Family Experience
                 // </button>
-                   <CustomButton
+                <CustomButton
                   action={() => handleBack()}
                   btnText={"Add Family Experience"}
                   className="border border-[#FFFFFF] text-[#555555]"

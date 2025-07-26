@@ -59,8 +59,7 @@ export default function HireStep4({
       <p className="Livvic-Bold text-4xl text-primary px-3 text-center width-form">
         {head}
       </p>
-      {subHead && <p className="text-center text-2xl mt-4">{subHead}</p>}
-      {subHead2 && <p className="text-center my-5 text-wrap">{subHead2}</p>}
+
 
       <div
         className={`flex items-center flex-col justify-center ${
@@ -68,13 +67,7 @@ export default function HireStep4({
         }`}
       >
         <div>
-          <p
-            className={`Classico text-xl !text-wrap mb-2 ${
-              data.length > 3 ? "" : "input-text"
-            }`}
-          >
-            {subHead1}
-          </p>
+         
 
           <Form form={form} name="validateOnly" autoComplete="off">
             {checkBox ? (
