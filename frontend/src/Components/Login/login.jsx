@@ -63,9 +63,6 @@ export default function Login() {
               <div className="bg-white flex gap-2 justify-center Livvic-SemiBold text-sm text-primary w-96 py-4 mb-4 rounded-[6px]">
                 <img src="/google-icon.svg" alt="google" /> Continue with Google
               </div>
-              <div className="bg-white flex gap-2 justify-center Livvic-SemiBold text-sm text-primary w-96 mb-4 rounded-[6px] py-4">
-                <img src="/apple-icon.svg" alt="apple" /> Continue with Apple
-              </div>
               <div className="flex items-center my-3 w-96">
                 <div className="flex-grow h-px bg-gray-300" />
                 <span className="mx-4 text-sm text-gray-500">or</span>
