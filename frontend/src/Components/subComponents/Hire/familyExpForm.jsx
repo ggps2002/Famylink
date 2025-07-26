@@ -9,9 +9,9 @@ const FamilyExperienceForm = ({ formRef }) => {
     const [selectedValue2, setSelectedValue2] = useState(null);
     const [selectedValue3, setSelectedValue3] = useState(null);
 
-
     const [selected, setSelected] = useState([]);
     const [selected1, setSelected1] = useState([]);
+    
     const options = [
         { label: 'Newborn (0-6 months)', value: 'newborn' },
         { label: 'Infants (6-12 months)', value: 'infants' },
@@ -58,174 +58,223 @@ const FamilyExperienceForm = ({ formRef }) => {
 
     const handleSelectAll = () => {
         if (selected.length === options.length) {
-            // Unselect all if all are already selected
             setSelected([]);
         } else {
-            // Select all
             setSelected(options.map((option) => option.value));
         }
     };
 
     const handleSelectAll1 = () => {
         if (selected1.length === options1.length) {
-            // Unselect all if all are already selected
             setSelected1([]);
         } else {
-            // Select all
             setSelected1(options1.map((option) => option.value));
         }
     };
-    const opt = ['Full-time Nanny', 'Part-time Nanny', 'Occasional Babysitting', 'Live-in Nanny', 'Date Nights']
-    const opt1 = ['Less than 6 months', '6 months to 1 year', '1 to 2 years', 'More than 2 years']
-    const opt2 = ['1 child', '2 children', '3 children', '4 or more children']
+
+    const opt = ['Full-time Nanny', 'Part-time Nanny', 'Occasional Babysitting', 'Live-in Nanny', 'Date Nights'];
+    const opt1 = ['Less than 6 months', '6 months to 1 year', '1 to 2 years', 'More than 2 years'];
+    const opt2 = ['1 child', '2 children', '3 children', '4 or more children'];
 
     useEffect(() => {
         if (formRef) {
             formRef.current = form;
         }
     }, [formRef, form]);
+
     return (
-        <div>
-            <p className='text-primary Livvic-Bold text-4xl text-center mb-6 width-form mx-auto'>
-                Experience Entry for Nanny and Babysitter
-            </p>
-            <div>
-
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8">
+                <p className='text-primary Livvic-Bold text-2xl sm:text-3xl lg:text-4xl text-center mb-6 width-form mx-auto'>
+                    Experience Entry for Nanny and Babysitter
+                </p>
             </div>
-            <Form className='flex justify-center' layout="vertical" form={form}>
-                <div>
-                    <div className='flex flex-wrap justify-center gap-x-12 margin-2 '>
-                        <InputDa name={'Family Identifier/Nickname (Optional)'} labelText='Family name'/>
-                        <Form.Item name='typeOfCareProvided' rules={[{ required: true, message: '' }]}>
-                            <SelectComponent opt={opt} onSelectChange={(value) => {
-                                setSelectedValue(value); // Update local state
-                                form.setFieldsValue({ typeOfCareProvided: value }); // Sync with form
-                            }} selectedValue={selectedValue} placeholder={'Type of Care Provided'} />
-                        </Form.Item>
 
-                    </div>
-                    <div className='flex flex-wrap justify-center gap-x-12 gap-y-6'>
-                        <Form.Item name='durationOfEmployment' rules={[{ required: true, message: '' }]}>
-                            <SelectComponent opt={opt1} onSelectChange={(value) => {
-                                setSelectedValue1(value); // Update local state
-                                form.setFieldsValue({ durationOfEmployment: value }); // Sync with form
-                            }} selectedValue={selectedValue1} placeholder={'Duration of Employment'} />
-                        </Form.Item>
-                        <Form.Item name='numberOfChildren' rules={[{ required: true, message: '' }]}>
-                            <SelectComponent opt={opt2} onSelectChange={(value) => {
-                                setSelectedValue2(value); // Update local state
-                                form.setFieldsValue({ numberOfChildren: value }); // Sync with form
-                            }} selectedValue={selectedValue2} placeholder={'Number of Children'} />
-                        </Form.Item>
-                    </div>
-                    <div>
-                        <p className="Classico text-xl mt-6 capitalize">Age Group(s) of Children</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
-                            {options.map((option) => (
-                                <Form.Item
-                                    key={option.value}
-                                    style={{ padding: 0, margin: 0 }}
-                                    name={'ageGroupsOfChildren'}
-                                >
-                                    <div
-                                        className={`cursor-pointer p-4 rounded-3xl border-2 ${selected.includes(option.value)
-                                            ? 'bg-white border-blue-400'
-                                            : 'bg-white border-white'
-                                            } hover:bg-white-500 transition-colors`}
-                                        onClick={() => handleSelect(option.value)}
-                                    >
-                                        {option.label}
-                                    </div>
-                                </Form.Item>
-                            ))}
-
-                            {/* "Specify" input in the second row */}
-                            <div className="col-span-1 sm:col-span-2 lg:col-span-2">
-                                <Form.Item
-                                    style={{ padding: 0, margin: 0 }}
-                                    name={'ageGroupsOfChildrenSpecify'}
-                                    rules={[{ required: false, message: '' }]}
-                                >
-                                    <Input
-                                        type="text"
-                                        placeholder="Specify"
-                                        className="w-full py-4 rounded-3xl border-none"
-                                    />
-                                </Form.Item>
-                            </div>
+            <div className="bg-white rounded-2xl p-6 sm:p-8">
+                <Form layout="vertical" form={form} className="w-full">
+                {/* First Row - Family Name and Type of Care */}
+                <div className="rounded-xl p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Basic Information</h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="w-full">
+                            <InputDa name={'Family Identifier/Nickname (Optional)'} labelText='Family name'/>
                         </div>
-
-
-
-                        <p className=" text-gray-500 text-end cursor-pointer" onClick={handleSelectAll}>
-                            {selected.length === options.length
-                                ? 'Deselect All'
-                                : 'Select all that apply'}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="Classico text-xl capitalize">Key Responsibilities</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
-                            {options1.map((option, index) => (
-                                <Form.Item
-                                    key={option.value}
-                                    style={{ padding: 0, margin: 0 }}
-                                    name={'keyResponsibilities'}
-                                >
-                                    <div
-                                        key={option.value}
-                                        className={`cursor-pointer p-4 rounded-3xl border-2 ${selected1.includes(option.value)
-                                            ? 'bg-white border-blue-400'
-                                            : 'bg-white border-white'
-                                            } hover:bg-white-500 transition-colors`}
-                                        onClick={() => handleSelect1(option.value)}
-                                    >
-                                        {option.label}
-                                    </div>
-                                </Form.Item>
-                            ))}
-                            <Form.Item
-                                style={{ padding: 0, margin: 0 }}
-                                name={'keyResponsibilitiesSpecify'}
-                                rules={[
-                                    {
-                                        required: false,
-                                        message: '',
-                                    },
-                                ]}
-                                className="col-span-2 sm:col-span-2 lg:col-span-1"
-                            >
-                                <Input
-                                    type="text"
-                                    placeholder="Specify"
-                                    className="py-4 rounded-3xl border-none"
+                        <div className="w-full">
+                            <Form.Item name='typeOfCareProvided' rules={[{ required: true, message: '' }]}>
+                                <SelectComponent 
+                                    opt={opt} 
+                                    onSelectChange={(value) => {
+                                        setSelectedValue(value);
+                                        form.setFieldsValue({ typeOfCareProvided: value });
+                                    }} 
+                                    selectedValue={selectedValue} 
+                                    placeholder={'Type of Care Provided'} 
                                 />
                             </Form.Item>
                         </div>
-                        <p className=" text-gray-500 text-end cursor-pointer" onClick={handleSelectAll1}>
-                            {selected1.length === options1.length
-                                ? 'Deselect All'
-                                : 'Select all that apply'}
-                        </p>
-                    </div>
-                    <div className='flex flex-wrap justify-center gap-x-12 margin-2 '>
-                        <InputDa name={'Location of Work'} placeholder={'Type Location'} />
-                        <InputDa name={'Reason for Leaving (Optional)'} req={true} placeholder={'Write Reason for Leaving'} />
-                    </div>
-                    <div >
-                        <Form.Item name='referencesAvailable' rules={[{ required: true, message: '' }]}>
-                            <SelectComponent opt={['Yes', 'No']} onSelectChange={(value) => {
-                                setSelectedValue3(value); // Update local state
-                                form.setFieldsValue({ referencesAvailable: value }); // Sync with form
-                            }} selectedValue={selectedValue3} placeholder={'References Available'} />
-                        </Form.Item>
                     </div>
                 </div>
 
-            </Form >
-        </div >
+                {/* Second Row - Duration and Number of Children */}
+                <div className="rounded-xl p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Employment Details</h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="w-full">
+                            <Form.Item name='durationOfEmployment' rules={[{ required: true, message: '' }]}>
+                                <SelectComponent 
+                                    opt={opt1} 
+                                    onSelectChange={(value) => {
+                                        setSelectedValue1(value);
+                                        form.setFieldsValue({ durationOfEmployment: value });
+                                    }} 
+                                    selectedValue={selectedValue1} 
+                                    placeholder={'Duration of Employment'} 
+                                />
+                            </Form.Item>
+                        </div>
+                        <div className="w-full">
+                            <Form.Item name='numberOfChildren' rules={[{ required: true, message: '' }]}>
+                                <SelectComponent 
+                                    opt={opt2} 
+                                    onSelectChange={(value) => {
+                                        setSelectedValue2(value);
+                                        form.setFieldsValue({ numberOfChildren: value });
+                                    }} 
+                                    selectedValue={selectedValue2} 
+                                    placeholder={'Number of Children'} 
+                                />
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
 
+                {/* Age Groups Section */}
+                <div className="rounded-xl p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Age Group(s) of Children</h3>
+                    <p className="Classico text-xl mt-2 mb-4 capitalize">Select all age groups that apply</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+                        {options.map((option) => (
+                            <Form.Item
+                                key={option.value}
+                                style={{ padding: 0, margin: 0 }}
+                                name={'ageGroupsOfChildren'}
+                            >
+                                <div
+                                    className={`cursor-pointer p-4 rounded-xl border-2 text-center shadow-sm transition-all duration-200 ${
+                                        selected.includes(option.value)
+                                            ? 'bg-blue-50 border-blue-400 shadow-md transform scale-105'
+                                            : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
+                                    } hover:transform hover:scale-105`}
+                                    onClick={() => handleSelect(option.value)}
+                                >
+                                    {option.label}
+                                </div>
+                            </Form.Item>
+                        ))}
+                    </div>
+
+                    {/* Specify input for Age Groups */}
+                    <div className="mb-4">
+                        <Form.Item
+                            style={{ padding: 0, margin: 0 }}
+                            name={'ageGroupsOfChildrenSpecify'}
+                            rules={[{ required: false, message: '' }]}
+                        >
+                            <Input
+                                type="text"
+                                placeholder="Specify other age groups..."
+                                className="w-full max-w-md py-4 rounded-xl border-2 border-gray-200 focus:border-blue-400 shadow-sm"
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <p className="text-gray-500 text-end cursor-pointer hover:text-blue-500 transition-colors" onClick={handleSelectAll}>
+                        {selected.length === options.length
+                            ? 'Deselect All'
+                            : 'Select all that apply'}
+                    </p>
+                </div>
+
+                {/* Key Responsibilities Section */}
+                <div className=" rounded-xl p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Key Responsibilities</h3>
+                    <p className="Classico text-xl mb-4 capitalize">Select all responsibilities that applied</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+                        {options1.map((option) => (
+                            <Form.Item
+                                key={option.value}
+                                style={{ padding: 0, margin: 0 }}
+                                name={'keyResponsibilities'}
+                            >
+                                <div
+                                    className={`cursor-pointer p-4 rounded-xl border-2 text-center shadow-sm transition-all duration-200 ${
+                                        selected1.includes(option.value)
+                                            ? 'bg-blue-50 border-blue-400 shadow-md transform scale-105'
+                                            : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
+                                    } hover:transform hover:scale-105`}
+                                    onClick={() => handleSelect1(option.value)}
+                                >
+                                    {option.label}
+                                </div>
+                            </Form.Item>
+                        ))}
+                    </div>
+
+                    {/* Specify input for Key Responsibilities */}
+                    <div className="mb-4">
+                        <Form.Item
+                            style={{ padding: 0, margin: 0 }}
+                            name={'keyResponsibilitiesSpecify'}
+                            rules={[{ required: false, message: '' }]}
+                        >
+                            <Input
+                                type="text"
+                                placeholder="Specify other responsibilities..."
+                                className="w-full max-w-md py-4 rounded-xl border-2 border-gray-200 focus:border-blue-400 shadow-sm"
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <p className="text-gray-500 text-end cursor-pointer hover:text-blue-500 transition-colors" onClick={handleSelectAll1}>
+                        {selected1.length === options1.length
+                            ? 'Deselect All'
+                            : 'Select all that apply'}
+                    </p>
+                </div>
+
+                {/* Location and Reason for Leaving */}
+                <div className="rounded-xl p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Additional Information</h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="w-full">
+                            <InputDa name={'Location of Work'} placeholder={'Type Location'} />
+                        </div>
+                        <div className="w-full">
+                            <InputDa name={'Reason for Leaving (Optional)'} req={true} placeholder={'Write Reason for Leaving'} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* References Available */}
+                <div className="rounded-xl p-6 mb-6">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">References</h3>
+                    <div className="w-full max-w-md">
+                        <Form.Item name='referencesAvailable' rules={[{ required: true, message: '' }]}>
+                            <SelectComponent 
+                                opt={['Yes', 'No']} 
+                                onSelectChange={(value) => {
+                                    setSelectedValue3(value);
+                                    form.setFieldsValue({ referencesAvailable: value });
+                                }} 
+                                selectedValue={selectedValue3} 
+                                placeholder={'References Available'} 
+                            />
+                        </Form.Item>
+                    </div>
+                </div>
+            </Form>
+            </div>
+        </div>
     );
 };
 

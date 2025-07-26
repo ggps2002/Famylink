@@ -9,6 +9,7 @@ import { addOrUpdateAdditionalInfo } from "../../../../Redux/formValue";
 import { Input } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { registerThunk } from "../../../../Redux/authSlice";
+import Button from "../../../../../NewComponents/Button";
 
 export default function HouseManager() {
     const [step, setStep] = useState(1);
@@ -306,40 +307,40 @@ export default function HouseManager() {
     return (
         <>
             <div className="padd-res">
-                <div className="rounded-3xl py-4 px-4" style={{ background: 'linear-gradient(174.22deg, rgba(158, 220, 225, 0.5) 0%, rgba(218, 244, 239, 0.4) 69.71%, rgba(239, 236, 230, 0.3) 100%)' }}>
+                <div className="rounded-3xl py-4 px-4" >
                     <div className='flex justify-end'>
                         <button onClick={handleGoBack}>
                             <CloseOutlined style={{ fontSize: "24px" }} />
                         </button>
                     </div>
-                    <div className='flex justify-center'>
-                        <div>
-                            {renderStepContent()}
+                          <div className="flex justify-center">
+            <div className="flex flex-col justify-between">
+              {renderStepContent()}
 
-                            <div className='text-center my-5'>
-
-                                {step > 1 &&
-                                    <button
-                                        style={{ border: "1px solid #38AEE3" }}
-                                        className='py-2 bg-white rounded-full my-0 mx-6 px-10 text-base font-normal mt-2'
-                                        onClick={handleBack}
-                                    >
-                                        Back
-                                    </button>
-                                }
-                                {step <= 7 &&
-
-                                    <button
-                                        style={{ background: "#85D1F1" }}
-                                        className='py-2 rounded-full my-0 mx-auto px-6 text-base font-normal transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-700 '
-                                        onClick={handleNext}
-                                    >
-                                        Continue
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    </div>
+              <div className="my-5 flex gap-4 justify-center">
+                {step > 1 && (
+                  // <button
+                  //   style={{ border: "1px solid #38AEE3" }}
+                  //   className="py-2 bg-white rounded-full my-0 mx-6 px-10 text-base font-normal mt-2"
+                  //   onClick={handleBack}
+                  // >
+                  //   Back
+                  // </button>
+                   <Button btnText={"Back"} action={() => handleBack()} className="border border-[#EEEEEE]"/>
+                )}
+                {step < 10 && (
+                  // <button
+                  //   style={{ background: "#85D1F1" }}
+                  //   className="py-2 rounded-full my-0 mx-auto px-6 text-base font-normal transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-700 "
+                  //   onClick={handleNext}
+                  // >
+                  //   Continue
+                  // </button>
+                  <Button btnText={"Continue"} action={() => handleNext()} className="bg-blue-300"/>
+                )}
+              </div>
+            </div>
+          </div>
                 </div>
             </div>
         </>

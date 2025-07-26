@@ -8,6 +8,7 @@ import { fireToastMessage } from "../../../../toastContainer";
 import { addOrUpdateAdditionalInfo } from "../../../Redux/formValue";
 import { cleanFormData1 } from "../../toCamelStr";
 import { registerThunk } from "../../../Redux/authSlice";
+import Button from "../../../../NewComponents/Button";
 
 export default function Tutor() {
   const [step, setStep] = useState(1);
@@ -80,8 +81,11 @@ export default function Tutor() {
           // setStep((prevStep) => prevStep + 1);
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     }
     if (step == 2) {
@@ -104,9 +108,12 @@ export default function Tutor() {
 
           // setStep((prevStep) => prevStep + 1);
         })
-        .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+         .catch((errorInfo) => {
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     }
     if (step == 3) {
@@ -130,8 +137,11 @@ export default function Tutor() {
           // setStep((prevStep) => prevStep + 1);
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     }
     if (step == 4) {
@@ -155,8 +165,11 @@ export default function Tutor() {
           // setStep((prevStep) => prevStep + 1);
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     }
     if (step == 5) {
@@ -198,8 +211,11 @@ export default function Tutor() {
           }
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     }
   };
@@ -288,7 +304,7 @@ export default function Tutor() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Private Educator/Tutor"}
+            head={"What subjects are you qualified to teach?"}
             data={step1Data}
             checkBox={true}
             subHead1={"What subjects are you qualified to teach?"}
@@ -300,7 +316,7 @@ export default function Tutor() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Private Educator/Tutor"}
+            head={"At what educational levels do you have experience teaching?"}
             data={step2Data}
             checkBox={true}
             inputNot={true}
@@ -313,7 +329,7 @@ export default function Tutor() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Private Educator/Tutor"}
+            head={"What is your teaching style?"}
             data={step3Data}
             checkBox={true}
             subHead1={"What is your teaching style?"}
@@ -324,7 +340,7 @@ export default function Tutor() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Private Educator/Tutor"}
+            head={"What is your availability for tutoring sessions?"}
             data={step4Data}
             checkBox={true}
             subHead1={"What is your availability for tutoring sessions?"}
@@ -335,7 +351,7 @@ export default function Tutor() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Private Educator/Tutor"}
+            head={"Are you able to offer remote learning sessions, or do you only teach in person?"}
             data={step5Data}
             checkBox={true}
             subHead1={
@@ -351,37 +367,34 @@ export default function Tutor() {
   };
   return (
     <>
-      <div className="padd-res">
+      <div className="padd-res min-h-[calc(100vh-6rem)]">
         <div
           className="py-4 px-4"
         >
-          <div className="flex justify-end">
-            <button onClick={handleGoBack}>
-              <CloseOutlined style={{ fontSize: "24px" }} />
-            </button>
-          </div>
           <div className="flex justify-center">
-            <div>
+            <div className="flex flex-col justify-between">
               {renderStepContent()}
 
-              <div className="text-center my-5">
+              <div className="my-5 flex gap-4 justify-center">
                 {step > 1 && (
-                  <button
-                    style={{ border: "1px solid #38AEE3" }}
-                    className="py-2 bg-white rounded-full my-0 mx-6 px-10 text-base font-normal mt-2"
-                    onClick={handleBack}
-                  >
-                    Back
-                  </button>
+                  // <button
+                  //   style={{ border: "1px solid #38AEE3" }}
+                  //   className="py-2 bg-white rounded-full my-0 mx-6 px-10 text-base font-normal mt-2"
+                  //   onClick={handleBack}
+                  // >
+                  //   Back
+                  // </button>
+                   <Button btnText={"Back"} action={() => handleBack()} className="border border-[#EEEEEE]"/>
                 )}
                 {step < 10 && (
-                  <button
-                    style={{ background: "#85D1F1" }}
-                    className="py-2 rounded-full my-0 mx-auto px-6 text-base font-normal transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-700 "
-                    onClick={handleNext}
-                  >
-                    Continue
-                  </button>
+                  // <button
+                  //   style={{ background: "#85D1F1" }}
+                  //   className="py-2 rounded-full my-0 mx-auto px-6 text-base font-normal transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-700 "
+                  //   onClick={handleNext}
+                  // >
+                  //   Continue
+                  // </button>
+                  <Button btnText={"Continue"} action={() => handleNext()} className="bg-blue-300"/>
                 )}
               </div>
             </div>
