@@ -59,7 +59,9 @@ const userSchema = new Schema({
   },
   password: {
     type: Schema.Types.String,
-    required: true,
+  },
+  registeredVia: {
+    type: Schema.Types.String,
   },
   dob: {
     type: Schema.Types.Date,

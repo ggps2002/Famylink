@@ -6,17 +6,90 @@ import { fireToastMessage } from "../../../toastContainer";
 import document from "../../../assets/documents/Terms_and_Conditions.pdf";
 import PropTypes from "prop-types";
 import Autocomplete from "react-google-autocomplete";
+import { api } from "../../../Config/api";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { userCheckThunk } from "../../Redux/authSlice";
+import { updateForm } from "../../Redux/formValue";
 
-export default function HireStep1({ formRef, head, comm }) {
+export default function HireStep1({ formRef, head, comm, handleNext }) {
   const { Option } = Select;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [zipCode, setZipCode] = useState("");
   const [location, setLocation] = useState("");
   const [coordinates, setCoordinates] = useState(null);
+  const dispatch = useDispatch();
+
+  function LoginPage() {
+    const onSuccess = async (credentialResponse) => {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log("Decoded Token", decoded);
+
+      // You can now access:
+      console.log("Email:", decoded.email);
+      console.log("Name:", decoded.name);
+      console.log("Picture:", decoded.picture);
+      try {
+        const res = dispatch(userCheckThunk({ email: decoded.email }));
+
+        if (res.message === "Email already exists") {
+          fireToastMessage({
+            message: res.message,
+            type: "error",
+          });
+          return;
+        }
+
+        // Prefill and move forward
+        // form.setFieldsValue({
+        //   name:decoded.name,
+        //   email:decoded.email,
+        //   imageUrl: decoded.picture,
+        //   registeredVia: "google",
+        // });
+
+        formRef.current = {
+          name: decoded.name,
+          email: decoded.email,
+          imageUrl: decoded.picture,
+          registeredVia: "google",
+        };
+
+        dispatch(
+          updateForm({
+            name: decoded.name,
+            email: decoded.email,
+            imageUrl: decoded.picture, // optional
+            registeredVia: "google",
+          })
+        );
+
+        // form.setFieldsValue({
+        //   name: decoded.name,
+        //   email: decoded.email,
+        //   imageUrl: decoded.picture,
+        //   registeredVia: "google",
+        // });
+
+        handleNext();
+      } catch (err) {
+        console.error("Google signup callback error:", err);
+        // alert("There was an error signing up with Google.");
+      }
+    };
+
+    const onError = () => {
+      console.log("Login Failed");
+    };
+
+    return <GoogleLogin onSuccess={onSuccess} onError={onError} />;
+  }
 
   useEffect(() => {
     const getCurrentLocation = async () => {
+      console.log("formRef:", formRef.current);
       if (!location) {
         navigator.geolocation.getCurrentPosition(async (position) => {
           const { latitude, longitude } = position.coords;
@@ -121,6 +194,20 @@ export default function HireStep1({ formRef, head, comm }) {
 
   return (
     <div>
+      <div className="flex flex-col items-center">
+        {/* <div
+          className="flex gap-2 cursor-pointer bg-gray-100 justify-center Livvic-SemiBold text-sm text-primary w-96 py-4 mb-4 rounded-[6px]"
+          onClick={handleGoogleSignup}
+        >
+          <img src="/google-icon.svg" alt="google" /> Continue with Google
+        </div> */}
+        <LoginPage />
+        <div className="flex items-center my-3 w-96">
+          <div className="flex-grow h-px bg-gray-300" />
+          <span className="mx-4 text-sm text-gray-500">or</span>
+          <div className="flex-grow h-px bg-gray-300" />
+        </div>
+      </div>
       <p className="px-3 width-form text-center text-primary Livvic-Bold text-4xl">
         <p className="px-3 width-form text-center text-primary Livvic-Bold text-4xl">
           {head.includes("Let’s create") || head.includes("Let's create") ? (
@@ -155,10 +242,10 @@ export default function HireStep1({ formRef, head, comm }) {
               type={"email"}
               name={"email"}
               placeholder={"Enter your email"}
-               labelText={"Your email"}
+              labelText={"Your email"}
             />
           </div>
-          
+
           <div className="w-full">
             {" "}
             <InputPassword />

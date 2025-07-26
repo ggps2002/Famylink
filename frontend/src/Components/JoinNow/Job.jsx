@@ -1596,6 +1596,8 @@ export default function Job() {
           <HireStep1
             formRef={jobStepFormRef}
             head={"Welcome, Let’s create your account"}
+            type="Nanny"
+         handleNext={() => setStep((prev) => prev + 1)}
           />
         );
       case 19:

@@ -5,6 +5,9 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk } from "../Redux/authSlice";
 import { fireToastMessage } from "../../toastContainer";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -12,6 +15,42 @@ export default function Login() {
   const handleGoBack = () => {
     navigate(-1); // Navigate back in history
   };
+  function LoginPage() {
+    const onSuccess = async (credentialResponse) => {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log("Decoded Token", decoded);
+
+      // You can now access:
+      console.log("Email:", decoded.email);
+      console.log("Name:", decoded.name);
+      console.log("Picture:", decoded.picture);
+      try {
+        const { user, status } = dispatch(loginThunk({ email: decoded.email }));
+
+        if (status == 200) {
+          if (user.type == "Nanny") {
+            navigate("/nanny");
+          } else if (user.type == "Parents") {
+            navigate("/family");
+          } else {
+            fireToastMessage({
+              type: "error",
+              message: "This is not for admin",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Google signup callback error:", err);
+        // alert("There was an error signing up with Google.");
+      }
+    };
+
+    const onError = () => {
+      console.log("Login Failed");
+    };
+
+    return <GoogleLogin onSuccess={onSuccess} onError={onError} />;
+  }
   const handleSubmit = async (values) => {
     try {
       const { user, status } = await dispatch(loginThunk(values)).unwrap();
@@ -60,9 +99,7 @@ export default function Login() {
               Log in to your Account
             </p>
             <div className="flex flex-col items-center mt-10">
-              <div className="bg-white flex gap-2 justify-center Livvic-SemiBold text-sm text-primary w-96 py-4 mb-4 rounded-[6px]">
-                <img src="/google-icon.svg" alt="google" /> Continue with Google
-              </div>
+              <LoginPage />
               <div className="flex items-center my-3 w-96">
                 <div className="flex-grow h-px bg-gray-300" />
                 <span className="mx-4 text-sm text-gray-500">or</span>

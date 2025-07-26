@@ -94,11 +94,7 @@ export default function CommunitySign() {
     return (
         <div className='padd-res w-full'>
             <div
-                className='px-4 py-4 rounded-3xl'
-                style={{
-                    background:
-                        'linear-gradient(174.22deg, rgba(183, 214, 255, 0.5) 0%, rgba(229, 241, 255, 0.4) 69.71%, rgba(248, 249, 255, 0.3) 100%)'
-                }}
+                className='px-4 py-4'
             >
                 <div className='flex justify-end'>
                     <button onClick={handleGoBack}>
@@ -107,7 +103,7 @@ export default function CommunitySign() {
                 </div>
                 <div className=' flex justify-center'>
                     <div>
-                        <HireStep1 formRef={hireStep1FormRef} head={'Welcome to Community'} comm={true} />
+                        <HireStep1 formRef={hireStep1FormRef} head={'Welcome to Community'} comm={true}  handleNext={() => setStep((prev) => prev + 1)}/>
                         <div className='w-full flex justify-center gap-4 flex-wrap'>
                             <Button
                                 style={{ border: '1px solid #38AEE3' }}

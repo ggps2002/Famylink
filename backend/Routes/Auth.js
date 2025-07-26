@@ -99,67 +99,100 @@ router.post("/check-user", async (req, res) => {
   }
 });
 
+
+
 router.post("/register", async (req, res) => {
   try {
-    // Check if the email already exists before proceeding
-    console.log(req.body)
-    const existingUser = await User.findOne({
-      email: req.body.email,
-    });
+    const { email, name, password, registeredVia } = req.body;
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).send({
+      return res.status(400).json({
         status: 400,
         message: "Email already exists",
       });
     }
 
-    // Hash password
-    const password = await bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS);
 
-    // Capitalize the username
-    const name = capitalizeUsername(req.body.name);
+    // Capitalize name
+    const capitalizedName = capitalizeUsername(name);
 
-    const cleanedBody = { ...req.body };
 
-    if (!cleanedBody.location || typeof cleanedBody.location !== "object") {
-      delete cleanedBody.location;
+    if (registeredVia === "google") {
+      const userData = {
+        ...req.body,
+        name: capitalizedName,
+        verified: { emailVer: true },
+        ActiveAt: new Date(),
+      }
+
+      // Clean location if it's invalid or not an object
+      if (!userData.location || typeof userData.location !== "object") {
+        delete userData.location;
+      }
+
+      // Create and save user
+      const user = new User(userData);
+      await user.save();
+
+      // Optionally notify others only if 'type' is defined (Nanny or Parent)
+      if (user.type === "Nanny" || user.type === "Parents") {
+        await notifyOppositeUsers(user);
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: "User registered successfully",
+      });
     }
 
-    // Create the new user instance
-    const user = new User({
-      ...cleanedBody,
-      password,
-      name,
+    const userData = {
+      ...req.body,
+      name: capitalizedName,
       verified: false,
       ActiveAt: new Date(),
-    });
+    };
 
-    // Save the user
+    // Hash password only if provided
+    if (password && typeof password === "string") {
+      userData.password = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
+    }
+
+
+    // Clean location if it's invalid or not an object
+    if (!userData.location || typeof userData.location !== "object") {
+      delete userData.location;
+    }
+
+    // Create and save user
+    const user = new User(userData);
     await user.save();
 
-    await notifyOppositeUsers(user);
+    // Optionally notify others only if 'type' is defined (Nanny or Parent)
+    if (user.type === "Nanny" || user.type === "Parents") {
+      await notifyOppositeUsers(user);
+    }
 
-    // Return success response
-    return res.status(200).send({
+    return res.status(200).json({
       status: 200,
-      message: "User added successfully",
+      message: "User registered successfully",
     });
   } catch (err) {
-    // Handle duplicate email error (MongoDB error code 11000)
     if (err.code === 11000) {
-      return res.status(400).send({
+      return res.status(400).json({
         status: 400,
         message: "Email already exists",
       });
     }
 
-    // Return general error response
-    return res.status(500).send({
+    return res.status(500).json({
       status: 500,
       message: err.message,
     });
   }
 });
+
 
 async function notifyOppositeUsers(newUser) {
   try {
@@ -271,6 +304,30 @@ router.post("/login", async (req, res) => {
       user.reviews.length > 0
         ? (totalRating / user.reviews.length).toFixed(1)
         : 0;
+
+    if (user.registeredVia === "google") {
+      // Generate tokens
+      const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } =
+        await generateTokens(user._id.toString());
+
+      const {
+        online,
+        ActiveAt,
+        otp,
+        otpExpiry,
+        ...userDetails
+      } = user.toJSON();
+
+      userDetails.averageRating = averageRating;
+
+      return res.status(200).json({
+        user: userDetails,
+        accessToken,
+        refreshToken,
+        accessTokenExpiry,
+        refreshTokenExpiry,
+      }); // ✅ Add return here to prevent falling through
+    }
 
     // Verify if the provided password matches the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);

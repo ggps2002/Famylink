@@ -1621,7 +1621,7 @@ export default function HireForm() {
       case 1:
         return (
           <>
-            <HireStep1 formRef={hireStep1FormRef} head={'Welcome Parents'} />
+            <HireStep1 formRef={hireStep1FormRef} head={'Welcome Parents'} type="Parents" handleNext={() => setStep((prev) => prev + 1)}/>
           </>
           // Pass form reference to HireStep1
         )

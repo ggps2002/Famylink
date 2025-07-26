@@ -147,6 +147,7 @@ export default function NewHireForm() {
       hireStep2FormRef.current
         .validateFields()
         .then(async (values) => {
+          
           const hasAnyChildValue = Object.values(values).some(
             (val) => val !== undefined && val !== ""
           );
@@ -207,7 +208,7 @@ export default function NewHireForm() {
         <div className="flex justify-center">
           <div>
             {step === 1 && (
-              <HireStep1 formRef={hireStep1FormRef} head={"Welcome, Let’s create your account"} />
+              <HireStep1 formRef={hireStep1FormRef} head={"Welcome, Let’s create your account"}  type="Parents" handleNext={() => setStep((prev) => prev + 1)}/>
             )}
             {step === 2 && (
               <NannyNoStep2

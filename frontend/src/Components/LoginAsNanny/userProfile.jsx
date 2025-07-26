@@ -198,7 +198,7 @@ export default function Profile() {
             <div className="mt-2">
               <ul className="list-disc pl-4 md:pl-6 space-y-2">
                 {
-                  user.additionalInfo.find((info) => info.key === "additionalDetails").value?.option?.map((det, i) => (
+                  user.additionalInfo.find((info) => info.key === "additionalDetails")?.value?.option?.map((det, i) => (
   <li key={i} className="text-[#555555] Livvic-Medium text-sm md:text-base">
                   {det.charAt(0).toUpperCase() + det.slice(1, det.length - 1)}
                 </li>
@@ -270,21 +270,20 @@ export default function Profile() {
           <p className="Livvic text-sm md:text-md text-[#555555] mt-2">
             {
               user.additionalInfo.find((info) => info.key === "jobDescription")
-                .value
+                ?.value
             }
           </p>
           <hr className="my-4" />
           <p className="Livvic-SemiBold text-base md:text-lg text-primary">
             Work Experience -{" "}
             {
-              user.additionalInfo.find((info) => info.key === "experience")
-                .value?.option
+              user.additionalInfo.find((info) => info.key === "experience")?.value?.option
             }
           </p>
           <ul className="mt-2 space-y-2">
             {user.additionalInfo
               .find((info) => info.key === "ageGroupsExp")
-              ?.value.option.map((v, i) => (
+              ?.value?.option.map((v, i) => (
                 <p
                   key={i}
                   className="Livvic-Medium text-sm md:text-md text-[#555555]"
@@ -306,14 +305,13 @@ export default function Profile() {
               {
                 user.additionalInfo.find(
                   (info) => info.key === "avaiForWorking"
-                ).value?.option
+                )?.value?.option
               }
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               Start:{" "}
               {
-                user.additionalInfo.find((info) => info.key === "availability")
-                  .value?.option
+                user.additionalInfo.find((info) => info.key === "availability")?.value?.option
               }
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
@@ -337,40 +335,35 @@ export default function Profile() {
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               1 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")
-                  .value?.firstChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.firstChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               2 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")
-                  .value?.secChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.secChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               3 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")
-                  .value?.thirdChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.thirdChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               4 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")
-                  .value?.fourthChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.fourthChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               5 Child Or More: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")
-                  .value?.fiveOrMoreChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.fiveOrMoreChild
               }
               /h
             </li>
