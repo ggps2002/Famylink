@@ -25,23 +25,32 @@ export default function Login() {
       console.log("Name:", decoded.name);
       console.log("Picture:", decoded.picture);
       try {
-        const { user, status } = dispatch(loginThunk({ email: decoded.email }));
+        const result = await dispatch(loginThunk({ email: decoded.email }));
 
-        if (status == 200) {
-          if (user.type == "Nanny") {
-            navigate("/nanny");
-          } else if (user.type == "Parents") {
-            navigate("/family");
-          } else {
-            fireToastMessage({
-              type: "error",
-              message: "This is not for admin",
-            });
+        if (loginThunk.fulfilled.match(result)) {
+          const { user, status } = result.payload;
+
+          if (status == 200) {
+            if (user.type === "Nanny") {
+              navigate("/nanny");
+            } else if (user.type === "Parents") {
+              navigate("/family");
+            } else {
+              fireToastMessage({
+                type: "error",
+                message: "This is not for admin",
+              });
+            }
           }
+        } else if (loginThunk.rejected.match(result)) {
+          const { message } = result.payload || {};
+          fireToastMessage({
+            type: "error",
+            message: message || "Login failed",
+          });
         }
       } catch (err) {
         console.error("Google signup callback error:", err);
-        // alert("There was an error signing up with Google.");
       }
     };
 

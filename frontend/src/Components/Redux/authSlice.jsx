@@ -34,7 +34,7 @@ export const loginThunk = createAsyncThunk(
   "auth/login",
   async (body, { rejectWithValue }) => {
     try {
-      const { data, status } = await api.post("/auth/login", body);
+      const { data, status, message } = await api.post("/auth/login", body);
       // Ensure your data structure matches this
       return {
         user: data.user,
@@ -43,6 +43,7 @@ export const loginThunk = createAsyncThunk(
         refreshToken: data.refreshToken,
         refreshTokenExpiry: data.refreshTokenExpiry,
         status,
+        message: message
       };
     } catch (error) {
       return rejectWithValue(error.response.data);
