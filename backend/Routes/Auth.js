@@ -329,6 +329,12 @@ router.post("/login", async (req, res) => {
       }); // ✅ Add return here to prevent falling through
     }
 
+    if(!password) {
+      return res.status(401).json({
+        message: "Authetication Denied",
+      })
+    }
+
     // Verify if the provided password matches the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
