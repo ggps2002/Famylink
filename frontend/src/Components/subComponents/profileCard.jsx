@@ -6,6 +6,7 @@ import { addOrRemoveFavouriteThunk } from "../Redux/favouriteSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshTokenThunk } from "../Redux/authSlice";
 import { NavLink } from "react-router-dom";
+import Ra from "./rate";
 
 function formatJobTitle(jobType) {
   if (!jobType) return "Job Needed";
@@ -18,7 +19,6 @@ function formatJobTitle(jobType) {
   return `${capitalized} Needed`;
 }
 
-
 export default function ProfileCard({
   nanny,
   img,
@@ -30,84 +30,139 @@ export default function ProfileCard({
   exp,
   rate,
   zipCode,
+  averageRating,
+  totalRatings,
 }) {
+  const formatLocation = () => {
+    if (!zipCode || !loc?.format_location) return "";
+    const parts = loc.format_location.split(",") || [];
+    const city = parts.at(-3)?.trim();
+    const state = parts.at(-2)?.trim().split(" ")[0];
+    return city && state ? `${city}, ${state}` : "";
+  };
   return (
-    <div
-      className={`flex flex-col justify-between shadow-custom-shadow border-[#D6DDEB] w-full min-h-96 bg-white p-4 rounded-2xl Quicksand`}
-    >
-      <div className="max-lg:w-full">
-        <div className="flex justify-between">
-          {img ? (
-            <img
-              className="bg-black rounded-full w-20 h-20 object-contain"
-              src={img}
-              alt="img"
-            />
-          ) : (
-            <Avatar
-              className="rounded-full text-black"
-              size="80"
-              color={"#38AEE3"}
-              name={name
-                ?.split(" ") // Split by space
-                .slice(0, 2) // Take first 1–2 words
-                .join(" ")}
-            />
-          )}
-
-          <div>
-            {time && (
-              <p
-                style={{ background: "#E7F6FD" }}
-                className="px-2 py-1 rounded-lg text-sm"
-              >
-                {time}
-              </p>
+    <div className="p-6 border rounded-[20px] border-[#EEEEEE] space-y-2">
+      <div className="flex justify-between gap-4">
+        {img ? (
+          <img
+            className="bg-black rounded-full w-20 h-20 object-contain"
+            src={img}
+            alt="img"
+          />
+        ) : (
+          <Avatar
+            className="rounded-full text-black"
+            size="80"
+            color={"#38AEE3"}
+            name={name
+              ?.split(" ") // Split by space
+              .slice(0, 2) // Take first 1–2 words
+              .join(" ")}
+          />
+        )}
+        <div className="flex flex-col items-end gap-2">
+          <div className="py-2 px-4 bg-primary text-primary rounded-full w-fit Livvic-SemiBold text-xs">
+            {time}
+          </div>
+          <div className="flex gap-2">
+            {totalRatings > 0 && (
+              <>
+                <Ra points={averageRating} size={20} />{" "}
+                <span className="Livvic-SemiBold text-[#555555] text-sm">
+                  {totalRatings}
+                </span>
+              </>
             )}
           </div>
         </div>
-        <p className="my-2 font-bold text-2xl">{name}</p>
       </div>
-
-      <p className="font-medium flex-1">
+      <p className="Livvic-SemiBold text-lg flex gap-2 mt-2">
+        {name} <img src="/shield.svg" alt="" />
+      </p>
+      <p className="Livvic-Medium text-sm text-[#555555]">{formatLocation()}</p>
+      <p className="Livvic-Medium text-sm text-[#555555]">
+        {exp && exp !== "N/A" && exp !== "0" && `${exp} of experience`}
+      </p>
+      <p className="text-sm text-[#777777]">
         {intro.length > 400 ? `${intro.substring(0, 400)}...` : intro}
       </p>
-
-      <div>
-        {loc && (
-          <p className="my-2 font-semibold text-lg">{loc?.format_location}</p>
-        )}
-        {/* {zipCode && <p className="my-2 font-semibold text-lg">{zipCode}</p>} */}
-
-        <div className="flex justify-between items-center">
-          {!nanny ? (
-            <p>
-              {hr && (
-                <span className="font-semibold">
-                  {hr}hr <span className="font-normal">with kids | </span>
-                </span>
-              )}
-              <span className="font-semibold">{exp}</span> experience
-            </p>
-          ) : (
-            <p>
-              <span className="font-semibold">
-                {hr} <span className="font-normal">kids</span>
-              </span>
-            </p>
-          )}
-          {rate && (
-            <div
-              style={{ background: "#FBF5DE" }}
-              className="flex gap-x-1 px-2 rounded-xl"
-            >
-              <p>{rate}</p>
-              <img className="object-contain" src={star} alt="star" />
-            </div>
-          )}
-        </div>
-      </div>
     </div>
+    // <div
+    //   className={`flex flex-col justify-between shadow-custom-shadow border-[#D6DDEB] w-full min-h-96 bg-white p-4 rounded-2xl Quicksand`}
+    // >
+    //   <div className="max-lg:w-full">
+    //     <div className="flex justify-between">
+    //       {img ? (
+    //         <img
+    //           className="bg-black rounded-full w-20 h-20 object-contain"
+    //           src={img}
+    //           alt="img"
+    //         />
+    //       ) : (
+    //         <Avatar
+    //           className="rounded-full text-black"
+    //           size="80"
+    //           color={"#38AEE3"}
+    //           name={name
+    //             ?.split(" ") // Split by space
+    //             .slice(0, 2) // Take first 1–2 words
+    //             .join(" ")}
+    //         />
+    //       )}
+
+    //       <div>
+    //         {time && (
+    //           <p
+    //             style={{ background: "#E7F6FD" }}
+    //             className="px-2 py-1 rounded-lg text-sm"
+    //           >
+    //             {time}
+    //           </p>
+    //         )}
+    //       </div>
+    //     </div>
+    //     <p className="my-2 font-bold text-2xl">{name}</p>
+    //   </div>
+
+    //   <p className="font-medium flex-1">
+    //     {intro.length > 400 ? `${intro.substring(0, 400)}...` : intro}
+    //   </p>
+
+    //   <div>
+    //     {loc && (
+    //       <p className="my-2 font-semibold text-lg">{loc?.format_location}</p>
+    //     )}
+    //     {/* {zipCode && <p className="my-2 font-semibold text-lg">{zipCode}</p>} */}
+
+    //     <div className="flex justify-between items-center">
+    //       {!nanny ? (
+    //         <p>
+    //           {hr && (
+    //             <span className="font-semibold">
+    //               {hr}hr <span className="font-normal">with kids | </span>
+    //             </span>
+    //           )}
+    //           <span className="font-semibold">{exp}</span> experience
+    //         </p>
+    //       ) : (
+    //         <p>
+    //           <span className="font-semibold">
+    //             {hr} <span className="font-normal">kids</span>
+    //           </span>
+    //         </p>
+    //       )}
+    //       {rate && (
+    //         <div
+    //           style={{ background: "#FBF5DE" }}
+    //           className="flex gap-x-1 px-2 rounded-xl"
+    //         >
+    //           <p>{rate}</p>
+    //           <img className="object-contain" src={star} alt="star" />
+    //         </div>
+    //       )}
+    //     </div>
+    //   </div>
+    // </div>
   );
 }
 
@@ -125,7 +180,8 @@ export function ProfileCard1({
   jobType,
   zipCode,
   created,
-  fav
+  fav,
+  nannyShareView,
 }) {
   const { user, accessToken } = useSelector((state) => state.auth);
   const isFavorited = user.favourite?.includes(id);
@@ -136,9 +192,22 @@ export function ProfileCard1({
     );
     await dispatch(refreshTokenThunk());
   };
+    const formatLocation = () => {
+    if (!zipCode || !loc?.format_location) return "";
+    const parts = loc.format_location.split(",") || [];
+    const city = parts.at(-3)?.trim();
+    const state = parts.at(-2)?.trim().split(" ")[0];
+    return city && state ? `${city}, ${state}` : "";
+  };
   return (
     <NavLink
-      to={fav ? `/nanny/jobDescription/${id}` : `jobDescription/${id}`}
+      to={
+        fav
+          ? `/nanny/jobDescription/${id}`
+          : nannyShareView
+          ? `/family/nannyShareView/${id}`
+          : `jobDescription/${id}`
+      }
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <div className="onboarding-box">
@@ -177,7 +246,7 @@ export function ProfileCard1({
           <span className="onboarding-form-label">|</span>
           <span className="onboarding-form-label">{hr} kids</span>
           <span className="onboarding-form-label">|</span>
-          <span className="onboarding-form-label">{loc?.format_location}</span>
+          <span className="onboarding-form-label">{formatLocation()}</span>
           <span className="onboarding-form-label">|</span>
           <span className="onboarding-form-label">{created}</span>
         </p>

@@ -56,7 +56,7 @@ export default function HireStep4({
 
   return (
     <div>
-      <p className="Livvic-Bold text-4xl text-primary px-3 text-center width-form">
+      <p className="Livvic-Bold text-4xl text-primary px-3 text-center width-form mb-6">
         {head}
       </p>
 

@@ -20,7 +20,7 @@ export default function MessageFrame() {
   }, [dispatch]);
 
   return (
-    <div className="relative padding-navbar1 Quicksand py-8">
+    <div className="relative">
       {/* Blurred overlay when unsubscribed */}
       {!isSubscribed && (
         <div className="absolute top-0 left-0 w-full h-full backdrop-blur-[4px] bg-white/50 z-20 flex items-center justify-center rounded-xl">
@@ -41,11 +41,8 @@ export default function MessageFrame() {
         </div>
       )}
 
-      <div className="shadow border-[1px] border-[#D6DDEB] bg-white rounded-xl my-5 relative z-10">
-        <p className="lg:text-3xl text-2xl font-bold edit-padding">Messages</p>
-        <div className="padding-sub pb-10">
+      <div className="bg-white relative z-0">
           <ChatInterface />
-        </div>
       </div>
     </div>
   );

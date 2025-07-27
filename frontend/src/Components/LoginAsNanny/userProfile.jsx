@@ -82,6 +82,15 @@ export default function Profile() {
     scrollRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
+  
+    const formatLocation = () => {
+    if (!user?.zipCode || !user?.location?.format_location) return "";
+    const parts = user?.location?.format_location.split(",") || [];
+    const city = parts.at(-3)?.trim();
+    const state = parts.at(-2)?.trim().split(" ")[0];
+    return city && state ? `${city}, ${state}` : "";
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-4 md:gap-6 p-3 md:py-6 md:px-12  w-full justify-center">
       {/* Left Sidebar */}
@@ -112,9 +121,9 @@ export default function Profile() {
                 {user.name}
               </p>
             </div>
-            {user?.location && (
+            {user?.location?.format_location && (
               <p className="text-[#555555] text-center text-sm md:text-md Livvic-Medium">
-                {user?.location?.format_location}
+                {formatLocation()}
               </p>
             )}
             <div className="mt-4 md:mt-6 w-full">

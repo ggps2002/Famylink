@@ -52,32 +52,34 @@ export default function Content({
 
   // Determine the current state of the content
   const getContentState = () => {
-    if (request) return 'request';
-    if (completed) return 'completed';
-    if (cancelled) return 'cancelled';
-    if (withdraw) return 'withdraw';
-    if (upcoming) return 'upcoming';
-    return 'default';
+    if (request) return "request";
+    if (completed) return "completed";
+    if (cancelled) return "cancelled";
+    if (withdraw) return "withdraw";
+    if (upcoming) return "upcoming";
+    return "default";
   };
 
   // Helper function to format location
   const formatLocation = () => {
-    if (!zipCode || !loc?.format_location) return '';
+    if (!zipCode || !loc?.format_location) return "";
     const parts = loc.format_location.split(",") || [];
     const city = parts.at(-3)?.trim();
     const state = parts.at(-2)?.trim().split(" ")[0];
-    return city && state ? `${city}, ${state}` : '';
+    return city && state ? `${city}, ${state}` : "";
   };
 
   // Action handlers
   const handleAcceptRequest = async () => {
     const handleConfirm = async () => {
       try {
-        const { status, data } = await dispatch(acceptReqThunk(bookingId)).unwrap();
-        
+        const { status, data } = await dispatch(
+          acceptReqThunk(bookingId)
+        ).unwrap();
+
         if (status === 200) {
           fireToastMessage({ success: true, message: data.message });
-          
+
           await new Promise(async (resolve) => {
             const updateContent = {
               bookingId,
@@ -86,9 +88,13 @@ export default function Content({
               content: "Accept your request",
               type: "Booking",
             };
-            socket?.emit("sendNotification", { content: updateContent }, resolve);
+            socket?.emit(
+              "sendNotification",
+              { content: updateContent },
+              resolve
+            );
           });
-          
+
           await dispatch(fetchOtherReqThunk({ limit: 8, page: 1 })).unwrap();
         }
       } catch (error) {
@@ -96,7 +102,7 @@ export default function Content({
         fireToastMessage({ type: "error", message: error.message });
       }
     };
-    
+
     SwalFireSuccess({
       title: `You have accepted ${name} Request`,
       handleConfirm,
@@ -106,11 +112,13 @@ export default function Content({
   const handleRejectRequest = async () => {
     const handleDelete = async () => {
       try {
-        const { status, data } = await dispatch(rejectedReqThunk(bookingId)).unwrap();
-        
+        const { status, data } = await dispatch(
+          rejectedReqThunk(bookingId)
+        ).unwrap();
+
         if (status === 200) {
           fireToastMessage({ success: true, message: data.message });
-          
+
           await new Promise(async (resolve) => {
             const updateContent = {
               bookingId,
@@ -119,9 +127,13 @@ export default function Content({
               content: "Reject your request",
               type: "Booking",
             };
-            socket?.emit("sendNotification", { content: updateContent }, resolve);
+            socket?.emit(
+              "sendNotification",
+              { content: updateContent },
+              resolve
+            );
           });
-          
+
           await dispatch(fetchOtherReqThunk({ limit: 8, page: 1 })).unwrap();
         }
       } catch (error) {
@@ -129,7 +141,7 @@ export default function Content({
         fireToastMessage({ type: "error", message: error.message });
       }
     };
-    
+
     SwalFireDelete({
       title: `Are you sure to reject ${name} Request`,
       handleDelete,
@@ -146,7 +158,7 @@ export default function Content({
         fireToastMessage({ type: "error", message: error.message });
       }
     };
-    
+
     SwalFireSuccess({
       title: `Are you sure you want to withdraw ${name} Request`,
       handleConfirm,
@@ -158,12 +170,14 @@ export default function Content({
       try {
         const { data } = await dispatch(reconsiderThunk(bookingId)).unwrap();
         fireToastMessage({ success: true, message: data.message });
-        await dispatch(fetchCancelRequesterThunk({ limit: 8, page: 1 })).unwrap();
+        await dispatch(
+          fetchCancelRequesterThunk({ limit: 8, page: 1 })
+        ).unwrap();
       } catch (error) {
         fireToastMessage({ type: "error", message: error.message });
       }
     };
-    
+
     SwalFireSuccess({
       title: `Are you sure you want to reconsider ${name} Request`,
       handleConfirm,
@@ -173,10 +187,13 @@ export default function Content({
   const handleMessage = async () => {
     try {
       const participants = [parentId, nannyId];
-      const { status } = await dispatch(createChatThunk({ participants })).unwrap();
-      
+      const { status } = await dispatch(
+        createChatThunk({ participants })
+      ).unwrap();
+
       if (status === 201 || status === 200) {
-        const route = type === "family" ? "/family/message/" : "/nanny/message/";
+        const route =
+          type === "family" ? "/family/message/" : "/nanny/message/";
         navigate(route);
       }
     } catch (error) {
@@ -185,17 +202,17 @@ export default function Content({
   };
 
   const getProfileLink = () => {
-    return type === "nanny" 
-      ? `/nanny/jobDescription/${id}` 
+    return type === "nanny"
+      ? `/nanny/jobDescription/${id}`
       : `/family/profileNanny/${id}`;
   };
 
   // Button components for different states
   const renderActionButtons = () => {
     const state = getContentState();
-    
+
     switch (state) {
-      case 'request':
+      case "request":
         if (type === "family") {
           return (
             <div className="flex flex-col sm:flex-row gap-2 w-full">
@@ -238,7 +255,7 @@ export default function Content({
           );
         }
 
-      case 'completed':
+      case "completed":
         return (
           <div className="flex flex-col gap-2 w-full">
             <button
@@ -274,7 +291,7 @@ export default function Content({
           </div>
         );
 
-      case 'cancelled':
+      case "cancelled":
         return (
           <div className="flex flex-col gap-2 w-full">
             <button
@@ -294,7 +311,7 @@ export default function Content({
           </div>
         );
 
-      case 'withdraw':
+      case "withdraw":
         return (
           <div className="w-full">
             <NavLink
@@ -308,7 +325,7 @@ export default function Content({
           </div>
         );
 
-      case 'upcoming':
+      case "upcoming":
         return (
           <div className="w-full">
             <NavLink
@@ -365,45 +382,48 @@ export default function Content({
         {/* Content */}
         <div className="flex-1 min-w-0 space-y-2">
           {/* Name */}
-         <p className="Livvic-SemiBold text-lg text-primary">{name}</p>
+          <p className="Livvic-SemiBold text-lg text-primary">{name}</p>
 
           {/* Location, Rate, Timing */}
           <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm text-gray-600 mb-2">
             {zipCode && formatLocation() && (
               <>
-                <span>{formatLocation()}</span>
+                <span className="Livvic-Medium text-sm text-[#555555]">{formatLocation()}</span>
                 <span className="text-gray-400">•</span>
               </>
             )}
-            <span>${hourlyRate}/h</span>
+            <span className="Livvic-Medium text-sm text-[#555555]">${hourlyRate}/h</span>
             {jobTiming && (
               <>
                 <span className="text-gray-400">•</span>
-                <span>{jobTiming}</span>
+                <span className="Livvic-Medium text-sm text-[#555555]">{jobTiming}</span>
+              </>
+            )}
+            {/* Time (for family type) */}
+            {type === "family" && time && (
+              <>
+                <span className="text-gray-400">•</span>
+                <span className="Livvic-Medium text-sm text-[#555555]">{time}</span>
+              </>
+            )}
+             {type === "family" && exp && (
+              <>
+                <span className="text-gray-400">•</span>
+                <span className="Livvic-Medium text-sm text-[#555555]">{exp} yr(s) exp.</span>
               </>
             )}
           </div>
 
-          {/* Time (for family type) */}
-          {type === "family" && time && (
-            <p className="text-sm text-gray-600 mb-2">{time}</p>
-          )}
-
           {/* Start and Experience (for family type) */}
-          {type === "family" && (start || exp) && (
+          {/* {type === "family" && (start || exp) && (
             <div className="flex flex-wrap gap-2 sm:gap-4 text-sm text-gray-600 mb-2">
               {start && (
                 <span>
                   <strong>Start:</strong> {start}
                 </span>
               )}
-              {exp && (
-                <span>
-                  <strong>Experience:</strong> {exp} of experience
-                </span>
-              )}
             </div>
-          )}
+          )} */}
 
           {/* Job Description */}
           {jobDes && (

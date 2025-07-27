@@ -35,7 +35,7 @@ export default function Requests({ type }) {
       ) : (
         <>
           {!data || data.length === 0 ? (
-            <p className="text-center">No requests available</p>
+            <p className="text-gray-500 text-start">No requests available</p>
           ) : (
             <>
               {data.map((v) => {

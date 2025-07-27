@@ -37,14 +37,14 @@ export default function MultiFormContainer({ formData, head, formRef, addInput }
     }, [formRef, form]);
     return (
         <Form form={form} initialValues={formValues}> {/* Provide initialValues */}
-            <p className='font-normal Classico px-3 offer-font text-center width-form mb-3'>
+            <p className=' px-3 onboarding-head text-center width-form mb-3'>
                 {head}
             </p>
 
             {formData.map((v, i) => (
                 <div className="flex justify-center my-5" key={i}>
                     <div>
-                        <p className="Classico text-xl mb-1">{v.heading}</p>
+                        <p className="Livvic-SemiBold text-primary text-lg mb-1 input-text">{v.heading}</p>
                         {v.data.map((j, h) => {
                             const headingKey = toCamelCase(v.heading);
                             return (
@@ -65,7 +65,7 @@ export default function MultiFormContainer({ formData, head, formRef, addInput }
                 addInput &&
                 <div className="flex justify-center" style={{ marginTop: "-20px" }}>
                     <div>
-                        <p className='className="Classico text-xl mb-1'>
+                        <p className='Livvic-SemiBold text-primary text-lg'>
                             {addInput.name}
                         </p>
                         <div className="flex justify-center">

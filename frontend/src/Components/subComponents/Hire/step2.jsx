@@ -19,7 +19,7 @@ export default function HireStep2({
   }
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <p className="text-primary Livvic-Bold text-center text-4xl px-3 mb-5">
           How many children
           <br /> do you have?

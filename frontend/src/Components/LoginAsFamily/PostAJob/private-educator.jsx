@@ -8,6 +8,7 @@ import MultiFormContainerCheck from "../../subComponents/Hire/MultipleChoice/Mul
 import { Form, Input } from "antd";
 import HireStep3 from "../../subComponents/Hire/step3";
 import { parseHourlyRate, useJobSubmitter } from "../../../Config/helpFunction";
+import Button from "../../../NewComponents/Button";
 
 export const PrivateEducatorJob = () => {
   const stepRef = useRef(null);
@@ -516,7 +517,7 @@ export const PrivateEducatorJob = () => {
         return (
           <HireStep4
             formRef={jobFormRef || {}}
-            subHead1={"What is your preferred schedule for childcare?"}
+            head={"What is your preferred schedule for childcare?"}
             data={step0Data}
             inputNot={true}
           />
@@ -529,14 +530,14 @@ export const PrivateEducatorJob = () => {
               name: 'Other Preferences',
               placeholder: 'Type here...'
             }}
-            subHead={'Which subject(s) does your child need help with?'}
+            head={'Which subject(s) does your child need help with?'}
             formData={step1Data}
           />
         );
       case 3: return (
         <HireStep4
           formRef={jobFormRef || {}}
-          subHead1={'What is the grade level of your child?'}
+          head={'What is the grade level of your child?'}
           data={step2Data}
           inputNot={true}
         />
@@ -544,7 +545,7 @@ export const PrivateEducatorJob = () => {
       case 4: return (
         <HireStep4
           formRef={jobFormRef || {}}
-          subHead1={'How often do you require tutoring sessions?'}
+          head={'How often do you require tutoring sessions?'}
           data={step3Data}
           inputNot={true}
         />
@@ -555,7 +556,7 @@ export const PrivateEducatorJob = () => {
           formRef={jobFormRef || {}}
           textAreaHead={'Other Preferences'}
           inputName={'Type here...'}
-          subHead1={'How long do you want each tutoring session to be?'}
+          head={'How long do you want each tutoring session to be?'}
           data={step4Data}
         />
       );
@@ -564,7 +565,7 @@ export const PrivateEducatorJob = () => {
         <HireStep4
           formRef={jobFormRef || {}}
           inputNot={true}
-          subHead1={'Do you prefer in-person or online tutoring sessions?'}
+          head={'Do you prefer in-person or online tutoring sessions?'}
           data={step5Data}
         />
       );
@@ -572,7 +573,7 @@ export const PrivateEducatorJob = () => {
         return (
           <HireStep4
             formRef={jobFormRef || {}}
-            subHead2={'(Select an hourly rate or weekly salary range.)'}
+            head={'(Select an hourly rate or weekly salary range.)'}
             data={step6Data}
           />
         );
@@ -582,7 +583,7 @@ export const PrivateEducatorJob = () => {
           formRef={jobFormRef || {}}
           textAreaHead={'Other Preferences'}
           inputName={'Type here...'}
-          subHead1={'What are your specific goals for tutoring?'}
+          head={'What are your specific goals for tutoring?'}
           data={step7Data}
         />
       );
@@ -591,7 +592,7 @@ export const PrivateEducatorJob = () => {
           checkBox={true}
           formRef={jobFormRef || {}}
           inputNot={true}
-          subHead1={"Do you have a preference for the tutor's teaching style?"}
+          head={"Do you have a preference for the tutor's teaching style?"}
           data={step8Data}
         />
       );
@@ -600,7 +601,7 @@ export const PrivateEducatorJob = () => {
           <HireStep3
             daysState={daysState}
             setDaysState={updateDaysState}
-            subHead={
+            head={
               'What days and times are you available for tutoring sessions?'
             }
           />
@@ -615,7 +616,7 @@ export const PrivateEducatorJob = () => {
               autoComplete='off'
             >
               <div>
-                <p className='mt-10 mb-1 text-xl Classico'>
+                <p className='mt-10 onboarding-head mb-6'>
                   Do you have any special requirements or <br className="max-lg:hidden" />preferences for the tutor?
                 </p>
                 <Form.Item
@@ -632,7 +633,7 @@ export const PrivateEducatorJob = () => {
                     value={specialReq} // Controlled value
                     onChange={(e) => setSpecialReq(e.target.value)} // Handle input changes
                     placeholder={'Type here...'}
-                    className='py-4 border-none !min-h-56 rounded-3xl input-width no-resize'
+                    className='py-4 border-none !min-h-56 rounded-3xl no-resize'
                   />
                 </Form.Item>
               </div>
@@ -649,7 +650,7 @@ export const PrivateEducatorJob = () => {
               autoComplete='off'
             >
               <div>
-                <p className='mt-10 mb-1 text-xl Classico'>
+                <p className='mt-10 onboarding-head text-center mb-6'>
                   Job Description
                 </p>
                 <Form.Item
@@ -661,13 +662,33 @@ export const PrivateEducatorJob = () => {
                     }
                   ]}
                 >
+                <div className="relative w-full">
+                <Form.Item
+                  style={{ margin: 0, padding: 0 }}
+                  name="jobDescription" // ✅ always use explicit `name`
+                  rules={[
+                    {
+                      required: true,
+                      message: "",
+                    },
+                  ]}
+                >
                   <Input.TextArea
                     defaultValue={textAreaValue}
                     value={textAreaValue} // Controlled value
                     onChange={handleChange} // Handle input changes
-                    placeholder={'Write job description..'}
-                    className='py-4 border-none !min-h-56 rounded-3xl input-width no-resize'
+                    placeholder="Write your job description.."
+                    rows={6}
+                    className={`border text-primary border-[#EEEEEE] rounded-[10px] px-4 pt-8 pb-2 placeholder-transparent  no-resize w-[40vw] !min-h-56`}
                   />
+                </Form.Item>
+                <label
+                  htmlFor={name}
+                  className="absolute left-4 top-2 text-sm text-[#666666] px-1 z-10"
+                >
+                  Job Description
+                </label>
+              </div>
                 </Form.Item>
               </div>
             </Form>
@@ -677,9 +698,6 @@ export const PrivateEducatorJob = () => {
   }
   return (
     <div className="lg:px-5 Quicksand">
-      <p className="lg:text-3xl text-2xl font-bold edit-padding Classico">
-        Post a Job
-      </p>
 
       {/* Stepper Component */}
       <div className="lg:px-10 px-2">
@@ -691,35 +709,29 @@ export const PrivateEducatorJob = () => {
         />
       </div>
 
-      <div className="lg:mx-10 mx-2 my-10 px-4 lg:rounded-[3rem] rounded-3xl bg-gradient-to-b from-[#9EDCE180] via-[#DAF4EF66] to-[#EFECE64D]">
+      <div className="lg:mx-10 mx-2 my-10 px-4 ">
         <div className="pb-16 pt-8">
           <div className="flex flex-col items-center">
-            <p className="font-normal Classico px-3 offer-font text-center width-form mb-3">
-              Tutor/Private Educator
-            </p>
             {renderStepContent()}
 
             <div className="mt-4 flex gap-2">
-              <button
-                className="mx-auto text-[#38AEE3] bg-white border border-[#38AEE3] lg:w-48 w-24 lg:py-2 py-1 rounded-full font-normal text-base transition hover:opacity-60 duration-700 delay-150 ease-in-out"
-                onClick={() => {
+               <Button
+                action={() => {
                   if (currentStep > 1) {
                     stepRef.current?.prev();
                   } else {
                     setShowApp(true);
                   }
                 }}
-              >
-                Back
-              </button>
-              <button
-                className="mx-auto bg-[#38AEE3] text-white lg:w-48 w-24 lg:py-2 py-1 border-none rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
-                onClick={HandleNext}
-              >
-                {
-                  (totalStep - 1) == currentStep ? 'Post a Job' : 'Continue'
+                btnText={"Back"}
+                className="border border-[#FFFFFF] text-[#555555]"
+              />
+              <Button
+                btnText={
+                  totalStep - 1 == currentStep ? "Post a Job" : "Continue"
                 }
-              </button>
+                action={() => HandleNext()}
+                className="bg-[#AEC4FF] text-primary"/>
             </div>
           </div>
         </div>

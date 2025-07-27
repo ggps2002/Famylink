@@ -201,7 +201,7 @@ export default function PageLayout() {
           </div>
           {!(
             pathname.startsWith("/family/post-a-job") ||
-            pathname.startsWith("/family/post-a-nannyShare")
+            pathname.startsWith("/family/post-a-nannyShare") ||  pathname.startsWith("/family/message")
           ) && <Footer />}
         </>
       )}

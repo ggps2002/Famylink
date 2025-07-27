@@ -33,20 +33,69 @@ export default function Favorites({ nanny }) {
   const endItem = Math.min(currentPage * pageSize, total); // End item index
   return (
     <div className="padding-navbar1 Quicksand">
-      <p className="font-bold lg:text-3xl text-2xl mb-8 Classico">Favorite</p>
-      <div className="flex max-lg:flex-col gap-6 ">
+      <p className="Livvic-SemiBold lg:text-3xl text-2xl mb-8">Favorite</p>
+       <div
+        className={
+          "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4"
+        }
+      >
         {data.length > 0 ? (
-          data.map((v) => (
+          data.map((profile) => (
             <NavLink
-              key={v._id}
+              key={profile._id}
               to={
                 nanny
-                  ? `/nanny/jobDescription/${v._id}`
-                  : `/family/profileNanny/${v._id}`
+                  ? `/nanny/jobDescription/${profile._id}`
+                  : `/family/profileNanny/${profile._id}`
               }
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <FavouriteCard
+              <ProfileCard
+                totalRatings={profile?.reviews?.length}
+                img={profile.imageUrl}
+                averageRating={
+                  profile?.reviews?.length
+                    ? (
+                        profile.reviews.reduce((sum, r) => sum + r.rating, 0) /
+                        profile.reviews.length
+                      ).toFixed(1)
+                    : 0
+                }
+                time={
+                  nanny
+                    ? profile?.additionalInfo?.find(
+                        (info) => info.key === "preferredSchedule"
+                      )?.value?.option
+                    : profile?.additionalInfo?.find(
+                        (info) => info.key === "avaiForWorking"
+                      )?.value?.option || "N/A"
+                }
+                name={profile.name}
+                intro={
+                  profile?.additionalInfo.find(
+                    (info) => info.key === "jobDescription"
+                  )?.value || "N/A"
+                }
+                loc={profile?.location}
+                zipCode={profile?.zipCode}
+                hr={
+                  nanny
+                    ? Object.keys(
+                        profile?.additionalInfo.find(
+                          (info) => info.key === "noOfChildren"
+                        )?.value || {}
+                      ).length
+                    : 40
+                }
+                exp={
+                  profile?.additionalInfo?.find(
+                    (info) => info.key === "experience"
+                  )?.value?.option || "N/A"
+                }
+                rate={profile.rate}
+                nanny={nanny}
+              />
+              {/* <FavouriteCard
                 img={v.imageUrl}
                 time={
                   v?.additionalInfo?.find(
@@ -82,7 +131,7 @@ export default function Favorites({ nanny }) {
                 }
                 rate={v.rate}
                 nanny={nanny}
-              />
+              /> */}
             </NavLink>
           ))
         ) : (
@@ -104,7 +153,7 @@ export default function Favorites({ nanny }) {
             Showing {startItem}-{endItem} from {total}
           </p>
           <Pagination
-            className="font-bold pagination-custom Quicksand"
+            className="font-bold"
             current={currentPage}
             pageSize={pageSize}
             total={total}

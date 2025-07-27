@@ -120,7 +120,6 @@ export default function FilterSlidersJobPost({
           trackStyle={{
             background: `${"linear-gradient(90deg, #AEC4FF 0%, #AEC4FF 100%)"}`,
           }}
-          handleStyle={{ borderColor: " #FFF1F5" }}
         />
         <p className="Livvic-SemiBold text-[#001243] text-sm">
           Within {locationValue}mi of
@@ -144,10 +143,6 @@ export default function FilterSlidersJobPost({
             trackStyle={{
               background: `${"linear-gradient(90deg, #AEC4FF 0%, #AEC4FF 100%)"}`,
             }}
-            handleStyle={[
-              { borderColor: "#FF6B6B" },
-              { borderColor: "#FF6B6B" },
-            ]}
           />
           <p className="Livvic-SemiBold text-[#001243] text-sm">
             Within ${priceValue[0]} - ${priceValue[1]}/hr
@@ -180,7 +175,7 @@ export default function FilterSlidersJobPost({
                 key={option}
                 onClick={() => toggleSelection("availability", option)}
                 style={getOptionStyle("availability", option)} // Pass the correct category here
-                className="Livvic-Medium text-[#555555] border border-[#EEEEEE] px-4 py-1 rounded-full"
+                className="Livvic-Medium text-[#555555] border border-[#EEEEEE] px-4 py-1 rounded-full cursor-pointer"
               >
                 {option}
               </p>

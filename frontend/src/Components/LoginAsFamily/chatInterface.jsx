@@ -81,7 +81,7 @@ export default function Component() {
   };
 
   const ContactList = () => (
-    <div className="flex bg-white flex-col Quicksand">
+    <div className="flex bg-white flex-col">
       <div
         style={{ overflowY: "auto", height: "100%" }}
         className="flex-1 mt-6"

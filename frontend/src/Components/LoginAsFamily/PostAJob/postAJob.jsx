@@ -11,6 +11,7 @@ import { SportsCoachesJob } from "./sports-coaches";
 import { MusicInstructorJob } from "./music-instructor";
 import { SwimInstructorJob } from "./swim-instructor";
 import { HouseManagerJob } from "./house-manager";
+import Button from "../../../NewComponents/Button";
 
 const App = () => {
   const navigate = useNavigate();
@@ -59,19 +60,16 @@ const App = () => {
 
   if (currentStep === 1) {
     if (selectedRadio === "nanny") return <NannyJob />;
-    else if (selectedRadio === 'privateEducator') return <PrivateEducatorJob />;
-    else if (selectedRadio === 'specializedCaregiver') return <SpecializedCaregiverJob />;
-    else if (selectedRadio === 'sportsCoaches') return <SportsCoachesJob />;
-    else if (selectedRadio === 'musicInstructor') return <MusicInstructorJob />;
-    else if (selectedRadio === 'swimInstructor') return <SwimInstructorJob />;
-    else if (selectedRadio === 'houseManager') return <HouseManagerJob />;
+    else if (selectedRadio === "privateEducator") return <PrivateEducatorJob />;
+    else if (selectedRadio === "specializedCaregiver")
+      return <SpecializedCaregiverJob />;
+    else if (selectedRadio === "sportsCoaches") return <SportsCoachesJob />;
+    else if (selectedRadio === "musicInstructor") return <MusicInstructorJob />;
+    else if (selectedRadio === "swimInstructor") return <SwimInstructorJob />;
+    else if (selectedRadio === "houseManager") return <HouseManagerJob />;
   }
   return (
     <div className="lg:px-5 Quicksand">
-      <p className="lg:text-3xl text-2xl font-bold edit-padding Classico">
-        Post a Job
-      </p>
-
       {/* Stepper Component */}
       <div className="lg:px-10 px-2">
         <CustomStepper
@@ -82,48 +80,86 @@ const App = () => {
         />
       </div>
 
-      <div className="lg:mx-10 mx-2 my-10 px-4 lg:rounded-[3rem] rounded-3xl bg-gradient-to-b from-[#9EDCE180] via-[#DAF4EF66] to-[#EFECE64D]">
+      <div className="lg:mx-10 mx-2 my-10 px-4">
         <div className="pb-16 pt-8">
           <div className="flex justify-end lg:mr-6">
             <button onClick={handleGoBack}>
               <X className="text-2xl" />
             </button>
           </div>
-          <p className="lg:text-5xl text-2xl text-center mb-10 Classico">
-            Which service are you hiring for?
+          <p className="onboarding-head text-center">
+            What type of services are
+            <br /> you looking for?
           </p>
 
-          <div className="flex justify-center items-start">
+          <div className="flex justify-center items-start mt-4">
             <Form form={form} name="validateOnly" autoComplete="off">
-              <Radio.Group
-                value={selectedRadio}
-                onChange={(e) => setSelectedRadio(e.target.value)}
-                className="grid grid-cols-1 gap-x-6 md:grid-cols-1 lg:grid-cols-2 justify-center mx-auto"
+              <Form.Item
+                name="option"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select at least one option.",
+                  },
+                ]}
               >
-                {/* Dynamic Radio Buttons */}
-                {data.map((v, i) => (
-                  <Form.Item name={toCamelCase(v.name)} key={i}>
-                    <div className="flex items-start gap-2">
-                      <Radio value={toCamelCase(v.name)} />
-                      <div className="input-width bg-white rounded-3xl py-4 px-4">
-                        <p className="Classico capitalize text-xl">{v.name}</p>
-                        <p className="text-black">{v.subHead}</p>
-                      </div>
-                    </div>
-                  </Form.Item>
-                ))}
-              </Radio.Group>
+                <Radio.Group
+                  value={selectedRadio}
+                  onChange={(e) => setSelectedRadio(e.target.value)}
+                  className="grid grid-cols-1 gap-x-6 md:grid-cols-1 lg:grid-cols-2 justify-center mx-auto"
+                >
+                  {/* Dynamic Radio Buttons */}
+                  {data.map((v, i) => {
+                    const val = toCamelCase(v.name); // 'nanny', 'privateEducator', etc.
+                    const isChecked = selectedRadio === val;
+
+                    return (
+                      <Form.Item name="option" key={i}>
+                        <div className="flex gap-4 px-4 py-2 items-start">
+                          <label className="flex items-center gap-2 cursor-pointer mt-1">
+                            <input
+                              type="radio"
+                              className="sr-only"
+                              checked={isChecked}
+                              onChange={() => setSelectedRadio(val)}
+                            />
+                            <div
+                              className={`w-5 h-5 rounded-full border-4 transition-colors duration-200 ${
+                                isChecked
+                                  ? "border-[#AEC4FF]"
+                                  : "border-[#EEEEEE]"
+                              }`}
+                            />
+                          </label>
+
+                          <div className="bg-white rounded-3xl py-1">
+                            <p className="Livvic-SemiBold text-lg text-primary leading-tight">
+                              {v.name}
+                            </p>
+                            <p className="Livvic-Medium text-sm">{v.subHead}</p>
+                          </div>
+                        </div>
+                      </Form.Item>
+                    );
+                  })}
+                </Radio.Group>
+              </Form.Item>
             </Form>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="mt-4 flex gap-2">
-              <button
+              {/* <button
                 className="mx-auto bg-[#38AEE3] text-white lg:w-48 w-24 lg:py-2 py-1 border-none rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
                 onClick={() => stepRef.current?.next()}
               >
                 Continue
-              </button>
+              </button> */}
+              <Button
+                btnText={"Continue"}
+                action={() => stepRef.current?.next()}
+                className="bg-blue-300"
+              />
             </div>
           </div>
         </div>

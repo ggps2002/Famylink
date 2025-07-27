@@ -109,7 +109,7 @@ export default function Navbar1({ nanny }) {
                 color: isActive ? "#001243" : "#8A8E99",
               })}
             >
-              <p>Nanny Share</p>
+              <p className="Livvic-SemiBold text-md">Nanny Share</p>
             </NavLink>
           )}
 
@@ -121,7 +121,7 @@ export default function Navbar1({ nanny }) {
                 color: isActive ? "#001243" : "#8A8E99",
               })}
             >
-              <p>My Job Listings</p>
+              <p className="Livvic-SemiBold text-md">My Job Listings</p>
             </NavLink>
           )}
 

@@ -6,13 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 import Avatar from "react-avatar";
 import { customFormat, formatSentence } from "../subComponents/toCamelStr";
 import { fireToastMessage } from "../../toastContainer";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ProfileCard1 } from "../subComponents/profileCard";
 import { fetchPostJobByCurrentUserThunk } from "../Redux/postJobSlice";
 import Loader from "../subComponents/loader";
+import Button from "../../NewComponents/Button";
+import { Link, Info, ChevronRight, ChevronLeft } from "lucide-react";
 
 export default function Profile() {
   const { user } = useSelector((s) => s.auth);
+  const scrollRef = useRef(null);
   const dispatch = useDispatch();
   const location = window.location.origin;
   const { data, isLoading } = useSelector((s) => s.jobPost);
@@ -23,190 +26,209 @@ export default function Profile() {
   if (isLoading) {
     return <Loader />;
   }
-  // console.log(data)
+  console.log(user);
+  const ratingCount = user?.reviews?.reduce((acc, review) => {
+    const rating = Math.floor(review.rating);
+    acc[rating] = (acc[rating] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalReviews = user?.reviews?.length || 0;
+
+  const ratingPercentages = [5, 4, 3, 2, 1].map((num) => {
+    const count = ratingCount?.[num] || 0;
+    const pro = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+    return { num, pro };
+  });
+
+  const scrollAmount = 300; // adjust scroll distance as needed
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  const formatLocation = () => {
+    if (!user?.zipCode || !user?.location?.format_location) return "";
+    const parts = user?.location?.format_location.split(",") || [];
+    const city = parts.at(-3)?.trim();
+    const state = parts.at(-2)?.trim().split(" ")[0];
+    return city && state ? `${city}, ${state}` : "";
+  };
   return (
-    <div className="padding-navbar1 Quicksand">
-      <div className="shadow-xl bg-white my-8 px-6 py-4 rounded-2xl text-center">
-        <div className="flex justify-center">
-          <div>
+    <div className="flex flex-col lg:flex-row gap-4 md:gap-6 p-3 md:py-6 md:px-12  w-full justify-center">
+      {/* Left Sidebar */}
+      <div className="w-full lg:w-1/4 xl:w-1/3 2xl:w-1/4">
+        {/* Profile Card */}
+        <div className="shadow-soft p-4 md:p-6 lg:p-9 rounded-[20px]">
+          <div className="flex flex-col items-center">
             {user?.imageUrl ? (
               <img
-                className="mx-auto rounded-full w-24 h-24 object-cover"
+                className="mx-auto rounded-[16px] w-20 md:w-24 object-contain"
                 src={user?.imageUrl}
                 alt="img"
               />
             ) : (
               <Avatar
-                className="rounded-full text-black"
+                className="rounded-[16px] text-black"
                 size="96"
                 color={"#38AEE3"}
-                name={
-                  user?.name
-                    ?.split(" ") // Split by space
-                    .slice(0, 2) // Take first 1–2 words
-                    .join(" ") // Re-join them
-                }
+                name={user?.name
+                  ?.split(" ") // Split by space
+                  .slice(0, 2) // Take first 1–2 words
+                  .join(" ")}
               />
             )}
-            <p className="my-2 font-bold lg:text-3xl text-2xl">{user.name}</p>
-            {user?.location && (
-              <p className="font-semibold text-lg">
-                {user?.location?.format_location}
+
+            <div className="flex gap-2">
+              <p className="my-2 text-primary Livvic-SemiBold text-xl md:text-2xl text-center">
+                {user.name}
+              </p>
+            </div>
+            {user?.location?.format_location && (
+              <p className="text-[#555555] text-center text-sm md:text-md Livvic-Medium">
+                {formatLocation()}
               </p>
             )}
-
-            <div className="mt-4 mb-2">
+            <div className="mt-4 md:mt-6 w-full">
               <NavLink
-                to={"/family/edit"}
+                to="/family/edit"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               >
-                <button
-                  style={{ border: "1px solid #38AEE3", color: "#38AEE3" }}
-                  className="bg-white mx-4 my-0 mt-2 px-6 py-2 rounded-full font-normal text-base hover:-translate-y-1 duration-700 delay-150 hover:scale-110"
-                >
-                  Edit Profile
-                </button>
-              </NavLink>
-            </div>
-            <div
-              style={{ border: "1px solid #38AEE3", color: "#38AEE3" }}
-              className="flex items-center gap-2 mb-4 pl-4 rounded-full max-w-full md:max-w-[500px]"
-            >
-              <p className="font-normal text-16-12 truncate overflow-hidden whitespace-nowrap flex-grow">
-                {location}/profile/{user?._id}
-              </p>
-              <button
-                style={{
-                  background: "#38AEE3",
-                  borderRadius: "0px 50px 50px 0px",
-                }}
-                className="hover:opacity-60 my-0 px-2 py-2 font-normal text-16-12 text-white duration-700 delay-150"
-                onClick={() => {
-                  const textToCopy = `${location}/profile/${user?._id}`; // Replace with the text you want to copy
-                  navigator.clipboard
-                    .writeText(textToCopy)
-                    .then(() => {
-                      fireToastMessage({ message: "Link copied successfully" }); // Optional success message
-                    })
-                    .catch((err) => {
-                      fireToastMessage({ type: "error", message: err });
-                    });
-                }}
-              >
-                Copy Link
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-x-4 gap-y-6 w-full">
-        <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-div">
-          <p className="mb-2 font-bold text-2xl">Description</p>
-          <p className="leading-5">
-            {user?.aboutMe ? user?.aboutMe : "No description available."}
-          </p>
-        </div>
-
-        <div className="width-2div">
-          <div>
-            {!isLoading && data[0] && (
-              <ProfileCard1
-                img={data[0]?.user?.imageUrl}
-                jobType={formatSentence(data[0]?.jobType)}
-                intro={data[0]?.[data[0]?.jobType]?.jobDescription || "N/A"}
-                loc={data[0]?.user?.location}
-                hr={data[0]?.user?.noOfChildren?.length}
-                rate={data[0]?.user?.averageRating}
-                time={data[0]?.[data[0]?.jobType]?.preferredSchedule}
-                nanny={true}
-                imageNot={true}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-x-4 gap-y-6 my-8 w-full">
-        <div className="flex gap-6 border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl width-div">
-          <div>
-            <p className="mb-2 font-bold text-2xl">Number of Child</p>
-            <p>{user?.noOfChildren?.length} Children</p>
-          </div>
-          <div>
-            <p className="mb-2 font-bold text-2xl">Age of Children</p>
-            <p>
-              {user?.noOfChildren?.info &&
-                Object.entries(user?.noOfChildren?.info)
-                  .map(
-                    ([child, age]) =>
-                      `${formatSentence(child)}: ${age} years old`
-                  )
-                  .join(", ")}
-            </p>
-          </div>
-        </div>
-        <div className="width-2div">
-          <div className="border-[1px] border-[#D6DDEB] bg-white p-4 rounded-2xl">
-            <p className="mb-2 font-bold text-2xl">Service:</p>
-            <div className="items-center">
-              {Array.isArray(user?.services) && user?.services.length > 0 ? (
-                user?.services.map((v, i) => (
-                  <div key={i} className="flex items-start">
-                    <p className="w-1/2 font-semibold Quicksand">
-                      {customFormat(v)}:
-                    </p>
-                    <span className="w-1/2 font-normal">Yes</span>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-start">
-                  <p className="w-1/2 font-semibold Quicksand">Nanny:</p>
-                  <span className="w-1/2 font-normal">Yes</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-[1px] border-[#D6DDEB] bg-white mb-8 p-4 rounded-2xl width-div">
-        <p className="mb-2 font-bold text-2xl">Reviews</p>
-        {user?.reviews && user?.reviews.length > 0 ? (
-          <div>
-            <div className="flex gap-4">
-              <div>
-                <p className="font-bold text-4xl text-center Quicksand">
-                  {user?.averageRating}
-                </p>
-                <Ra points={user?.averageRating} size={8} />
-                <p style={{ fontSize: 8 }}>{user?.reviews.length} Reviews</p>
-              </div>
-              <div>
-                <Prog num={5} pro={100} color={"#029E76"} />
-                <Prog num={4} pro={70} color={"#029E76"} />
-                <Prog num={3} pro={60} color={"#FEA500"} />
-                <Prog num={2} pro={40} color={"#FF5269"} />
-                <Prog num={1} pro={30} color={"#FF5269"} />
-              </div>
-            </div>
-
-            <div className="mt-10 pr-10 max-h-48 overflow-auto">
-              {user?.reviews?.map((v, i) => (
-                <Reviews
-                  size={8}
-                  points={v?.rating}
-                  para={v?.msg}
-                  name={v?.userId?.name}
-                  img={v?.userId?.imageUrl}
-                  hr={i !== user?.reviews.length - 1} // Only add <hr> if it's not the last item
+                {" "}
+                <Button
+                  btnText={"Edit Profile"}
+                  className="bg-primary w-full py-2 text-sm md:text-base"
                 />
-              ))}
+              </NavLink>
+              <div className="relative w-full">
+                <Button
+                  btnText={
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                      <Link className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-[#555555]" />
+                      <span
+                        className="text-[
+#555555] Livvic-Medium text-sm md:text-base"
+                      >
+                        Copy Profile Link
+                      </span>
+                    </div>
+                  }
+                  className="w-full py-2 sm:py-2.5 md:py-3 mt-2 border border-gray-200 text-[#555555] Livvic-Medium text-xs sm:text-sm md:text-base lg:text-lg"
+                />
+              </div>
+              <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
+                <Info className="text-yellow-400" size={20} />
+                <p className="text-yellow-400">working on copy feature</p>
+              </div>
             </div>
           </div>
-        ) : (
-          <p>No reviews available</p>
-        )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="w-full lg:w-2/3 xl:w-2/3 2xl:w-1/2 space-y-4 md:space-y-6">
+        {/* About Me Section */}
+        <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            About Me
+          </p>
+          <p className="Livvic text-sm md:text-md text-[#555555] mt-2">
+            {
+              user.additionalInfo.find((info) => info.key === "jobDescription")
+                ?.value
+            }
+          </p>
+          <hr className="my-4" />
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Number of Child
+          </p>
+          <ul className="mt-2 space-y-2 Livvic-SemiBold text-[#555555] text-lg">
+            {user.noOfChildren?.length + " children"}
+          </ul>
+          <hr className="my-4" />
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Age of Children
+          </p>
+          <ul className="mt-2 space-y-2">
+            {user.noOfChildren?.info &&
+              Object.entries(user.noOfChildren.info).map(([key, value], i) => (
+                <li
+                  key={i}
+                  className="Livvic-SemiBold text-[#555555] text-lg"
+                >
+                  {value} years old
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
+          <p className="Livvic-SemiBold text-base md:text-lg text-primary">
+            Reviews
+          </p>
+          {user?.reviews && user?.reviews.length > 0 ? (
+            <div className="mt-4">
+              <div className="flex flex-col items-center md:flex-row justify-between gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="space-y-2 text-center sm:text-left">
+                    <p className="Livvic-Bold text-3xl md:text-4xl">
+                      {user?.averageRating}
+                    </p>
+                    <Ra points={user?.averageRating} size={20} />
+                    <p className="Livvic-SemiBold text-sm">
+                      {user?.reviews.length} Reviews
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    {ratingPercentages.map(({ num, pro }, i) => (
+                      <Prog key={i} num={num} pro={pro} color={"#029E76"} />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex self-center md:self-end gap-2 md:gap-4 justify-center">
+                  <div
+                    onClick={scrollLeft}
+                    className="p-2 rounded-full border border-[#EEEEEE] cursor-pointer hover:bg-gray-50"
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+                  </div>
+                  <div
+                    onClick={scrollRight}
+                    className="p-2 rounded-full border border-[#EEEEEE] cursor-pointer hover:bg-gray-50"
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center md:justify-start">
+                <div
+                  ref={scrollRef}
+                  className="mt-6 md:mt-10 flex flex-nowrap gap-3 md:gap-4 overflow-x-hidden scroll-smooth snap-x snap-mandatory overflow-y-hidden"
+                >
+                  {user?.reviews?.map((v, i) => (
+                    <Reviews
+                      key={i}
+                      size={13.5}
+                      points={v?.rating}
+                      para={v?.msg}
+                      name={v?.userId?.name}
+                      img={v?.userId?.imageUrl}
+                      hr={i !== user?.reviews.length - 1}
+                      created={v?.createdAt} // Only add <hr> if it's not the last item
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm md:text-base">No reviews available</p>
+          )}
+        </div>
       </div>
     </div>
   );

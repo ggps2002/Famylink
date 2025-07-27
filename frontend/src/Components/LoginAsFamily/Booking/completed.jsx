@@ -30,6 +30,8 @@ export default function Completed({ type }) {
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, total);
 
+  console.log("Booking data:", data);
+
   return (
     <div>
       {loading ? ( // Show loader while data is fetching
@@ -53,8 +55,10 @@ export default function Completed({ type }) {
                       bookingId={v._id}
                       jobDes={
                         type == "nanny"
-                          ? v.jobId[v.jobId.jobType].jobDescription
-                          : ""
+                          ? v?.jobId[v.jobId.jobType].jobDescription
+                          : v?.requestBy?.additionalInfo?.find(
+                              (info) => info.key === "jobDescription"
+                            )?.value
                       }
                       jobTiming={
                         type == "nanny" ? v.jobId[v.jobId.jobType].require : ""
@@ -64,7 +68,15 @@ export default function Completed({ type }) {
                           ? `${
                               v?.jobId?.[v?.jobId?.jobType]?.hourlyRate?.min
                             }-${v?.jobId?.[v?.jobId?.jobType]?.hourlyRate?.max}`
-                          : ""
+                          : `${
+                              v?.requestBy?.additionalInfo?.find(
+                                (info) => info.key === "salaryRange"
+                              )?.value?.min
+                            }-${
+                              v?.requestBy?.additionalInfo?.find(
+                                (info) => info.key === "salaryRange"
+                              )?.value?.max
+                            }`
                       }
                       id={type == "nanny" ? v?.jobId?._id : v.requestBy?._id}
                       img={

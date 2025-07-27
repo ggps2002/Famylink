@@ -1,13 +1,11 @@
+import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Requests from "./request";
-import Upcoming from "./upcoming";
-import Cancelled from "./cancelled";
 import Completed from "./completed";
-import { useLocation } from "react-router-dom";
+import Withdraw from "./withdraw";
 
-export default function Booking() {
+export default function BookingNanny() {
   const [val, setVal] = useState("pending");
-
   const location = useLocation();
 
   useEffect(() => {
@@ -19,69 +17,73 @@ export default function Booking() {
 
   const handleClick = (e) => {
     const value = e.currentTarget.getAttribute("data-value");
-    setVal(value); // Do something with the value
+    setVal(value);
   };
+
   return (
-    <div className="padding-navbar1 Quicksand">
-      <div className="shadow border-[1px] border-[#D6DDEB] bg-white rounded-xl my-5">
-        <p className="lg:text-3xl text-2xl font-bold edit-padding Classico">Bookings</p>
+    <div className="padding-navbar1 Quicksand lg:w-[80%] mx-auto">
+      <div className="rounded-xl my-5">
+        <p className="lg:text-3xl text-2xl font-bold mb-6">
+          Applications
+        </p>
         <div>
-          <div className="padding-sub pb-10">
-            <div className="grid grid-cols-3 gap-0 place-items-stretch">
+          <div className="pb-10">
+            {/* Tab Navigation - Always Horizontal */}
+            <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
               <div
                 data-value="pending"
-                style={
-                  val === "pending" ? { borderBottom: "1px solid black" } : {}
-                }
+                style={val === "pending" ? { backgroundColor: "#AEC4FF" } : {}}
                 onClick={handleClick}
-                className="cursor-pointer flex justify-center items-center w-full"
+                className="cursor-pointer flex justify-center items-center rounded-full bg-[#EFF1F9] px-2 sm:px-3 md:px-4 py-2 flex-shrink-0"
               >
-                <p className="text-header-booking font-semibold text-center pb-2">
+                <p className="Livvic-Medium text-xs sm:text-sm md:text-md text-primary text-center whitespace-nowrap">
                   Pending Applications
                 </p>
               </div>
               <div
-                data-value="accepted"
+                data-value="completed"
                 style={
-                  val === "accepted" ? { borderBottom: "1px solid black" } : {}
+                  val === "completed" ? { backgroundColor: "#AEC4FF" } : {}
                 }
                 onClick={handleClick}
-                className="cursor-pointer flex justify-center items-center w-full"
+                className="cursor-pointer flex justify-center items-center rounded-full bg-[#EFF1F9] px-2 sm:px-3 md:px-4 py-2 flex-shrink-0"
               >
-                <p className="text-header-booking font-semibold text-center pb-2">
+                <p className="Livvic-Medium text-xs sm:text-sm md:text-md text-primary text-center whitespace-nowrap">
                   Accepted Applications
                 </p>
               </div>
               <div
                 data-value="cancelled"
                 style={
-                  val === "cancelled" ? { borderBottom: "1px solid black" } : {}
+                  val === "cancelled" ? { backgroundColor: "#AEC4FF" } : {}
                 }
                 onClick={handleClick}
-                className="cursor-pointer flex justify-center items-center w-full"
+                className="cursor-pointer flex justify-center items-center rounded-full bg-[#EFF1F9] px-2 sm:px-3 md:px-4 py-2 flex-shrink-0"
               >
-                <p className="text-header-booking font-semibold text-center pb-2">
+                <p className="Livvic-Medium text-xs sm:text-sm md:text-md text-primary text-center whitespace-nowrap">
                   Rejected Applications
                 </p>
               </div>
             </div>
 
-            <hr />
-            {val == "pending" && (
-              <div className="mt-5">
-                <Requests type={'family'}/>
-              </div>
-            )}
-            {val == "accepted" && (
-              <div className="mt-5">
-                <Completed type={'family'}/>
-              </div>
-            )}
-            {val == "cancelled" && (
-              <div className="mt-5">
-                <Cancelled type={'family'}/>
-              </div>
-            )}
+            {/* Content Area */}
+            <div className="mt-6 min-h-[calc(100vh-150px)]">
+              {val === "pending" && (
+                <div className="mt-5">
+                  <Requests type={"family"} />
+                </div>
+              )}
+              {val === "cancelled" && (
+                <div className="mt-5">
+                  <Withdraw type={"family"} />
+                </div>
+              )}
+              {val === "completed" && (
+                <div className="mt-5">
+                  <Completed type={"family"} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

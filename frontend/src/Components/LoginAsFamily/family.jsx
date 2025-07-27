@@ -82,9 +82,6 @@ export default function Family() {
       {!isChildRoute && (
         <div className="padding-navbar1 Quicksand">
           <div className="lg:flex flex-wrap justify-between items-center">
-            <p className="lg:my-8 mb-8 font-bold lg:text-4xl text-2xl Classico">
-              Find your Perfect Nanny
-            </p>
             {/* <div className="flex justify-end max-lg:mb-4">
               <CustomSelect
                 placeholder="Recently Posted"

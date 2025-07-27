@@ -30,6 +30,7 @@ import moment from "moment";
 import { fireToastMessage } from "../../../toastContainer";
 import { SwalFireDelete } from "../../../swalFire";
 import { createChatThunk } from "../../Redux/chatSlice";
+import Button from "../../../NewComponents/Button";
 
 export const NannyShareView = () => {
   const { id } = useParams();
@@ -223,7 +224,7 @@ export const NannyShareView = () => {
     });
   };
   const handleMessage = async () => {
-    console.log(data?.user?._id, user._id)
+    console.log(data?.user?._id, user._id);
     try {
       const participants = [data?.user?._id, user._id];
       const { status } = await dispatch(
@@ -233,7 +234,7 @@ export const NannyShareView = () => {
         navigate(`/family/message/`);
       }
     } catch (error) {
-        console.log(error)
+      console.log(error);
       fireToastMessage({ type: "error", message: error.message });
     }
   };
@@ -243,7 +244,7 @@ export const NannyShareView = () => {
         <Loader />
       ) : (
         <div className="padding-navbar1 Quicksand">
-          <p className="lg:text-4xl lg:mb-4 mb-2 text-2xl font-bold Classico">
+          <p className="lg:text-4xl lg:mb-4 mb-2 text-2xl Livvic-SemiBold text-primary">
             Nanny Share
           </p>
           <div className="flex flex-col justify-between shadow-custom-shadow lg:p-8 p-4 rounded-2xl bg-white">
@@ -266,12 +267,10 @@ export const NannyShareView = () => {
                 }
               />
             )}
-            <p className="my-2 font-bold text-2xl">{data?.user?.name}</p>
+            <p className="my-2 Livvic-SemiBold text-2xl">{data?.user?.name}</p>
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
-                Job Description
-              </p>
+              <p className="Livvic-SemiBold text-lg">Job Description</p>
 
               {editMode ? (
                 <div className="lg:mt-4 mt-2">
@@ -289,7 +288,7 @@ export const NannyShareView = () => {
                   />
                 </div>
               ) : (
-                <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">
+                <p className="text-[#555555] text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">
                   {data?.jobDescription}
                 </p>
               )}
@@ -297,9 +296,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
-                Specific Days
-              </p>
+              <p className="Livvic-SemiBold text-lg">Specific Days</p>
               <div className="flex flex-wrap justify-left gap-x-10 gap-y-5 lg:my-4 my-2">
                 {editMode ? (
                   // ✅ Editable View
@@ -363,12 +360,13 @@ export const NannyShareView = () => {
                               index < days.length - 1 ? "schdule-Border" : ""
                             }`}
                           >
-                            <p className="text-lg">{day}</p>
+                            <p className="text-lg text-[#55555] Livvic-SemiBold">
+                              {day}
+                            </p>
                             {dayData && dayData.checked ? (
-                              <>
+                              <div className="flex gap-4">
                                 <p>
-                                  Start{" "}
-                                  <span className="font-bold">
+                                  <span className="text-[#666666]">
                                     {new Date(dayData.start).toLocaleTimeString(
                                       [],
                                       {
@@ -379,9 +377,9 @@ export const NannyShareView = () => {
                                     )}
                                   </span>
                                 </p>
+                                -
                                 <p>
-                                  End{" "}
-                                  <span className="font-bold">
+                                  <span className="text-[#666666]">
                                     {new Date(dayData.end).toLocaleTimeString(
                                       [],
                                       {
@@ -392,9 +390,11 @@ export const NannyShareView = () => {
                                     )}
                                   </span>
                                 </p>
-                              </>
+                              </div>
                             ) : (
-                              <p className="w-28">I don't work on {day}</p>
+                              <p className="w-28  text-[#666666]">
+                                I don't work on {day}
+                              </p>
                             )}
                           </div>
                         );
@@ -406,7 +406,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 How flexible are you with scheduling and arrangements?
               </p>
               {editMode ? (
@@ -443,7 +443,7 @@ export const NannyShareView = () => {
                 </>
               ) : (
                 <>
-                  <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">
+                  <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm px-4 py-2 border border-[#EEEEEE] rounded-full w-fit text-[#555555]">
                     {data?.schedule}
                   </p>
                   {data?.scheduleSpecify && (
@@ -457,7 +457,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 Do you have a specific parenting style or philosophy?
               </p>
               {editMode ? (
@@ -492,7 +492,7 @@ export const NannyShareView = () => {
                 </>
               ) : (
                 <>
-                  <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">
+                  <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm px-4 py-2 border border-[#EEEEEE] rounded-full w-fit text-[#555555]">
                     {data?.style}
                   </p>
                   {data?.styleSpecify && (
@@ -506,7 +506,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 What responsibilities would you like the nanny to handle?
               </p>
               {editMode ? (
@@ -545,8 +545,11 @@ export const NannyShareView = () => {
                 <>
                   <div className="flex gap-x-4 gap-y-2 flex-wrap lg:my-4 my-2">
                     {data?.responsibility &&
-                      data?.responsibility?.map((v) => (
-                        <p className="font-medium text-justify leading-5 max-lg:text-sm">
+                      data?.responsibility?.map((v, i) => (
+                        <p
+                          key={i}
+                          className="font-medium text-justify leading-5 max-lg:text-sm px-4 py-2 border border-[#EEEEEE] rounded-full w-fit text-[#555555]"
+                        >
                           {v}
                         </p>
                       ))}
@@ -562,7 +565,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 What is your hourly budget for a nanny share?
               </p>
               <p className="text-wrap">
@@ -604,7 +607,7 @@ export const NannyShareView = () => {
               ) : (
                 <>
                   {data?.hourlyRate && (
-                    <p className="font-bold text-justify lg:my-4 my-2 leading-5 max-lg:text-sm">
+                    <p className="text-[#666666] text-justify lg:my-4 my-2 leading-5 max-lg:text-sm">
                       {findMatchingRate(data?.hourlyRate) || "Not specified"}
                     </p>
                   )}
@@ -619,7 +622,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 Do you have pets? If so, what kind?
               </p>
 
@@ -669,7 +672,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 How do you prefer to communicate and coordinate with another
                 family?
               </p>
@@ -722,7 +725,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 Do you have any backup care options in case the nanny is
                 unavailable?
               </p>
@@ -774,7 +777,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 How involved do you want to be in daily activities and
                 decision-making?
               </p>
@@ -824,7 +827,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 What is your daily routine and any specific activities you want
                 to include?
               </p>
@@ -882,7 +885,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 Do you have specific house rules or guidelines?
               </p>
               {editMode ? (
@@ -938,7 +941,7 @@ export const NannyShareView = () => {
             <hr />
 
             <div className="lg:my-4 my-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 Are there any allergies or health considerations the nanny
                 should be aware of?
               </p>
@@ -997,7 +1000,7 @@ export const NannyShareView = () => {
 
             <hr />
             <div className="lg:mt-4 mt-2">
-              <p className="lg:text-2xl text-xl font-bold Classico">
+              <p className="text-lg Livvic-SemiBold">
                 How flexible are you with scheduling and arrangements?
               </p>
               {editMode ? (
@@ -1048,37 +1051,37 @@ export const NannyShareView = () => {
           </div>
           <div className="flex justify-center gap-2 lg:my-8 my-4">
             {user?._id == data?.user?._id && (
-              <button
-                onClick={handleDeleteClick}
-                className=" text-white bg-[#FF0000] border border-[#FF0119] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
-              >
-                Delete Job
-              </button>
+              <Button
+                btnText={"Delete Job"}
+                action={() => handleDeleteClick()}
+                className="bg-[#FF8484] text-white"
+              />
             )}
 
-            <button
-              onClick={() =>
+            <Button
+              btnText={"Go Back"}
+              action={() =>
                 editMode ? setEditMode((prev) => !prev) : navigate(-1)
               }
-              className=" text-[#38AEE3] bg-white border border-[#38AEE3] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:opacity-60 duration-700 delay-150 ease-in-out"
-            >
-              Go back
-            </button>
+              className="text-[#555555] border border-[#EEEEEE]"
+            />
             {user?._id == data?.user?._id && (
-              <button
-                onClick={handleEditClick}
-                className=" bg-[#38AEE3] text-white lg:w-32 w-24 h-10 border-none rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
-              >
-                {editMode ? "Update Share" : "Edit Share"}
-              </button>
+              // <button
+              //   onClick={handleEditClick}
+              //   className=" bg-[#38AEE3] text-white lg:w-32 w-24 h-10 border-none rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
+              // >
+              //   {editMode ? "Update Share" : "Edit Share"}
+              // </button>
+                <Button btnText={editMode ? "Update Share" : "Edit Share"} action={() => handleEditClick()} className="bg-[#AEC4FF]"/>
             )}
             {user?._id != data?.user?._id && (
-              <button
-                onClick={handleMessage}
-                className=" text-[#38AEE3] bg-white border border-[#38AEE3] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:opacity-60 duration-700 delay-150 ease-in-out"
-              >
-                Message
-              </button>
+              // <button
+              //   onClick={handleMessage}
+              //   className=" text-[#38AEE3] bg-white border border-[#38AEE3] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:opacity-60 duration-700 delay-150 ease-in-out"
+              // >
+              //   Message
+              // </button>
+               <Button btnText={"Message"} action={() => handleMessage()} className="bg-[#AEC4FF]"/>
             )}
           </div>
         </div>

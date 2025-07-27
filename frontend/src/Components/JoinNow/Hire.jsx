@@ -27,6 +27,7 @@ import { addOrUpdateAdditionalInfo, updateForm } from '../Redux/formValue'
 import { registerThunk } from '../Redux/authSlice'
 import { NavLink } from 'react-router-dom'
 import { api } from '../../Config/api'
+import Button from '../../NewComponents/Button'
 export default function HireForm() {
   const { pathname } = useLocation()
   const [form] = Form.useForm()
@@ -2140,11 +2141,7 @@ export default function HireForm() {
   return (
     <div className='padd-res'>
       <div
-        className='px-4 py-4 rounded-3xl'
-        style={{
-          background:
-            'linear-gradient(174.22deg, rgba(158, 220, 225, 0.5) 0%, rgba(218, 244, 239, 0.4) 69.71%, rgba(239, 236, 230, 0.3) 100%)'
-        }}
+        className='px-4 py-4'
       >
         <div className='flex justify-end'>
           <button onClick={handleGoBack}>
@@ -2156,52 +2153,57 @@ export default function HireForm() {
             {renderStepContent()} {/* Render content based on step */}
             <div className='my-5 text-center'>
               {step === 11 && nannyShare === 'no' ? (
-                <button
-                  style={{ border: '1px solid #38AEE3' }}
-                  className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal margin-2'
-                  onClick={toggleButton} // Toggles between enabling and disabling the button
-                >
-                  Write by Myself
-                </button>
+                // <button
+                //   style={{ border: '1px solid #38AEE3' }}
+                //   className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal margin-2'
+                //   onClick={toggleButton} // Toggles between enabling and disabling the button
+                // >
+                //   Write by Myself
+                // </button>
+                <Button btnText={"Write By Myself"} action={() => toggleButton()}/>
               ) : (
                 nannyShare == 'no' &&
                 step < 12 && (
-                  <button
-                    style={{ border: '1px solid #38AEE3' }}
-                    className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base'
-                    onClick={handleBack}
-                  >
-                    Back
-                  </button>
+                  // <button
+                  //   style={{ border: '1px solid #38AEE3' }}
+                  //   className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base'
+                  //   onClick={handleBack}
+                  // >
+                  //   Back
+                  // </button>
+                   <Button btnText={"Back"} action={() => handleBack()}/>
                 )
               )}
               {nannyShare == 'yes' && (
-                <button
-                  style={{ border: '1px solid #38AEE3' }}
-                  className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base'
-                  onClick={handleBack}
-                >
-                  Back
-                </button>
+                // <button
+                //   style={{ border: '1px solid #38AEE3' }}
+                //   className='bg-white mx-6 my-0 mt-2 px-10 py-2 rounded-full font-normal text-base'
+                //   onClick={handleBack}
+                // >
+                //   Back
+                // </button>
+                 <Button btnText={"Back"} action={() => handleBack()}/>
               )}
 
               {nannyShare == 'no' && step > 0 && step <= 11 && (
-                <button
-                  style={{ background: '#85D1F1' }}
-                  className='mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110'
-                  onClick={handleNext}
-                >
-                  Continue
-                </button>
+                // <button
+                //   style={{ background: '#85D1F1' }}
+                //   className='mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110'
+                //   onClick={handleNext}
+                // >
+                //   Continue
+                // </button>
+                   <Button btnText={"Continue"} action={() => handleNext()} className="bg-blue-300"/>
               )}
               {nannyShare == 'yes' && (
-                <button
-                  style={{ background: '#85D1F1' }}
-                  className='mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110'
-                  onClick={handleNext}
-                >
-                  Continue
-                </button>
+                // <button
+                //   style={{ background: '#85D1F1' }}
+                //   className='mx-auto my-0 px-6 py-2 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110'
+                //   onClick={handleNext}
+                // >
+                //   Continue
+                // </button>
+                 <Button btnText={"Continue"} action={() => handleNext()} className="bg-blue-300"/>
               )}
 
               {step == 0 && (

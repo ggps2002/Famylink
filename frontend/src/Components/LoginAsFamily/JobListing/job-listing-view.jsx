@@ -9,6 +9,18 @@ import { SwalFireDelete } from "../../../swalFire";
 import { fireToastMessage } from "../../../toastContainer";
 import { findMatchingRate, findMatchingRate1, formatKey, hourlyData, parseHourlyRate, prefer, step5Data } from "../../../Config/helpFunction";
 import moment from "moment";
+import Button from "../../../NewComponents/Button";
+
+function formatJobTitle(jobType) {
+  if (!jobType) return "Job Needed";
+
+  const withSpaces = jobType.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const capitalized = withSpaces
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return `${capitalized} Needed`;
+}
 
 
 const { Option } = Select;
@@ -107,36 +119,35 @@ const JobListingView = () => {
                     data?.[data?.jobType] &&
                     <>
                         <div className="padding-navbar1 Quicksand">
-                            <div className="flex flex-col justify-between shadow-custom-shadow lg:p-8 p-4 rounded-2xl bg-white">
-                                <p className="lg:text-4xl lg:mb-4 mb-2 text-2xl font-bold Classico">{data?.jobType && formatSentence(data?.jobType)}</p>
-
+                            <div className="flex flex-col justify-between shadow-soft lg:p-8 p-4 rounded-2xl bg-white">
+                                <p className=" lg:mb-4 mb-2 Livvic-SemiBold text-4xl text-primary">{data?.jobType && formatJobTitle(data?.jobType)}</p>
+      <hr />
                                 <div className="lg:my-4 my-2">
-                                    <p className="lg:text-2xl text-xl font-bold Classico">Description</p>
-                                    <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm"> {data?.[data?.jobType] && data?.[data?.jobType]?.jobDescription}</p>
+                                    <p className=" Livvic-SemiBold text-lg">Description</p>
+                                    <p className=" text-justify text-[#555555] lg:my-4 my-2 max-lg:text-sm"> {data?.[data?.jobType] && data?.[data?.jobType]?.jobDescription}</p>
                                 </div>
                                 <hr />
 
                                 <div className="lg:my-4 my-2">
-                                    <p className="lg:text-2xl text-xl font-bold Classico">What is your preferred schedule for childcare?</p>
-                                    <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">{data?.[data?.jobType] && data?.[data?.jobType]?.preferredSchedule}</p>
+                                    <p className=" Livvic-SemiBold text-lg text-primary">What is your preferred schedule for childcare?</p>
+                                    <p className="font-medium rounded-full px-4 py-2 border border-[#EEEEEE] w-fit text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">{data?.[data?.jobType] && data?.[data?.jobType]?.preferredSchedule}</p>
                                 </div>
                                 <hr />
 
-                                <div className="lg:my-4 my-2">
-                                    <p className="lg:text-2xl text-xl font-bold Classico">Hourly rate or weekly salary range</p>
+                                {/* <div className="lg:my-4 my-2">
+                                    <p className="Livvic-SemiBold text-lg text-primary">Hourly rate or weekly salary range</p>
                                     <p className="font-medium text-justify leading-5 lg:my-4 my-2 max-lg:text-sm">{data?.[data?.jobType] && findMatchingRate1(data?.[data?.jobType]?.hourlyRate)}</p>
                                     {data[data.jobType].hourlyRateSpecify &&
                                         <div className="w-full">
                                             <p className="font-medium text-justify leading-5 max-lg:text-sm">Specify: {data[data.jobType].hourlyRateSpecify}</p>
                                         </div>
                                     }
-                                </div>
+                                </div> */}
                                 {data?.[data?.jobType]?.specificDays &&
                                     <>
-                                        <hr />
 
                                         <div className="lg:my-4 my-2">
-                                            <p className="lg:text-2xl text-xl font-bold Classico">Do you have specific days and times when you need childcare?</p>
+                                            <p className="Livvic-SemiBold text-lg text-primary">Do you have specific days and times when you need childcare?</p>
                                             <div className="flex flex-wrap justify-left gap-x-10 gap-y-5">
                                                 {data?.[data?.jobType]?.specificDays &&
                                                     days.map((day, index) => {
@@ -147,12 +158,11 @@ const JobListingView = () => {
                                                                 className={`pr-8 mt-2 ${index < days.length - 1 ? "schdule-Border" : ""
                                                                     }`}
                                                             >
-                                                                <p className="text-lg">{day}</p>
+                                                                <p className="Livvic-SemiBold text-[#555555] text-lg">{day}</p>
                                                                 {dayData && dayData.checked ? (
-                                                                    <>
+                                                                    <div className="flex gap-4">
                                                                         <p>
-                                                                            Start{" "}
-                                                                            <span className="font-bold">
+                                                                            <span className="text-[#666666]">
                                                                                 {new Date(dayData.start).toLocaleTimeString([], {
                                                                                     hour: "2-digit",
                                                                                     minute: "2-digit",
@@ -161,8 +171,7 @@ const JobListingView = () => {
                                                                             </span>
                                                                         </p>
                                                                         <p>
-                                                                            End{" "}
-                                                                            <span className="font-bold">
+                                                                            <span className="text-[#666666]">
                                                                                 {new Date(dayData.end).toLocaleTimeString([], {
                                                                                     hour: "2-digit",
                                                                                     minute: "2-digit",
@@ -170,9 +179,9 @@ const JobListingView = () => {
                                                                                 })}
                                                                             </span>
                                                                         </p>
-                                                                    </>
+                                                                    </div>
                                                                 ) : (
-                                                                    <p className="w-28">I don't work on {day}</p>
+                                                                    <p className="w-28 text-[#666666]">I don't work on {day}</p>
                                                                 )}
                                                             </div>
                                                         );
@@ -184,7 +193,7 @@ const JobListingView = () => {
                                 {data?.jobType != 'swimInstructor' &&
                                     <>
                                         <div className="lg:my-4 my-2">
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'nanny' && 'What are your expectations from the caregiver?'}
                                                 {data?.jobType == 'musicInstructor' && 'What instrument do you want your child to learn?'}
                                                 {data?.jobType == 'houseManager' && 'What specific duties do you need help with?'}
@@ -248,7 +257,7 @@ const JobListingView = () => {
                                     </>
                                 }
                                 <div className="lg:mt-4 mt-2">
-                                    <p className="lg:text-2xl text-xl font-bold Classico">
+                                    <p className="Livvic-SemiBold text-lg text-primary">
                                         {data?.jobType == 'nanny' && 'Do you have any specific requirements or preferences for your caregiver?'}
                                         {(data?.jobType == 'musicInstructor' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'What is the current skill level of your child?'}
                                         {data?.jobType == 'houseManager' && 'Do you require assistance with errands and grocery shopping?'}
@@ -307,7 +316,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {(data?.jobType == 'musicInstructor' || data?.jobType == 'houseManager' || data?.jobType == 'privateEducator' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'How often do you require?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -326,7 +335,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {(data?.jobType == 'musicInstructor' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'How long do you want each lesson to be?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -350,7 +359,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {(data?.jobType === 'musicInstructor' || data?.jobType == 'privateEducator' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'Where do you prefer lessons?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -369,7 +378,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {(data?.jobType === 'musicInstructor' || data?.jobType == 'privateEducator' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'What are your specific goals?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -398,7 +407,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'houseManager' && 'Do you require cooking services? If so, for whom?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -419,7 +428,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'specializedCaregiver' && 'Duration of Care'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -445,7 +454,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'specializedCaregiver' && 'Experience and Qualifications Required'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -471,7 +480,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'specializedCaregiver' && 'Availability'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -495,7 +504,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'specializedCaregiver' && 'Additional Skills and Competencies'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -521,7 +530,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {data?.jobType == 'specializedCaregiver' && 'Personal Fit and Preferences'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -547,7 +556,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 {(data?.jobType === 'musicInstructor' || data?.jobType == 'privateEducator' || data?.jobType == 'sportsCoaches' || data?.jobType == 'swimInstructor') && 'Do you have a preference any specific style?'}
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -568,7 +577,7 @@ const JobListingView = () => {
                                     <>
                                         <hr className="lg:my-4 my-2" />
                                         <div>
-                                            <p className="lg:text-2xl text-xl font-bold Classico">
+                                            <p className="Livvic-SemiBold text-lg text-primary">
                                                 Special requirements
                                             </p>
                                             <div className="flex gap-x-4 gap-y-2 flex-wrap lg:mt-4 mt-2">
@@ -581,23 +590,26 @@ const JobListingView = () => {
                                 }
                             </div>
                             <div className="flex justify-center gap-2 lg:my-8 my-4">
-                                <button
+                                {/* <button
                                     onClick={handleDeleteClick}
                                     className=" text-white bg-[#FF0000] border border-[#FF0119] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
                                 >
                                     Delete Job
-                                </button>
-                                <button onClick={() => navigate(-1)}
+                                </button> */}
+                                <Button btnText={"Delete Job"} action={() => handleDeleteClick()} className="bg-[#FF8484] text-white"/>
+                                {/* <button onClick={() => navigate(-1)}
                                     className=" text-[#38AEE3] bg-white border border-[#38AEE3] lg:w-32 w-24 h-10 rounded-full font-normal text-base transition hover:opacity-60 duration-700 delay-150 ease-in-out"
                                 >
                                     Go back
-                                </button>
-                                <button
+                                </button> */}
+                                <Button btnText={"Go Back"} action={() => navigate(-1)} className="text-[#555555] border border-[#EEEEEE]"/>
+                                {/* <button
                                     onClick={handleEditClick}
                                     className=" bg-[#38AEE3] text-white lg:w-32 w-24 h-10 border-none rounded-full font-normal text-base transition hover:-translate-y-1 duration-700 delay-150 ease-in-out hover:scale-110"
                                 >
                                     Edit Job
-                                </button>
+                                </button> */}
+                                 <Button btnText={"Edit Job"} action={() => handleEditClick()} className="bg-[#AEC4FF]"/>
                             </div>
                         </div>
                         <Modal

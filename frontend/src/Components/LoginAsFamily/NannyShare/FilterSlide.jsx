@@ -101,10 +101,10 @@ export default function FilterSlidersNannyShare({
 
         return {
             background: isSelected
-                ? 'linear-gradient(90deg, #FFF1F5 0%, #9EDCE1 100%)'
+                ? '#AEC4FF'
                 : 'transparent',
-            color: isSelected ? '#333' : '#666',
-            borderColor: isSelected ? '#FFF1F5' : '#D6DDEB',
+            color: isSelected ? '#FFFFFF' : '#666',
+            borderColor: isSelected ? '' : '#D6DDEB',
             transition: 'all 0.3s ease'
         }
     }
@@ -113,7 +113,7 @@ export default function FilterSlidersNannyShare({
         <div className='border border-[#D6DDEB] bg-white p-4 rounded-2xl filter-width'>
             {/* Location Slider */}
             <div className=''>
-                <h4 className='font-semibold text-2xl Classico'>Location</h4>
+                 <h4 className="onboarding-subHead text-[#001243]">Location</h4>
                 <Slider
                     className=''
                     min={0}
@@ -121,18 +121,17 @@ export default function FilterSlidersNannyShare({
                     value={locationValue}
                     onChange={setLocationValue}
                     trackStyle={{
-                        background: `${'linear-gradient(90deg, #FFF1F5 0%, #9EDCE1 100%)'}`
+                        background: `#AEC4FF'}`
                     }}
-                    handleStyle={{ borderColor: '#FF6B6B' }}
                 />
-                <p className='text-gray-500 text-sm'>
+                <p className='Livvic-SemiBold text-[#001243] text-sm'>
                     Within {locationValue}mi of 50, {user?.location?.format_location ? user?.location?.format_location : 'Your given location'}
                 </p>
             </div>
             <hr className='border-1 my-4' />
             <div>
                 <div>
-                    <h4 className='font-semibold text-2xl Classico'>Price</h4>
+                      <h4 className="onboarding-subHead text-[#001243]">Price</h4>
                     <Slider
                         className=''
                         range
@@ -141,14 +140,10 @@ export default function FilterSlidersNannyShare({
                         value={priceValue}
                         onChange={setPriceValue}
                         trackStyle={{
-                            background: `${window.location.pathname == '/nanny' ? 'linear-gradient(90deg, #FFF1F5 0%, #FFCADA 100%)' : 'linear-gradient(90deg, #FFF1F5 0%, #9EDCE1 100%)'}`
+                            background: '#AEC4FF'
                         }}
-                        handleStyle={[
-                            { borderColor: '#FF6B6B' },
-                            { borderColor: '#FF6B6B' }
-                        ]}
                     />
-                    <p className='text-gray-500 text-sm'>
+                    <p className="Livvic-SemiBold text-[#001243] text-sm">
                         Within ${priceValue[0]} - ${priceValue[1]}/hr
                     </p>
                 </div>
@@ -156,7 +151,7 @@ export default function FilterSlidersNannyShare({
             </div>
 
             <div className='mt-6'>
-                <h4 className='font-semibold text-2xl Classico'>Number of Children</h4>
+                <h4 className="onboarding-subHead text-[#001243]">Number of Children</h4>
                 <input
                     type="number"
                     min={1}
@@ -171,14 +166,14 @@ export default function FilterSlidersNannyShare({
             <hr className='border-1 my-4' />
             {/* Services Options */}
             <div>
-                <h4 className='font-semibold text-2xl  Classico'>Age of Children</h4>
+                <h4 className="onboarding-subHead text-[#001243]">Age of Children</h4>
                 <div className='flex flex-wrap gap-x-2 gap-y-4 mt-3'>
                     {(ageOfChildren).map(option => (
                         <p
                             key={option}
                             onClick={() => toggleSelection('care', option)}
                             style={getOptionStyle('care', option)}
-                            className='border-2 px-4 py-1 rounded-3xl text-gray-500 cursor-pointer'
+                            className="Livvic-Medium text-[#555555] border border-[#EEEEEE] px-4 py-1 rounded-full cursor-pointer"
                         >
                             {option}
                         </p>
