@@ -208,7 +208,7 @@ const BillingMethod = ({ nanny }) => {
         )}
 
         {/* PayPal Option */}
-        <div className="flex items-center justify-between space-x-2">
+        {/* <div className="flex items-center justify-between space-x-2">
           <label
             htmlFor="paypal"
             className="Livvic-SemiBold text-md text-primary flex items-center gap-2"
@@ -232,7 +232,7 @@ const BillingMethod = ({ nanny }) => {
               }`}
             />
           </label>
-        </div>
+        </div> */}
 
         {/* Billing Status */}
         {isActive && (

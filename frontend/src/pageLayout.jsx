@@ -189,12 +189,12 @@ export default function PageLayout() {
               pathname.startsWith("/family/post-a-job") ||
               pathname.startsWith("/family/post-a-nannyShare")
                 ? "bg-white"
-                : `bg-gradient-to-b ${
+                : ` ${
                     pathname.startsWith("/family/pricing") ||
                     pathname.startsWith("/family/message")
                       ? "py-0"
                       : "py-8"
-                  } from-[#9EDCE180] via-[#DAF4EF66] to-[#EFECE64D]`
+                  }`
             }`}
           >
             <Outlet />
