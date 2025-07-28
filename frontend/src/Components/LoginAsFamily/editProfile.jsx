@@ -414,34 +414,6 @@ export default function EditProfile() {
                     </Spin>
                   </Form.Item>
                 </div>
-
-                <div>
-                  <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
-                  <Form.Item
-                    name="zipCode"
-                    rules={[
-                      { required: true, message: "ZIP code is required" },
-                    ]}
-                  >
-                    <Spin spinning={loading} size="small">
-                      <Input
-                        name="zipCode"
-                        placeholder="Enter ZIP code"
-                        value={zipCode}
-                        onChange={(e) => {
-                          const zip = e.target.value;
-                          setZipCode(zip);
-                          form.setFieldsValue({ zipCode: zip });
-                        }}
-                        onBlur={(e) =>
-                          handleZipValidation(e.target.value.trim())
-                        }
-                        className="border rounded-3xl"
-                        maxLength={10}
-                      />
-                    </Spin>
-                  </Form.Item>
-                </div>
                 <div>
                   <p className="mb-2 font-semibold text-lg capitalize">
                     Gender

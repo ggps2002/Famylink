@@ -453,13 +453,13 @@ const communitySlice = createSlice({
       })
 
       .addCase(postCommLikeThunk.pending, (state) => {
-        state.isLoading = true;
+        // state.isLoading = true;
       })
       .addCase(postCommLikeThunk.rejected, (state) => {
-        state.isLoading = false;
+        // state.isLoading = false;
       })
       .addCase(postCommLikeThunk.fulfilled, (state) => {
-        state.isLoading = false;
+        // state.isLoading = false;
       })
 
       .addCase(postCommDislikeThunk.pending, (state) => {
@@ -473,13 +473,13 @@ const communitySlice = createSlice({
       })
 
       .addCase(postReplyLikeThunk.pending, (state) => {
-        state.isLoading = true;
+        // state.isLoading = true;
       })
       .addCase(postReplyLikeThunk.rejected, (state) => {
-        state.isLoading = false;
+        // state.isLoading = false;
       })
       .addCase(postReplyLikeThunk.fulfilled, (state) => {
-        state.isLoading = false;
+        // state.isLoading = false;
       })
 
       .addCase(postReplyDislikeThunk.pending, (state) => {

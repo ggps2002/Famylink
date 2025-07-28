@@ -11,10 +11,13 @@ function Footer() {
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
         >
-          <path fill="#001243" d="M0,50 C360,0 1080,0 1440,50 L1440,120 L0,120 Z" />
+          <path
+            fill="#001243"
+            d="M0,50 C360,0 1080,0 1440,50 L1440,120 L0,120 Z"
+          />
         </svg>
       </div>
-      
+
       {/* Footer content */}
       <div className="bg-[#001243] text-white -mt-1">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
@@ -32,13 +35,41 @@ function Footer() {
                 <br /> and building a supportive community.
               </p>
               <div className="flex gap-4 mt-6">
-                <img src="/icons/Socials/facebook-icon.svg" alt="facebook" className="cursor-pointer hover:opacity-80 transition-opacity" />
-                <img src="/icons/Socials/twitter-icon.svg" alt="twitter" className="cursor-pointer hover:opacity-80 transition-opacity" />
-                <img src="/icons/Socials/instagram-icon.svg" alt="instagram" className="cursor-pointer hover:opacity-80 transition-opacity" />
-                <img src="/icons/Socials/youtube-icon.svg" alt="youtube" className="cursor-pointer hover:opacity-80 transition-opacity" />
+                <a
+                  href="https://www.facebook.com/profile.php?id=61573842520549"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/icons/Socials/facebook-icon.svg"
+                    alt="facebook"
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                  />
+                </a>
+                <img
+                  src="/icons/Socials/twitter-icon.svg"
+                  alt="twitter"
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
+                <a
+                  href="https://www.instagram.com/famylink.us?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/icons/Socials/instagram-icon.svg"
+                    alt="instagram"
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                  />
+                </a>
+                <img
+                  src="/icons/Socials/youtube-icon.svg"
+                  alt="youtube"
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
               </div>
             </div>
-            
+
             {/* Links Section */}
             <div>
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
@@ -46,38 +77,56 @@ function Footer() {
               </p>
               <ul className="mt-4 flex flex-col gap-4">
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     Services
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     For Job Seekers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     Community
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors">
+                  <a
+                    href="#"
+                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
+                  >
                     Contact
                   </a>
                 </li>
               </ul>
             </div>
-            
+
             {/* Contact Section */}
             <div>
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
@@ -95,12 +144,13 @@ function Footer() {
                 </li>
               </ul>
             </div>
-            
+
             {/* Newsletter Section */}
             <div>
               <p className="Livvic-SemiBold text-lg leading-[30px]">
                 Stay in the loop—get helpful
-                <br className="hidden sm:block" /> childcare tips and platform updates.
+                <br className="hidden sm:block" /> childcare tips and platform
+                updates.
               </p>
               <div className="flex mt-6 focus-within:ring-2 focus-within:ring-[#4f7eff] rounded-md transition duration-200">
                 <input
@@ -110,13 +160,17 @@ function Footer() {
                 />
                 <div className="p-1 bg-[#152D6F] rounded-r-md">
                   <button className="bg-[#AEC4FF] p-1 rounded-[6px] flex justify-center items-center hover:bg-[#9BB8FF] transition-colors">
-                    <img src="/arrow-right.svg" alt="arrow-right" className="w-10 h-10"/>
+                    <img
+                      src="/arrow-right.svg"
+                      alt="arrow-right"
+                      className="w-10 h-10"
+                    />
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Bottom Section */}
           <hr className="mt-12 h-px bg-[#FFFFFF33] border-0" />
           <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">

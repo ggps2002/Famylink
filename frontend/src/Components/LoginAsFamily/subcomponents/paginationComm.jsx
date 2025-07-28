@@ -1,4 +1,3 @@
-// PaginationComm.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "react-avatar";
@@ -15,27 +14,64 @@ import {
   replyPostReplyThunk,
   createPostThunk,
 } from "../../Redux/communitySlice";
-import { Dislike, Like, Reply, Upload } from "../../../assets/icons";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { api } from "../../../Config/api";
 import Blogs from "../../Blogs/Blogs";
-import { Loader2 } from "lucide-react";
+import {
+  Loader2,
+  Heart,
+  MessageCircle,
+  Share,
+  MoreHorizontal,
+  Image,
+  Video,
+  Smile,
+  Plus,
+  X,
+  Menu,
+  ChevronDown,
+  Shield,
+} from "lucide-react";
+import { SelectComponent } from "../../subComponents/input";
+import { Select } from "antd";
 
 const dateFormatting = (date) => {
   const createdAtDate = new Date(date);
-  const formattedDate = createdAtDate.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const formattedTime = createdAtDate.toLocaleTimeString("en-US", {
+  const now = new Date();
+
+  const isYesterday =
+    now.getDate() - createdAtDate.getDate() === 1 &&
+    now.getMonth() === createdAtDate.getMonth() &&
+    now.getFullYear() === createdAtDate.getFullYear();
+
+  const formatTime = createdAtDate.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
-  }); // gives "9:30 AM"
+  });
 
-  return `${formattedDate} @ ${formattedTime}`;
+  if (isYesterday) {
+    return `${formatTime}, Yesterday`;
+  }
+
+  const isToday =
+    now.getDate() === createdAtDate.getDate() &&
+    now.getMonth() === createdAtDate.getMonth() &&
+    now.getFullYear() === createdAtDate.getFullYear();
+
+  if (isToday) {
+    return `${formatTime}, Today`;
+  }
+
+  // Default: show date like "Jul 25, 2025"
+  const formattedDate = createdAtDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return `${formatTime}, ${formattedDate}`;
 };
 
 const PaginationComm = ({ category, searchQuery }) => {
@@ -49,9 +85,10 @@ const PaginationComm = ({ category, searchQuery }) => {
   const [currentUserId, setCurrentUserId] = useState("");
   const [replyText, setReplyText] = useState("");
   const [posts, setPosts] = useState([]);
+  const [adminPosts, setAdminPosts] = useState([]);
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyToCommentId, setReplyToCommentId] = useState(null);
-  const [quotedText, setQuotedText] = useState(""); // for UI quote
+  const [quotedText, setQuotedText] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("");
@@ -62,6 +99,15 @@ const PaginationComm = ({ category, searchQuery }) => {
   const [deletePostId, setDeletePostId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showAdminPosts, setShowAdminPosts] = useState(false);
+  const [showTopicsDropdown, setShowTopicsDropdown] = useState(false);
+
+  const handleTopicChange = (value) => {
+    setSelectedTopic(value);
+    // you can do additional logic here like filtering, etc.
+  };
 
   const handleCreatePost = async () => {
     if (!postContent.trim() || !selectedTopic) return;
@@ -79,6 +125,7 @@ const PaginationComm = ({ category, searchQuery }) => {
     setSelectedTopic("");
     setMediaFiles([]);
     setIsAnonymous(false);
+    setIsCreatePostModalOpen(false);
     dispatch(fetchAllCommunityThunk());
     await fetchAllData();
   };
@@ -114,6 +161,7 @@ const PaginationComm = ({ category, searchQuery }) => {
       await api.delete(`/community/${deletePostId}`);
 
       setPosts((prev) => prev.filter((p) => p._id !== deletePostId));
+      setAdminPosts((prev) => prev.filter((p) => p._id !== deletePostId));
       setIsDeleteDialogOpen(false);
       setDeletePostId(null);
     } catch (error) {
@@ -169,33 +217,39 @@ const PaginationComm = ({ category, searchQuery }) => {
 
       await Promise.all(
         Array.from(userIds).map(async (id) => {
-          // if (id === "000000000000000000000000") return;
-
           try {
             const res = await api.get(`/userData/getUserById/${id}`);
             const data = res.data?.data;
             userMap[id] = {
               name: data?.name || "User",
               profilePic: data?.profilePic || null,
+              type: data?.type || "User",
             };
           } catch {
-            userMap[id] = { name: "User", profilePic: null };
+            userMap[id] = { name: "User", profilePic: null, type: "User" };
           }
         })
       );
 
       setPostCreators(userMap);
+
+      // Filter admin posts
+      const adminPostsFiltered = allPosts.filter((post) => {
+        const creator = userMap[post.createdBy];
+        return creator?.type === "Admin";
+      });
+      setAdminPosts(adminPostsFiltered);
     } catch (err) {
       console.error("Error fetching community or user data:", err);
     }
   }, [dispatch]);
 
-    const filteredPosts = posts?.filter((post) => (
-        // eslint-disable-next-line react/prop-types
+  const filteredPosts =
+    posts?.filter(
+      (post) =>
         post.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        // eslint-disable-next-line react/prop-types
         post.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )) || [];
+    ) || [];
 
   useEffect(() => {
     if (user?._id) {
@@ -273,101 +327,10 @@ const PaginationComm = ({ category, searchQuery }) => {
     }
   };
 
-  const handleDislike = async (postId) => {
-    const post = posts.find((p) => p._id === postId);
-    const hasDisliked = post.dislikes?.includes(user._id);
-
-    setPosts((prev) =>
-      prev.map((p) =>
-        p._id === postId
-          ? {
-              ...p,
-              dislikes: hasDisliked
-                ? p.dislikes.filter((id) => id !== user._id)
-                : [...(p.dislikes || []), user._id],
-            }
-          : p
-      )
-    );
-
-    try {
-      await dispatch(postCommDislikeThunk({ id: postId, comm: false }));
-    } catch {
-      // Optionally revert UI here
-    }
-  };
-
-  const handleCommentDislike = async (commentId) => {
-    if (!activePostId || !commentId) return;
-
-    try {
-      await dispatch(
-        postCommentDislikeThunk({ postId: activePostId, commentId })
-      );
-      const res = await dispatch(fetchPostByIdThunk(activePostId));
-      const updated = res.payload?.data;
-      if (updated) {
-        setPosts((prev) =>
-          prev.map((p) =>
-            p._id === updated._id ? { ...p, comments: updated.comments } : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error disliking comment:", error);
-    }
-  };
-
-  const handleReplyLike = async (commentId, replyId) => {
-    if (!activePostId || !commentId || !replyId) return;
-
-    try {
-      await dispatch(
-        postReplyLikeThunk({ postId: activePostId, commentId, replyId })
-      );
-      const res = await dispatch(fetchPostByIdThunk(activePostId));
-      const updated = res.payload?.data;
-      if (updated) {
-        setPosts((prev) =>
-          prev.map((p) =>
-            p._id === updated._id ? { ...p, comments: updated.comments } : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error liking reply:", error);
-    }
-  };
-
-  const handleReplyDislike = async (commentId, replyId) => {
-    if (!activePostId || !commentId || !replyId) return;
-
-    try {
-      await dispatch(
-        postReplyDislikeThunk({ postId: activePostId, commentId, replyId })
-      );
-      const res = await dispatch(fetchPostByIdThunk(activePostId));
-      const updated = res.payload?.data;
-      if (updated) {
-        setPosts((prev) =>
-          prev.map((p) =>
-            p._id === updated._id ? { ...p, comments: updated.comments } : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error disliking reply:", error);
-    }
-  };
-
   const handlePostCommentReply = () => {
-    console.log("ReplyText", replyText);
-    console.log("replyToCommentId", replyToCommentId);
     if (!replyText.trim()) return;
 
     if (replyToCommentId) {
-      // 🔁 Nested reply to a comment
-      console.log("replyToCommentId", replyToCommentId);
       dispatch(
         replyPostReplyThunk({
           postId: activePostId,
@@ -391,459 +354,1127 @@ const PaginationComm = ({ category, searchQuery }) => {
         setQuotedText("");
         setIsReplyModalOpen(false);
       });
-    } else {
-      // 🔁 Fallback to posting a top-level comment
-      dispatch(postCommentThunk({ id: activePostId, comment: replyText })).then(
-        () => {
-          dispatch(fetchPostByIdThunk(activePostId)).then((res) => {
-            const updated = res.payload?.data;
-            if (updated) {
-              setPosts((prev) =>
-                prev.map((p) =>
-                  p._id === updated._id
-                    ? { ...p, comments: updated.comments }
-                    : p
-                )
-              );
-            }
-          });
-          setReplyText("");
-          setIsReplyModalOpen(false);
-        }
-      );
     }
   };
 
-  return category === "Community Resources" ? (
-    <div className="w-full mx-auto">
-      {isLoading ? (
-        <div className="text-center py-10">
-          <span className="inline-block w-10 h-10 border-4 border-blue-500 border-dashed rounded-full animate-spin"></span>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          {/* LEFT SIDEBAR */}
-          <div className="lg:col-span-3">
-            <div className="space-y-6 h-[80vh] overflow-y-auto pr-2">
-              {filteredPosts.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-white border border-gray-200 rounded-2xl p-6"
-                >
-                  <h2 className="text-2xl font-bold mb-3">{post.topicName}</h2>
-                  <p className="text-gray-700 mb-4 whitespace-pre-wrap break-words">
-                    {post.description || ""}
-                  </p>
-                  {post.media.map((mediaItem, idx) => (
-                    <div
-                      key={idx}
-                      className="rounded-lg overflow-hidden border border-gray-200"
-                    >
-                      {mediaItem.type === "image" ? (
-                        <img
-                          src={mediaItem.url}
-                          alt={`media-${idx}`}
-                          className="w-full h-auto object-cover"
-                        />
-                      ) : (
-                        <video
-                          src={mediaItem.url}
-                          controls
-                          className="w-full h-auto object-contain"
-                        />
-                      )}
-                    </div>
-                  ))}
-                  <div className="text-sm text-gray-500">
-                    Created by:{" "}
-                    {post.isAnonymous
-                      ? "User"
-                      : postCreators[post.createdBy]?.name || "Loading..."}
-                    <br />
-                    Posted on: {dateFormatting(post.createdAt)}
-                  </div>
-                  <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={Like}
-                        alt="like"
-                        className="cursor-pointer w-4 h-4"
-                        onClick={() => handleLike(post._id)}
-                      />
-                      <span>{post.likes?.length || 0}</span>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={Dislike}
-                        alt="dislike"
-                        className="cursor-pointer w-4 h-4"
-                        onClick={() => handleDislike(post._id)}
-                      />
-                      <span>{post.dislikes?.length || 0}</span>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={Reply}
-                        alt="reply"
-                        className="cursor-pointer w-4 h-4"
-                        onClick={() => setActivePostId(post._id)}
-                      />
-                      <span>Reply</span>
-                    </div>
-                    {currentUserId === post.createdBy && (
-                      <div
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => {
-                          setDeleteCommentId(null);
-                          setDeletePostId(post._id);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <span>Delete</span>
-                      </div>
+  // Comment threading logic with curved lines
+  const renderCommentsWithLines = (comments) => {
+    if (!comments || comments.length === 0) return null;
+
+    const originalComments = [];
+    const replyComments = [];
+
+    comments.forEach((comment) => {
+      if (comment.replies && comment.replies.length > 0) {
+        replyComments.push(comment);
+      } else {
+        originalComments.push(comment);
+      }
+    });
+
+    const commentThreads = originalComments.map((originalComment) => {
+      const relatedReplies = replyComments.filter(
+        (reply) =>
+          reply.replies[0].comment === originalComment.comment ||
+          reply.replies.some((r) => r.user === originalComment.user?._id)
+      );
+
+      return {
+        original: originalComment,
+        replies: relatedReplies,
+      };
+    });
+
+    replyComments.forEach((reply) => {
+      const hasMatchingOriginal = commentThreads.some((thread) =>
+        thread.replies.includes(reply)
+      );
+
+      if (!hasMatchingOriginal) {
+        commentThreads.push({
+          original: {
+            ...reply.replies[0],
+            _id: `original-${reply._id}`,
+            isOriginalFromReply: true,
+          },
+          replies: [reply],
+        });
+      }
+    });
+
+    return commentThreads
+      .sort(
+        (a, b) =>
+          new Date(a.original.createdAt) - new Date(b.original.createdAt)
+      )
+      .map((thread, threadIndex) => {
+        const originalComment = thread.original;
+        const commentUser = !originalComment.isAnonymous
+          ? postCreators[originalComment.user?._id || originalComment.user]
+          : {};
+
+        return (
+          <div
+            key={originalComment._id || `thread-${threadIndex}`}
+            className="relative"
+          >
+            {/* Original Comment */}
+            <div className="flex items-start space-x-3">
+              {commentUser?.profilePic && !originalComment.isAnonymous ? (
+                <img
+                  src={commentUser.profilePic}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <Avatar
+                  name={
+                    originalComment.isAnonymous
+                      ? "Anonymous"
+                      : commentUser?.name || "User"
+                  }
+                  size="40"
+                  round
+                  className="text-white flex-shrink-0"
+                  color="#6B7280"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="rounded-2xl px-4">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="Livvic-SemiBold text-sm text-gray-900">
+                      {originalComment.isAnonymous
+                        ? "Anonymous"
+                        : commentUser?.name || "User"}
+                    </h4>
+                    {commentUser?.type === "Admin" && (
+                      <Shield className="w-4 h-4 text-blue-600" />
                     )}
                   </div>
+                  <span className="Livvic-Medium text-xs -mt-2 text-[#555555]">
+                    {dateFormatting(originalComment.createdAt)}
+                  </span>
+                  <p className="Livvic-Medium text-sm break-words">
+                    {originalComment.comment}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CENTER CONTENT */}
-          <div className="lg:col-span-6 space-y-6">
-            {/* New Post Box */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-start gap-4">
-                {user?.profilePic ? (
-                  <img
-                    src={user?.profilePic}
-                    alt="user"
-                    className="rounded-full w-12 h-12"
-                  />
-                ) : (
-                  <Avatar
-                    className="rounded-full text-black"
-                    size="48"
-                    color="#38AEE3"
-                    name={user.name?.split(" ").slice(0, 2).join(" ")}
-                  />
-                )}
-
-                <div className="flex-1">
-                  <textarea
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                    placeholder="Write your post..."
-                    className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-lg focus:outline-none resize-none"
-                    rows={4}
-                  />
-                  <label className="flex items-center gap-2 text-gray-600 text-base my-2">
-                    <input
-                      type="checkbox"
-                      checked={isAnonymous}
-                      onChange={(e) => setIsAnonymous(e.target.checked)}
-                      className="w-5 h-5"
-                    />
-                    Stay Anonymous
-                  </label>
-
-                  {postContent.trim() && (
+                <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 px-2">
+                  {!originalComment.isOriginalFromReply && (
                     <>
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
-                        <select
-                          value={selectedTopic}
-                          onChange={(e) => setSelectedTopic(e.target.value)}
-                          className="border border-gray-300 rounded-lg px-4 py-2 text-base w-full sm:w-auto"
-                        >
-                          <option value="">Select Topic</option>
-                          {Array.isArray(communities) &&
-                            communities
-                              .flatMap((comm) =>
-                                (comm.topics || []).map((topic) => ({
-                                  ...topic,
-                                  communityName: comm.name,
-                                }))
-                              )
-                              .slice(0, 5)
-                              .map((topic) => (
-                                <option key={topic._id} value={topic._id}>
-                                  {topic.name} — {topic.communityName}
-                                </option>
-                              ))}
-                        </select>
-                        <input
-                          id="media-upload"
-                          type="file"
-                          accept="image/*,video/*"
-                          multiple
-                          onChange={(e) =>
-                            setMediaFiles(Array.from(e.target.files))
-                          }
-                          className="hidden"
-                        />
-
-                        {/* Label triggers file input */}
-                        <label
-                          htmlFor="media-upload"
-                          className="cursor-pointer inline-flex items-center gap-2 text-gray-600 hover:text-blue-500"
-                        >
-                          {/* SVG icon (you can replace this with any icon) */}
-                          <img src={Upload} alt="upload" />
-                          <span>Photo/Video</span>
-                        </label>
-                      </div>
-                      {mediaFiles.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {mediaFiles.map((file, idx) => (
-                            <div
-                              key={idx}
-                              className=" border border-gray-300 rounded overflow-hidden"
-                            >
-                              {file.type.startsWith("image") ? (
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt="preview"
-                                  className="object-cover w-full h-full"
-                                />
-                              ) : (
-                                <video
-                                  src={URL.createObjectURL(file)}
-                                  controls
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mt-4">
+                      <button
+                        onClick={() => handleCommentLike(originalComment._id)}
+                        className="hover:text-red-500 font-medium"
+                      >
+                        Like ({originalComment.likes?.length || 0})
+                      </button>
+                      <button
+                        onClick={() => {
+                          setReplyToCommentId(originalComment._id);
+                          setQuotedText(originalComment.comment);
+                          setIsReplyModalOpen(true);
+                        }}
+                        className="hover:text-blue-500 font-medium"
+                      >
+                        Reply
+                      </button>
+                      {currentUserId === originalComment.user?._id && (
                         <button
-                          onClick={handleCreatePost}
-                          className="bg-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-600 transition"
+                          onClick={() => {
+                            setDeletePostId(null);
+                            setDeleteCommentId(originalComment._id);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="hover:text-red-500 font-medium"
                         >
-                          Share Post
+                          Delete
                         </button>
-                      </div>
+                      )}
                     </>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Replies */}
-            {activePost && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col min-h-[400px]">
-                <div className="flex gap-4 overflow-auto">
-                  <div className="overflow-y-auto pr-2 max-h-[800px] w-full">
-                    {!activePost.comments.length ? (
-                      <div className="text-gray-500 text-lg flex justify-center items-center h-[200px]">
-                        <p>No replies yet</p>
-                      </div>
-                    ) : (
-                      [...activePost.comments]
-                        .sort(
-                          (a, b) =>
-                            new Date(b.createdAt) - new Date(a.createdAt)
-                        )
-                        .map((reply) => {
-                          const user = !reply.isAnonymous
-                            ? postCreators[reply.user?._id]
-                            : {};
-                          const replying =
-                            reply.replies &&
-                            reply.replies.length > 0 &&
-                            reply.replies[0] &&
-                            !reply.replies[0].isAnonymous
-                              ? postCreators[reply.replies[0].user]
-                              : {};
+            {/* Replies with Vertical Line + Dot */}
+            {thread.replies.length > 0 && (
+              <div className="relative ml-12 pl-6 space-y-4 mt-4">
+                {thread.replies
+                  .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                  .map((reply, replyIndex) => {
+                    const replyUser = !reply.isAnonymous
+                      ? postCreators[
+                          typeof reply.user === "string"
+                            ? reply.user
+                            : reply.user?._id
+                        ]
+                      : {};
 
-                          return (
-                            <div
-                              key={reply._id}
-                              className="border-b last:border-b-0"
-                            >
-                              <div className="flex gap-4 p-6 border-b last:border-b-0">
-                                {user?.profilePic ? (
-                                  <img
-                                    src={user?.profilePic}
-                                    alt="user"
-                                    className="rounded-full w-12 h-12"
-                                  />
-                                ) : (
-                                  <Avatar
-                                    className="rounded-full text-black"
-                                    size="32"
-                                    color="#38AEE3"
-                                    name={
-                                      user?.name ||
-                                      "User"?.split(" ").slice(0, 2).join(" ")
-                                    }
-                                  />
+                    return (
+                      <div key={reply._id} className="relative">
+                        {/* Dot before each reply */}
+                        <div className="flex items-start space-x-3">
+                          {replyUser?.profilePic && !reply.isAnonymous ? (
+                            <img
+                              src={replyUser.profilePic}
+                              alt="Profile"
+                              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <Avatar
+                              name={
+                                reply.isAnonymous
+                                  ? "Anonymous"
+                                  : replyUser?.name || "User"
+                              }
+                              size="32"
+                              round
+                              className="text-white flex-shrink-0"
+                              color="#6B7280"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="bg-white rounded-2xl px-3 ">
+                              <div className="flex items-center space-x-2">
+                                <h4 className="Livvic-SemiBold text-sm text-gray-900">
+                                  {reply.isAnonymous
+                                    ? "Anonymous"
+                                    : replyUser?.name || "User"}
+                                </h4>
+                                {replyUser?.type === "Admin" && (
+                                  <Shield className="w-3 h-3 text-blue-600" />
                                 )}
-                                <div>
-                                  <h2 className="text-2xl font-bold mb-2">
-                                    {user?.name || "User"}
-                                  </h2>
-                                  {reply.replies &&
-                                    reply.replies.length > 0 && (
-                                      <div className="flex gap-2">
-                                        <div>
-                                          <p className="rounded-2xl border border-gray-200 p-4 mb-4">
-                                            <span className="text-gray-400 text-lg">
-                                              Replying to{" "}
-                                              {replying.name || "User"}
-                                            </span>
-                                            <br />"{reply.replies[0].comment}"
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
-                                  <p className="text-gray-700">
-                                    {reply.comment}
-                                  </p>
-                                  <div className="text-sm text-gray-500 mt-4">
-                                    Posted on: {dateFormatting(reply.createdAt)}
-                                  </div>
-                                  <div className="flex gap-6 mt-4 text-gray-600 text-lg">
-                                    <div className="flex gap-2">
-                                      <img
-                                        src={Like}
-                                        alt="like"
-                                        onClick={() =>
-                                          handleCommentLike(reply._id)
-                                        }
-                                        className="cursor-pointer"
-                                      />
-                                      <span>{reply.likes?.length || 0}</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                      <img
-                                        src={Dislike}
-                                        alt="dislike"
-                                        onClick={() =>
-                                          handleCommentDislike(reply._id)
-                                        }
-                                        className="cursor-pointer"
-                                      />
-                                      <span>{reply.dislikes?.length || 0}</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                      <img
-                                        src={Reply}
-                                        alt="reply"
-                                        onClick={() => {
-                                          setReplyToCommentId(reply._id);
-                                          setQuotedText(reply.comment);
-                                          setIsReplyModalOpen(true);
-                                        }}
-                                        className="cursor-pointer"
-                                      />
+                              </div>
+                              <span className="Livvic-Medium text-xs !mt-1 text-[#555555]">
+                                {dateFormatting(reply.createdAt)}
+                              </span>
+                              <p className="Livvic-Medium text-sm break-words">
+                                {reply.comment}
+                              </p>
+                            </div>
+                            <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500 px-2">
+                              <button
+                                onClick={() => handleCommentLike(reply._id)}
+                                className="hover:text-red-500 font-medium"
+                              >
+                                Like ({reply.likes?.length || 0})
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setReplyToCommentId(originalComment._id);
+                                  setQuotedText(reply.comment);
+                                  setIsReplyModalOpen(true);
+                                }}
+                                className="hover:text-blue-500 font-medium"
+                              >
+                                Reply
+                              </button>
+                              {currentUserId === reply.user?._id && (
+                                <button
+                                  onClick={() => {
+                                    setDeletePostId(null);
+                                    setDeleteCommentId(reply._id);
+                                    setIsDeleteDialogOpen(true);
+                                  }}
+                                  className="hover:text-red-500 font-medium"
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        );
+      });
+  };
 
-                                      <span>Reply</span>
+  if (category !== "Community Resources") {
+    return <Blogs category={category} searchQuery={searchQuery} />;
+  }
+
+  return (
+    <div className="max-w-full mx-auto relative">
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <>
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden mb-4 flex gap-2 flex-wrap">
+            <div
+              className={`${
+                showAdminPosts
+                  ? "bg-[#AEC4FF] text-primary"
+                  : "bg-white border border-[#EEEEEE] text-[#555555]"
+              } px-4 py-2 rounded-full w-fit h-fit Livvic-Medium cursor-pointer`}
+              onClick={() => setShowAdminPosts(!showAdminPosts)}
+            >
+              {showAdminPosts ? "View Non-Admin Posts" : "View Admin Posts"}
+            </div>
+            <Select
+              value={selectedTopic}
+              onChange={handleTopicChange}
+              placeholder="Select Topic"
+              className="w-72 rounded-full shadow-sm border border-gray-200 hover:border-gray-400 focus:border-primary"
+              style={{
+                height: "48px",
+                width: "180px",
+              }}
+              dropdownStyle={{
+                borderRadius: "10px",
+              }}
+              bordered={false}
+            >
+              {(Array.isArray(localCommunities)
+                ? localCommunities
+                    .flatMap((comm) => comm.topics || [])
+                    .slice(0, 8)
+                    .map((topic) => topic.name)
+                : []
+              ).map((opt) => (
+                <Select.Option key={opt} value={opt}>
+                  <span className="text-sm text-gray-800">{opt}</span>
+                </Select.Option>
+              ))}
+            </Select>
+
+            {/* <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="flex items-center space-x-2 bg-white rounded-lg px-4 py-2 shadow-sm border"
+            >
+              <Menu className="w-5 h-5" />
+              <span>Menu</span>
+            </button> */}
+
+            {/* {showMobileMenu && (
+              <div className="mt-2 bg-white rounded-lg shadow-lg border p-4 space-y-3">
+                <button
+                  onClick={() => {
+                    setShowAdminPosts(!showAdminPosts);
+                    setShowMobileMenu(false);
+                  }}
+                  className="flex items-center space-x-2 w-full text-left p-2 hover:bg-gray-50 rounded"
+                >
+                  <Shield className="w-4 h-4 text-blue-600" />
+                  <span>Admin Posts</span>
+                </button>
+
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTopicsDropdown(!showTopicsDropdown)}
+                    className="flex items-center justify-between w-full text-left p-2 hover:bg-gray-50 rounded"
+                  >
+                    <span>Topics</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+
+                  {showTopicsDropdown && (
+                    <div className="mt-1 bg-gray-50 rounded p-2 space-y-1">
+                      {Array.isArray(localCommunities) &&
+                        localCommunities
+                          .flatMap((comm) => comm.topics || [])
+                          .slice(0, 5)
+                          .map((topic) => (
+                            <button
+                              key={topic._id}
+                              className="block w-full text-left text-sm p-1 hover:bg-white rounded"
+                            >
+                              {topic.name}
+                            </button>
+                          ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )} */}
+          </div>
+
+          <div className="flex gap-6">
+            {/* Left Column - Admin Posts (Desktop Only) */}
+            <div className="hidden lg:block w-80 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                {/* <div className="p-4 border-b border-gray-100">
+                  <div className="flex items-center space-x-2">
+                    <Shield className="w-5 h-5 text-blue-600" />
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Admin Posts
+                    </h3>
+                  </div>
+                </div> */}
+
+                <div className="max-h-96 overflow-y-auto">
+                  {adminPosts.length > 0 ? (
+                    <div className="space-y-1">
+                      {adminPosts.map((post) => {
+                        const creator = postCreators[post.createdBy];
+                        return (
+                          <div
+                            key={post._id}
+                            onClick={() => setActivePostId(post._id)}
+                            className={`p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-100 ${
+                              activePostId === post._id
+                                ? "bg-blue-50 border-l-4 border-l-blue-600"
+                                : ""
+                            }`}
+                          >
+                            <div className="flex items-start space-x-3">
+                              {creator?.profilePic && !post.isAnonymous ? (
+                                <img
+                                  src={creator.profilePic}
+                                  alt="Profile"
+                                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                                />
+                              ) : (
+                                <Avatar
+                                  name={
+                                    post.isAnonymous
+                                      ? "Anonymous"
+                                      : creator?.name || "Admin"
+                                  }
+                                  size="32"
+                                  round
+                                  className="text-white flex-shrink-0"
+                                  color="#3B82F6"
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <h4 className="font-semibold text-sm text-gray-900 truncate">
+                                    {post.isAnonymous
+                                      ? "Anonymous"
+                                      : creator?.name || "Admin"}
+                                  </h4>
+                                  <Shield className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                                </div>
+                                <p className="text-xs text-gray-600 font-medium mb-1 truncate">
+                                  {post.topicName}
+                                </p>
+                                <p className="text-xs text-gray-800 line-clamp-2">
+                                  {post.description}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {dateFormatting(post.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-gray-500">
+                      <Shield className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">No admin posts yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Middle Column - Expanded Post View or Posts List */}
+            <div className="flex-1 max-w-4xl">
+              {activePostId && activePost ? (
+                /* Expanded Post View */
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                  {/* Post Header */}
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        {(() => {
+                          const creator = postCreators[activePost.createdBy];
+                          return (
+                            <>
+                              {creator?.profilePic &&
+                              !activePost.isAnonymous ? (
+                                <img
+                                  src={creator.profilePic}
+                                  alt="Profile"
+                                  className="w-12 h-12 rounded-full object-cover"
+                                />
+                              ) : (
+                                <Avatar
+                                  name={
+                                    activePost.isAnonymous
+                                      ? "Anonymous"
+                                      : creator?.name || "User"
+                                  }
+                                  size="48"
+                                  round
+                                  className="text-white"
+                                  color="#6B7280"
+                                />
+                              )}
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <h3 className="font-bold text-gray-900">
+                                    {activePost.isAnonymous
+                                      ? "Anonymous"
+                                      : creator?.name || "User"}
+                                  </h3>
+                                  {creator?.type === "Admin" && (
+                                    <Shield className="w-4 h-4 text-blue-600" />
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-500">
+                                  {dateFormatting(activePost.createdAt)}
+                                </p>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+
+                      <button
+                        onClick={() => setActivePostId(null)}
+                        className="p-2 hover:bg-gray-100 rounded-full"
+                      >
+                        <X className="w-5 h-5 text-gray-500" />
+                      </button>
+                    </div>
+
+                    {/* <h2 className="text-2xl font-bold mb-3 text-gray-900">
+                      {activePost.topicName}
+                    </h2> */}
+                    <p className="text-gray-800 text-base leading-relaxed whitespace-pre-wrap break-words">
+                      {activePost.description}
+                    </p>
+
+                    {/* Media */}
+                    {activePost.media && activePost.media.length > 0 && (
+                      <div className="mt-4 rounded-lg overflow-hidden">
+                        {activePost.media.length === 1 ? (
+                          <div className="w-full">
+                            {activePost.media[0].type === "image" ? (
+                              <img
+                                src={activePost.media[0].url}
+                                alt="Post media"
+                                className="w-full h-auto object-cover rounded-lg"
+                              />
+                            ) : (
+                              <video
+                                src={activePost.media[0].url}
+                                controls
+                                className="w-full h-auto object-cover rounded-lg"
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2">
+                            {activePost.media
+                              .slice(0, 4)
+                              .map((mediaItem, idx) => (
+                                <div key={idx} className="aspect-square">
+                                  {mediaItem.type === "image" ? (
+                                    <img
+                                      src={mediaItem.url}
+                                      alt={`media-${idx}`}
+                                      className="w-full h-full object-cover rounded-lg"
+                                    />
+                                  ) : (
+                                    <video
+                                      src={mediaItem.url}
+                                      className="w-full h-full object-cover rounded-lg"
+                                    />
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Post Actions */}
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                      <div className="flex items-center space-x-6">
+                        <button
+                          onClick={() => handleLike(activePost._id)}
+                          className={`flex items-center space-x-2 ${
+                            activePost.likes?.includes(user._id)
+                              ? "text-red-500"
+                              : "text-gray-500 hover:text-red-500"
+                          }`}
+                        >
+                          <Heart
+                            className={`w-5 h-5 ${
+                              activePost.likes?.includes(user._id)
+                                ? "fill-current"
+                                : ""
+                            }`}
+                          />
+                          <span className="text-sm font-medium">
+                            {activePost.likes?.length || 0}
+                          </span>
+                        </button>
+
+                        <div className="flex items-center space-x-2 text-gray-500">
+                          <MessageCircle className="w-5 h-5" />
+                          <span className="text-sm font-medium">
+                            {activePost.comments?.length || 0}
+                          </span>
+                        </div>
+
+                        {/* <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500">
+                          <Share className="w-5 h-5" />
+                          <span className="text-sm font-medium">Share</span>
+                        </button> */}
+                      </div>
+
+                      {currentUserId === activePost.createdBy && (
+                        <button
+                          onClick={() => {
+                            setDeleteCommentId(null);
+                            setDeletePostId(activePost._id);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="text-red-500 hover:text-red-600 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Comments Section */}
+                  <div className="p-6">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-6">
+                      Comments ({activePost.comments?.length || 0})
+                    </h3>
+
+                    {/* Comments List with Curved Lines */}
+                    <div className="space-y-6 mb-6">
+                      {activePost.comments && activePost.comments.length > 0 ? (
+                        renderCommentsWithLines(activePost.comments)
+                      ) : (
+                        <div className="text-center text-gray-500 py-8">
+                          <MessageCircle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                          <p>No comments yet</p>
+                          <p className="text-sm">Be the first to comment!</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Comment Input */}
+                    <div className="border-t border-gray-100 pt-6">
+                      <div className="flex items-start space-x-3">
+                        {user?.profilePic ? (
+                          <img
+                            src={user.profilePic}
+                            alt="Profile"
+                            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <Avatar
+                            name={user?.name || "User"}
+                            size="40"
+                            round
+                            className="text-white flex-shrink-0"
+                            color="#3B82F6"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <textarea
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Write your comment..."
+                            className="w-full resize-none border border-gray-300 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            rows={3}
+                          />
+                          <div className="flex items-center justify-between mt-3">
+                            <div className="flex items-center space-x-4">
+                              <Smile className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
+                              <label className="flex items-center gap-2 text-sm text-gray-600">
+                                <input
+                                  type="checkbox"
+                                  checked={isAnonymous}
+                                  onChange={(e) =>
+                                    setIsAnonymous(e.target.checked)
+                                  }
+                                  className="rounded"
+                                />
+                                Anonymous
+                              </label>
+                            </div>
+                            <button
+                              onClick={handlePostReply}
+                              disabled={!replyText.trim()}
+                              className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Post Comment
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Mobile Admin Posts Toggle */}
+                  {showAdminPosts && (
+                    <div className="lg:hidden bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                      {/* <div className="flex items-center space-x-2 mb-4">
+                        <Shield className="w-5 h-5 text-blue-600" />
+                        <h3 className="font-bold text-lg text-gray-900">
+                          Admin Posts
+                        </h3>
+                      </div> */}
+
+                      {adminPosts.length > 0 ? (
+                        <div className="space-y-3">
+                          {adminPosts.slice(0, 3).map((post) => {
+                            const creator = postCreators[post.createdBy];
+                            return (
+                              <div
+                                key={post._id}
+                                onClick={() => {
+                                  setActivePostId(post._id);
+                                  setShowAdminPosts(false);
+                                }}
+                                className="p-3 cursor-pointer hover:bg-gray-50 rounded-lg border"
+                              >
+                                <div className="flex items-start space-x-3">
+                                  {creator?.profilePic && !post.isAnonymous ? (
+                                    <img
+                                      src={creator.profilePic}
+                                      alt="Profile"
+                                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                                    />
+                                  ) : (
+                                    <Avatar
+                                      name={
+                                        post.isAnonymous
+                                          ? "Anonymous"
+                                          : creator?.name || "Admin"
+                                      }
+                                      size="32"
+                                      round
+                                      className="text-white flex-shrink-0"
+                                      color="#3B82F6"
+                                    />
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                      <h4 className="font-semibold text-sm text-gray-900">
+                                        {post.isAnonymous
+                                          ? "Anonymous"
+                                          : creator?.name || "Admin"}
+                                      </h4>
+                                      <Shield className="w-3 h-3 text-blue-600" />
                                     </div>
-                                    {currentUserId === reply.user?._id && (
-                                      <div
-                                        className="text-red-500 cursor-pointer"
-                                        onClick={() => {
-                                          setDeletePostId(null);
-                                          setDeleteCommentId(reply._id);
-                                          setIsDeleteDialogOpen(true);
-                                        }}
-                                      >
-                                        <span>Delete</span>
-                                      </div>
-                                    )}
+                                    <p className="text-xs text-gray-600 font-medium mb-1">
+                                      {post.topicName}
+                                    </p>
+                                    <p className="text-sm text-gray-800 line-clamp-2">
+                                      {post.description}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                      {dateFormatting(post.createdAt)}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center text-gray-500 py-4">
+                          <Shield className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">No admin posts yet</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Create Post - Hidden on mobile */}
+                  <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div className="flex items-start space-x-3">
+                      {user?.profilePic ? (
+                        <img
+                          src={user.profilePic}
+                          alt="Profile"
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <Avatar
+                          name={user?.name || "User"}
+                          size="40"
+                          round
+                          className="text-white"
+                          color="#3B82F6"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <textarea
+                          value={postContent}
+                          onChange={(e) => setPostContent(e.target.value)}
+                          placeholder="Write your post..."
+                          className="w-full text-gray-700 rounded-[20px] placeholder-gray-500 resize-none border-none outline-none text-lg"
+                          rows={3}
+                        />
+
+                        {postContent.trim() && (
+                          <div className="mt-4 space-y-3">
+                            <div className="flex flex-wrap items-center gap-3">
+                              <select
+                                value={selectedTopic}
+                                onChange={(e) =>
+                                  setSelectedTopic(e.target.value)
+                                }
+                                className="text-sm border border-gray-300 rounded-lg px-3 py-2"
+                              >
+                                <option value="">Select Topic</option>
+                                {Array.isArray(communities) &&
+                                  communities
+                                    .flatMap((comm) =>
+                                      (comm.topics || []).map((topic) => ({
+                                        ...topic,
+                                        communityName: comm.name,
+                                      }))
+                                    )
+                                    .slice(0, 5)
+                                    .map((topic) => (
+                                      <option key={topic._id} value={topic._id}>
+                                        {topic.name} — {topic.communityName}
+                                      </option>
+                                    ))}
+                              </select>
+
+                              <label className="flex items-center gap-2 text-sm text-gray-600">
+                                <input
+                                  type="checkbox"
+                                  checked={isAnonymous}
+                                  onChange={(e) =>
+                                    setIsAnonymous(e.target.checked)
+                                  }
+                                  className="rounded"
+                                />
+                                Stay Anonymous
+                              </label>
                             </div>
-                          );
-                        })
-                    )}
-                  </div>
-                </div>
-                {/* Reply Input */}
-                <div className="mt-auto pt-4 border-t">
-                  <div className="flex gap-4">
-                    {user?.profilePic ? (
-                      <img
-                        src={user?.profilePic}
-                        alt="user"
-                        className="rounded-full w-12 h-12"
-                      />
-                    ) : (
-                      <Avatar
-                        className="rounded-full text-black"
-                        size="48"
-                        color={"#38AEE3"}
-                        name={user.name
-                          ?.split(" ") // Split by space
-                          .slice(0, 2) // Take first 1–2 words
-                          .join(" ")}
-                      />
-                    )}
-                    <div className="w-full">
-                      <h2 className="text-2xl font-bold mb-2">{user.name}</h2>
-                      <textarea
-                        placeholder={`Reply to ${activePost.description.slice(
-                          0,
-                          25
-                        )}...`}
-                        className="w-full border border-gray-300 rounded-2xl p-3 text-[18px] focus:outline-none min-h-32 placeholder-gray-400"
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                      />
+
+                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                              <div className="flex items-center space-x-4">
+                                <input
+                                  id="media-upload"
+                                  type="file"
+                                  accept="image/*,video/*"
+                                  multiple
+                                  onChange={(e) =>
+                                    setMediaFiles(Array.from(e.target.files))
+                                  }
+                                  className="hidden"
+                                />
+                                <label
+                                  htmlFor="media-upload"
+                                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 cursor-pointer"
+                                >
+                                  <Image className="w-5 h-5" />
+                                  <span className="text-sm font-medium">
+                                    Photo/Video
+                                  </span>
+                                </label>
+                              </div>
+
+                              <button
+                                onClick={handleCreatePost}
+                                disabled={!selectedTopic}
+                                className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                Share Post
+                              </button>
+                            </div>
+
+                            {mediaFiles.length > 0 && (
+                              <div className="grid grid-cols-2 gap-2 mt-3">
+                                {mediaFiles.slice(0, 4).map((file, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="relative aspect-square rounded-lg overflow-hidden"
+                                  >
+                                    {file.type.startsWith("image") ? (
+                                      <img
+                                        src={URL.createObjectURL(file)}
+                                        alt="preview"
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <video
+                                        src={URL.createObjectURL(file)}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={handlePostReply}
-                      className="rounded-full text-white bg-[#38AEE3] flex items-center justify-center px-6 py-3"
-                    >
-                      Post Reply
-                    </button>
+                  {/* Posts List for Mobile/When No Post Selected */}
+                  <div className="space-y-6 max-h-[calc(100vh-2rem)] w-full max-w-full overflow-x-hidden px-2 overflow-y-scroll thin-scrollbar">
+                    {/* Posts Feed */}
+                    {!showAdminPosts &&
+                      filteredPosts.map((post) => {
+                        const creator = postCreators[post.createdBy];
+                        const hasLiked = post.likes?.includes(user._id);
+
+                        return (
+                          <div
+                            key={post._id}
+                            className="bg-white rounded-xl shadow-sm border border-gray-200"
+                          >
+                            {/* Post Header */}
+                            <div className="p-4 flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                {creator?.profilePic && !post.isAnonymous ? (
+                                  <img
+                                    src={creator.profilePic}
+                                    alt="Profile"
+                                    className="w-10 h-10 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <Avatar
+                                    name={
+                                      post.isAnonymous
+                                        ? "Anonymous"
+                                        : creator?.name || "User"
+                                    }
+                                    size="40"
+                                    round
+                                    className="text-white"
+                                    color="#6B7280"
+                                  />
+                                )}
+                                <div>
+                                  <div className="flex items-center space-x-2">
+                                    <h3 className="Livvic-SemiBold text-sm">
+                                      {post.isAnonymous
+                                        ? "Anonymous"
+                                        : creator?.name || "User"}
+                                    </h3>
+                                    {creator?.type === "Admin" && (
+                                      <Shield className="w-4 h-4 text-blue-600" />
+                                    )}
+                                  </div>
+                                  <p className="Livvic-Medium text-[#555555] text-xs">
+                                    {dateFormatting(post.createdAt)}
+                                  </p>
+                                </div>
+                              </div>
+                              {/* <button className="text-gray-400 hover:text-gray-600">
+                            <MoreHorizontal className="w-5 h-5" />
+                          </button> */}
+                            </div>
+
+                            {/* Post Content */}
+                            <div className="px-4 pb-3">
+                              {/* <h2 className="font-bold text-lg mb-2 text-gray-900">
+                                {post.topicName}
+                              </h2> */}
+
+                              {/* Media */}
+                              {post.media && post.media.length > 0 && (
+                                <div className="mt-3 rounded-lg overflow-hidden">
+                                  {post.media.length === 1 ? (
+                                    <div className="aspect-video">
+                                      {post.media[0].type === "image" ? (
+                                        <img
+                                          src={post.media[0].url}
+                                          alt="Post media"
+                                          className="w-full h-full object-cover max-w-full"
+                                        />
+                                      ) : (
+                                        <video
+                                          src={post.media[0].url}
+                                          controls
+                                          className="w-full h-full object-cover max-w-full"
+                                        />
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <div className="grid grid-cols-2 gap-1">
+                                      {post.media
+                                        .slice(0, 4)
+                                        .map((mediaItem, idx) => (
+                                          <div
+                                            key={idx}
+                                            className="aspect-square"
+                                          >
+                                            {mediaItem.type === "image" ? (
+                                              <img
+                                                src={mediaItem.url}
+                                                alt={`media-${idx}`}
+                                                className="w-full h-full object-cover"
+                                              />
+                                            ) : (
+                                              <video
+                                                src={mediaItem.url}
+                                                className="w-full h-full object-cover"
+                                              />
+                                            )}
+                                          </div>
+                                        ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              <p className="Livvic-SemiBold text-sm text-primary whitespace-pre-wrap break-words break-all overflow-wrap break-word">
+                                {post.description}
+                              </p>
+                            </div>
+
+                            {/* Post Actions */}
+                            <div className="px-4 py-3 border-t border-gray-100">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4 md:space-x-6">
+                                  <button
+                                    onClick={() => handleLike(post._id)}
+                                    className={`flex items-center space-x-2 ${
+                                      hasLiked
+                                        ? "text-red-500"
+                                        : "text-gray-500 hover:text-red-500"
+                                    }`}
+                                  >
+                                    <Heart
+                                      className={`w-5 h-5 ${
+                                        hasLiked ? "fill-current" : ""
+                                      }`}
+                                    />
+                                    <span className="text-sm font-medium">
+                                      {post.likes?.length || 0}
+                                    </span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => setActivePostId(post._id)}
+                                    className="flex items-center space-x-2 text-gray-500 hover:text-blue-500"
+                                  >
+                                    <MessageCircle className="w-5 h-5" />
+                                    <span className="text-sm font-medium">
+                                      {post.comments?.length || 0}
+                                    </span>
+                                  </button>
+
+                                  {/* <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500">
+                                <Share className="w-5 h-5" />
+                                <span className="text-sm font-medium hidden sm:inline">Share</span>
+                              </button> */}
+                                </div>
+
+                                {currentUserId === post.createdBy && (
+                                  <button
+                                    onClick={() => {
+                                      setDeleteCommentId(null);
+                                      setDeletePostId(post._id);
+                                      setIsDeleteDialogOpen(true);
+                                    }}
+                                    className="text-red-500 hover:text-red-600 text-sm font-medium"
+                                  >
+                                    Delete
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right Sidebar - Hidden on mobile, only show when no post is selected on desktop */}
+            {!activePostId && (
+              <div className="hidden lg:block w-80 space-y-6">
+                {/* Popular Topics */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className=" text-lg Livvic-SemiBold mb-4">
+                    Popular Topics
+                  </h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {Array.isArray(localCommunities) &&
+                      localCommunities
+                        .flatMap((comm) => comm.topics || [])
+                        .slice(0, 8)
+                        .map((topic) => (
+                          <div
+                            key={topic._id}
+                            className="flex items-center justify-between py-2 px-4 border border-[#EEEEEE] w-fit rounded-full"
+                          >
+                            <p className="Livvic-Medium text-[#555555] text-sm">
+                              {topic.name}
+                            </p>
+                          </div>
+                        ))}
+                  </div>
+                </div>
+
+                {/* Active Discussions */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className="text-lg Livvic-SemiBold mb-4">
+                    Active discussions
+                  </h3>
+                  <div className="space-y-2">
+                    {filteredPosts.slice(0, 4).map((post) => {
+                      const creator = postCreators[post.createdBy];
+                      return (
+                        <div
+                          key={post._id}
+                          className="flex items-start space-x-3"
+                        >
+                          {/* <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div> */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-[#333333] line-clamp-2 whitespace-pre-wrap break-words">
+                              {post.description.length > 50
+                                ? `${post.description.substring(0, 50)}...`
+                                : post.description}
+                            </p>
+                            <div className="flex items-center justify-between mt-1">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1">
+                                  <Heart className="w-3 h-3 text-gray-500" />
+                                  <span className="text-xs text-gray-500">
+                                    {post.likes?.length || 0}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <MessageCircle className="w-3 h-3 text-gray-500" />
+                                  <span className="text-xs text-gray-500">
+                                    {post.comments?.length || 0}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
             )}
           </div>
-
-          {/* RIGHT SIDEBAR */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h2 className="text-2xl font-semibold mb-4">Suggested Topics</h2>
-              {Array.isArray(localCommunities) &&
-                localCommunities
-                  .flatMap((comm) => comm.topics || [])
-                  .slice(0, 5)
-                  .map((topic) => (
-                    <p
-                      key={topic._id}
-                      className="text-gray-700 border-b py-3 last:border-b-0"
-                    >
-                      {topic.name}
-                      <span className="block text-sm text-gray-400">
-                        Community Topic
-                      </span>
-                    </p>
-                  ))}
-            </div>
-            {/* <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h2 className="text-2xl font-semibold mb-4">Local Events</h2>
-              {Array(5)
-                .fill(null)
-                .map((_, i) => (
-                  <p
-                    key={i}
-                    className="text-gray-700 border-b py-3 last:border-b-0"
-                  >
-                    Lorem ipsum dolor sit amet.
-                    <span className="block text-sm text-gray-400">3h</span>
-                  </p>
-                ))}
-            </div> */}
-          </div>
-        </div>
+        </>
       )}
+
+      {/* Floating Plus Button for Mobile */}
+      <button
+        onClick={() => setIsCreatePostModalOpen(true)}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 md:hidden z-40 flex items-center justify-center"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
+      {/* Reply Modal */}
       <Transition.Root show={isReplyModalOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -863,7 +1494,7 @@ const PaginationComm = ({ category, searchQuery }) => {
           </Transition.Child>
 
           <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="flex min-h-full items-center justify-center p-4">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -873,22 +1504,53 @@ const PaginationComm = ({ category, searchQuery }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-2xl font-bold mb-4">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 mb-4"
+                  >
                     Reply to Comment
                   </Dialog.Title>
+
+                  {quotedText && (
+                    <div className="bg-gray-50 rounded-lg p-3 mb-4 border-l-4 border-blue-500">
+                      <p className="text-sm text-gray-600 italic">
+                        "{quotedText}"
+                      </p>
+                    </div>
+                  )}
+
                   <textarea
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Write your reply..."
-                    className="w-full border border-gray-300 rounded-2xl p-4 min-h-32 text-lg focus:outline-none"
+                    className="w-full resize-none border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+                    rows={4}
                   />
-                  <div className="mt-4 flex justify-end">
+
+                  <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                    <input
+                      type="checkbox"
+                      checked={isAnonymous}
+                      onChange={(e) => setIsAnonymous(e.target.checked)}
+                      className="rounded"
+                    />
+                    Reply anonymously
+                  </label>
+
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => setIsReplyModalOpen(false)}
+                      className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full font-medium"
+                    >
+                      Cancel
+                    </button>
                     <button
                       onClick={handlePostCommentReply}
-                      className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full"
+                      disabled={!replyText.trim()}
+                      className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Post Reply
+                      Reply
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -897,6 +1559,204 @@ const PaginationComm = ({ category, searchQuery }) => {
           </div>
         </Dialog>
       </Transition.Root>
+
+      {/* Create Post Modal for Mobile */}
+      <Transition.Root show={isCreatePostModalOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsCreatePostModalOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-full sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-full sm:scale-95"
+              >
+                <Dialog.Panel className="w-full sm:max-w-2xl transform overflow-hidden rounded-t-2xl sm:rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Create Post
+                    </h3>
+                    <button
+                      onClick={() => setIsCreatePostModalOpen(false)}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                    >
+                      <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4 max-h-[70vh] overflow-y-auto">
+                    <div className="flex items-start space-x-3">
+                      {user?.profilePic ? (
+                        <img
+                          src={user.profilePic}
+                          alt="Profile"
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <Avatar
+                          name={user?.name || "User"}
+                          size="40"
+                          round
+                          className="text-white"
+                          color="#3B82F6"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <textarea
+                          value={postContent}
+                          onChange={(e) => setPostContent(e.target.value)}
+                          placeholder="What's on your mind?"
+                          className="w-full text-gray-700 placeholder-gray-500 resize-none border-none outline-none text-lg min-h-32"
+                          rows={4}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Topic Selection */}
+                    <div className="mt-4 space-y-4">
+                      <select
+                        value={selectedTopic}
+                        onChange={(e) => setSelectedTopic(e.target.value)}
+                        className="w-full text-sm border border-gray-300 rounded-lg px-3 py-3"
+                      >
+                        <option value="">Select Topic</option>
+                        {Array.isArray(communities) &&
+                          communities
+                            .flatMap((comm) =>
+                              (comm.topics || []).map((topic) => ({
+                                ...topic,
+                                communityName: comm.name,
+                              }))
+                            )
+                            .slice(0, 10)
+                            .map((topic) => (
+                              <option key={topic._id} value={topic._id}>
+                                {topic.name} — {topic.communityName}
+                              </option>
+                            ))}
+                      </select>
+
+                      {/* Anonymous Toggle */}
+                      <label className="flex items-center gap-3 text-gray-700">
+                        <input
+                          type="checkbox"
+                          checked={isAnonymous}
+                          onChange={(e) => setIsAnonymous(e.target.checked)}
+                          className="w-4 h-4 rounded"
+                        />
+                        <span>Post anonymously</span>
+                      </label>
+
+                      {/* Media Upload */}
+                      <div className="flex items-center space-x-4">
+                        <input
+                          id="modal-media-upload"
+                          type="file"
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={(e) =>
+                            setMediaFiles(Array.from(e.target.files))
+                          }
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="modal-media-upload"
+                          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 cursor-pointer py-2 px-4 border border-blue-200 rounded-lg hover:bg-blue-50"
+                        >
+                          <Image className="w-5 h-5" />
+                          <span className="text-sm font-medium">
+                            Add Photos/Videos
+                          </span>
+                        </label>
+                      </div>
+
+                      {/* Media Preview */}
+                      {mediaFiles.length > 0 && (
+                        <div className="grid grid-cols-2 gap-2">
+                          {mediaFiles.slice(0, 4).map((file, idx) => (
+                            <div
+                              key={idx}
+                              className="relative aspect-square rounded-lg overflow-hidden"
+                            >
+                              {file.type.startsWith("image") ? (
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt="preview"
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <video
+                                  src={URL.createObjectURL(file)}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                              <button
+                                onClick={() =>
+                                  setMediaFiles((prev) =>
+                                    prev.filter((_, i) => i !== idx)
+                                  )
+                                }
+                                className="absolute top-2 right-2 w-6 h-6 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="p-4 border-t border-gray-200 flex justify-between items-center">
+                    <div className="text-sm text-gray-500">
+                      {postContent.length}/500 characters
+                    </div>
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={() => setIsCreatePostModalOpen(false)}
+                        className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full font-medium"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCreatePost}
+                        disabled={!postContent.trim() || !selectedTopic}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Share Post
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      {/* Delete Confirmation Dialog */}
       <Transition.Root show={isDeleteDialogOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -916,7 +1776,7 @@ const PaginationComm = ({ category, searchQuery }) => {
           </Transition.Child>
 
           <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="flex min-h-full items-center justify-center p-4">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -927,38 +1787,37 @@ const PaginationComm = ({ category, searchQuery }) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-xl font-semibold">
-                    Confirm Delete
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 mb-4"
+                  >
+                    {deletePostId ? "Delete Post" : "Delete Comment"}
                   </Dialog.Title>
-                  <p className="mt-4 text-gray-700">
-                    {`Are you sure you want to delete this 
-                    ${deleteCommentId ? "comment" : "post"}? This action cannot
-                    be undone.`}
+
+                  <p className="text-sm text-gray-500 mb-6">
+                    Are you sure you want to delete this{" "}
+                    {deletePostId ? "post" : "comment"}? This action cannot be
+                    undone.
                   </p>
-                  <div className="mt-6 flex justify-end gap-4">
+
+                  <div className="flex justify-end space-x-3">
                     <button
                       onClick={() => setIsDeleteDialogOpen(false)}
-                      className="px-4 py-2 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400"
+                      className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full font-medium"
                     >
                       Cancel
                     </button>
                     <button
-                      disabled={isDeletingPost}
-                      onClick={() =>
-                        deleteCommentId
-                          ? handleDeleteComment()
-                          : handleDeletePost()
+                      onClick={
+                        deletePostId ? handleDeletePost : handleDeleteComment
                       }
-                      className="px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+                      disabled={isDeletingPost}
+                      className="bg-red-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                      {isDeletingPost ? (
-                        <div className="flex justify-center items-center gap-2">
-                          <Loader2 className="animate-spin w-4 h-4" />
-                          <p>Deleting</p>
-                        </div>
-                      ) : (
-                        "Yes, Delete"
+                      {isDeletingPost && (
+                        <Loader2 className="w-4 h-4 animate-spin" />
                       )}
+                      Delete
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -968,8 +1827,6 @@ const PaginationComm = ({ category, searchQuery }) => {
         </Dialog>
       </Transition.Root>
     </div>
-  ) : (
-    <Blogs category={category} searchQuery={searchQuery}/>
   );
 };
 

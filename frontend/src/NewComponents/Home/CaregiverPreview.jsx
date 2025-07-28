@@ -184,16 +184,16 @@ function CaregiverPreview() {
       {/* Results Modal */}
       {showResults && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-3xl w-full max-w-7xl max-h-[90vh] overflow-hidden shadow-2xl border border-[#AEC4FF]/30">
+          <div className="rounded-3xl w-full max-w-7xl max-h-[90vh] overflow-hidden bg-white">
             {/* Results Header */}
-            <div className="flex justify-between items-center p-6 sm:p-8 border-b border-[#AEC4FF]/20 bg-gradient-to-r from-[#AEC4FF]/5 to-[#85D1F1]/5">
+            <div className="flex justify-between items-center p-6 sm:p-8 ">
               <div>
-                <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold Livvic-Bold">
+                <h3 className=" text-xl sm:text-2xl md:text-3xl font-bold Livvic-Bold">
                   {searchType === "caregivers"
                     ? `Available Caregivers in ${zipCode}`
                     : `Job Opportunities in ${zipCode}`}
                 </h3>
-                <p className="text-[#FFFFFF99] text-sm sm:text-base mt-1">
+                <p className=" text-sm sm:text-base mt-1">
                   {searchType === "caregivers"
                     ? `${caregiverData.length} caregiver${
                         caregiverData.length !== 1 ? "s" : ""
@@ -205,7 +205,7 @@ function CaregiverPreview() {
               </div>
               <button
                 onClick={handleCloseResults}
-                className="flex items-center gap-2 bg-[#AEC4FF]/20 hover:bg-[#AEC4FF]/30 text-white px-3 sm:px-4 py-2 rounded-full transition-all duration-200 border border-[#AEC4FF]/40 hover:border-[#AEC4FF]/60"
+                className="flex items-center gap-2  px-3 sm:px-4 py-2 rounded-full transition-all duration-200"
               >
                 <X className="w-4 h-4" />
                 <span className="hidden sm:inline text-sm">Close</span>
@@ -221,7 +221,7 @@ function CaregiverPreview() {
                     caregiverData.map((person, index) => (
                       <div
                         key={index}
-                        className="bg-gradient-to-br from-white to-[#f8faff] shadow-xl hover:shadow-2xl rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.02] border border-[#AEC4FF]/30 hover:border-[#AEC4FF]/50"
+                        className=" rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300"
                       >
                         <div className="mb-4">
                           {/* Header */}
@@ -229,7 +229,7 @@ function CaregiverPreview() {
                             <h4 className="text-lg sm:text-xl font-bold text-gray-800 Livvic-Bold">
                               {person.name}
                             </h4>
-                            <span className="inline-block bg-[#AEC4FF] text-gray-800 text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
+                            <span className="inline-block border border-[#EEEEEE] text-[#555555] text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
                               {person.role}
                             </span>
                           </div>
@@ -252,13 +252,13 @@ function CaregiverPreview() {
                           {/* Details */}
                           <div className="space-y-2 mb-4">
                             <p className="text-sm text-gray-700 flex flex-wrap gap-2">
-                              <span className="bg-[#AEC4FF]/20 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                              <span className="px-2 py-1 rounded text-xs font-medium">
                                 {person.rate}
                               </span>
-                              <span className="bg-[#85D1F1]/20 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                              <span className="px-2 py-1 rounded text-xs font-medium">
                                 {person.availability?.option || "Available"}
                               </span>
-                              <span className="bg-[#AEC4FF]/15 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                              <span className="px-2 py-1 rounded text-xs font-medium">
                                 {person.experience?.option || "Experienced"}
                               </span>
                             </p>
@@ -270,7 +270,7 @@ function CaregiverPreview() {
                               ..."
                             </p>
 
-                            <div className="bg-gradient-to-r from-[#AEC4FF]/10 to-[#85D1F1]/10 px-3 py-2 rounded-lg border border-[#AEC4FF]/20">
+                            <div className="px-3 py-2 rounded-lg">
                               <p className="text-sm font-medium">
                                 <span className="text-gray-600">Service:</span>
                                 <span className="text-[#0f3460] ml-1">
@@ -290,7 +290,7 @@ function CaregiverPreview() {
                           }}
                           className="mt-auto"
                         >
-                          <button className="w-full bg-gradient-to-r from-[#85D1F1] to-[#AEC4FF] hover:from-[#AEC4FF] hover:to-[#85D1F1] text-[#0f3460] font-bold text-sm sm:text-base px-4 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg border border-[#AEC4FF]/30">
+                          <button className="w-full  font-bold text-sm sm:text-base px-4 py-3 rounded-full transition-all duration-300 bg-primary text-primary">
                             {person.cta || "Connect Now"}
                           </button>
                         </NavLink>
@@ -318,9 +318,9 @@ function CaregiverPreview() {
                     jobData.map((job, index) => (
                       <div
                         key={index}
-                        className="bg-gradient-to-br from-white to-[#f8faff] shadow-xl hover:shadow-2xl rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.02] border border-[#AEC4FF]/30 hover:border-[#AEC4FF]/50"
+                        className="rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300"
                       >
-                        <div className="mb-4">
+                        <div className="mb-4 bg-white">
                           {/* Job Title */}
                           <div className="mb-3">
                             <h4 className="text-lg sm:text-xl font-bold text-gray-800 Livvic-Bold mb-2">
@@ -347,7 +347,7 @@ function CaregiverPreview() {
                             )}
 
                             {/* Additional Details */}
-                            <div className="bg-gradient-to-r from-[#AEC4FF]/10 to-[#85D1F1]/10 px-3 py-2 rounded-lg border border-[#AEC4FF]/20">
+                            <div className=" px-3 py-2 rounded-lg">
                               <p className="text-sm font-medium text-[#0f3460]">
                                 Job Opportunity Available
                               </p>
@@ -364,7 +364,7 @@ function CaregiverPreview() {
                           }}
                           className="mt-auto"
                         >
-                          <button className="w-full bg-gradient-to-r from-[#85D1F1] to-[#AEC4FF] hover:from-[#AEC4FF] hover:to-[#85D1F1] text-[#0f3460] font-bold text-sm sm:text-base px-4 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg border border-[#AEC4FF]/30">
+                          <button className="w-full font-bold text-sm sm:text-base px-4 py-3 rounded-full transition-all duration-300 bg-primary text-primary">
                             {job.action || "Apply Now"}
                           </button>
                         </NavLink>

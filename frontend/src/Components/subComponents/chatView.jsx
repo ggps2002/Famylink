@@ -236,9 +236,9 @@ export default function ChatView({
             </span>
           </div>
 
-          <div className="h-10 w-10 p-2 flex items-center justify-center rounded-full">
+          {pathname.split("/")[1] === "nanny" && <div className="h-10 w-10 p-2 flex items-center justify-center rounded-full">
             <MoreVertical />
-          </div>
+          </div>}
         </div>
         <div className="flex items-center space-x-2">
           {nannyShare != selectedContact?.otherParticipant?.type &&

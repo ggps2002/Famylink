@@ -117,25 +117,29 @@ export default function Component() {
             <div className="flex-1 ml-4">
               <div className="flex justify-between items-center font-black Quicksand">
                 {contact?.otherParticipant?.name}
-                {nannyShare != contact?.otherParticipant?.type &&
-                  pathname.split("/")[1] != "nanny" && (
-                    <Star
-                      fill={
-                        user.favourite?.includes(contact?.otherParticipant?._id)
-                          ? `#38AEE3`
-                          : "white"
-                      }
-                      color="#38AEE3"
-                      className="w-4"
-                    />
-                  )}
-                <div
-                  style={{ color: "#777777" }}
-                  className="flex items-center gap-1 text-muted-foreground text-sm font-light"
-                >
-                  {contact?.lastMessage?.length > 0 && (
-                    <>{timeAgo(contact.updatedAt)}</>
-                  )}
+                <div className="flex gap-2 items-center">
+                  <div
+                    style={{ color: "#777777" }}
+                    className="flex items-center gap-1 text-muted-foreground text-sm font-light"
+                  >
+                    {contact?.lastMessage?.length > 0 && (
+                      <>{timeAgo(contact.updatedAt)}</>
+                    )}
+                  </div>
+                  {nannyShare != contact?.otherParticipant?.type &&
+                    pathname.split("/")[1] != "nanny" && (
+                      <Star
+                        fill={
+                          user.favourite?.includes(
+                            contact?.otherParticipant?._id
+                          )
+                            ? `#38AEE3`
+                            : "white"
+                        }
+                        color="#38AEE3"
+                        className="w-4"
+                      />
+                    )}
                 </div>
               </div>
               <div
@@ -180,7 +184,7 @@ export default function Component() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Messages"
+            placeholder="Search Contacts"
             className="w-full pl-10 pr-4 py-2 rounded-full border border-[#EEEEEE] placeholder:text-sm"
           />
           <span className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400">

@@ -22,6 +22,7 @@ router.post("/", authMiddleware, async (req, res) => {
     }
 
     const { jobType, ...jobData } = req.body;
+    console.log(req.body)
     if (!jobType) {
       return res
         .status(400)

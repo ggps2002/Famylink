@@ -54,11 +54,11 @@ export default function TipsAndArticlesNanny() {
       </Drawer>
 
       <div className="padding-navbar1 Quicksand">
-        <div className="shadow border-[1px] border-[#D6DDEB] bg-white  my-10 rounded-xl">
-          <div className="flex justify-between items-center mb-12">
-            <p className="font-bold lg:text-3xl text-2xl uppercase edit-padding">
+        <div className=" bg-white rounded-xl mb-12">
+          <div className="flex justify-end items-center mb-12">
+            {/* <p className="font-bold lg:text-3xl text-2xl uppercase edit-padding">
               famylink {val.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase()}
-            </p>
+            </p> */}
             <div className="flex justify-end padding-navbar1">
               <div>
                 <Search onSearch={handleSearch} />
@@ -86,8 +86,8 @@ export default function TipsAndArticlesNanny() {
               </div>
             ))}
           </div>
-          <div className="pt-4 pb-10 px-6">
-            <div className="pt-4 pb-10 px-6">
+          <div className="">
+            <div className="">
               <PagComm category={val} nanny={true} searchQuery={searchQuery}/>
             </div>
           </div>
