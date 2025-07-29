@@ -47,7 +47,11 @@ app.use(
 
 app.use('/', router);
 
-httpServer.listen(PORT, () => {
-    console.log(`Server is running on Port ${PORT}`);
-    console.log(`server running in ${process.env.NODE_ENV} mode`)
+// httpServer.listen(PORT, () => {
+//     console.log(`Server is running on Port ${PORT}`);
+//     console.log(`server running in ${process.env.NODE_ENV} mode`)
+// });
+
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
