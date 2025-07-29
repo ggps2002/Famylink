@@ -85,7 +85,7 @@ export default function JobSeekers() {
 
         <div className="bg-white">
           <Sec4
-            head={"Join FamilyLink Community"}
+            head={"Join Famlink Community"}
             subHead={
               "Discover rewarding opportunities in childcare and beyond. Whether you're a nanny, babysitter, tutor, music instructor, sports coach, or specialized caregiver, FamyLink connects you with families seeking your skills and expertise."
             }

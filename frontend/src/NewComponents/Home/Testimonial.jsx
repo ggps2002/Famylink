@@ -3,17 +3,17 @@ import TestimonialCard from "../TestimonialCard";
 
 const testimonials = [
   {
-    para: `Finding a math tutor who could work with our learning-different son seemed impossible. FamyLink matched us with James, who has the patience and approach our son truly needed.`,
+    para: `Finding a math tutor who could work with our learning-different son seemed impossible. Famlink matched us with James, who has the patience and approach our son truly needed.`,
     name: "David L., Brooklyn, NY",
     highlight: "Saved ~$1,800/month through shared tutoring arrangement",
   },
   {
-    para: `After our twins were born, we were overwhelmed. FamyLink connected us with a night doula who helped us sleep, recover, and feel human again.`,
+    para: `After our twins were born, we were overwhelmed. Famlink connected us with a night doula who helped us sleep, recover, and feel human again.`,
     name: "Jenna M., Austin, TX",
     highlight: "Avoided ~$2,400/month in agency fees",
   },
   {
-    para: `We struggled to find a caregiver who truly understood our daughter's sensory needs. FamyLink matched us with Amina, whose autism experience brings calm and joy to each day.`,
+    para: `We struggled to find a caregiver who truly understood our daughter's sensory needs. Famlink matched us with Amina, whose autism experience brings calm and joy to each day.`,
     name: "Priya S., San Mateo, CA",
     highlight: "Saved 15+ hours/week in stressful trial-and-error searches",
   },
@@ -44,7 +44,7 @@ function Testimonial() {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 my-16 sm:my-20 lg:my-28">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
         <h1 className="Livvic-Bold text-4xl sm:text-5xl">What Our Families Are Saying</h1>
-        <div className="flex gap-4 mt-6">
+        <div className="flex gap-4 mt-6 lg:hidden">
           <img 
             src="/arrow-left.svg" 
             alt="arrow-left" 
@@ -70,7 +70,7 @@ function Testimonial() {
       </div>
 
       {/* Desktop: All three testimonials */}
-      <div className="mt-8 sm:mt-12 lg:mt-16 hidden lg:flex justify-between">
+      <div className="mt-8 sm:mt-12 lg:mt-16 hidden lg:flex justify-between gap-2">
         {testimonials.map((t, i) => (
           <TestimonialCard
             key={i}

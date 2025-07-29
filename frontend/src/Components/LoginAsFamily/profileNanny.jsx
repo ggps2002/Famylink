@@ -29,6 +29,7 @@ import { getSubscriptionStatusThunk } from "../Redux/cardSlice";
 import { NavLink } from "react-router-dom";
 import Button from "../../NewComponents/Button";
 import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import CustomButton from "../../NewComponents/Button";
 
 export default function ProfileNanny() {
   const { id } = useParams();
@@ -405,7 +406,26 @@ export default function ProfileNanny() {
       </div>
 
       {/* Main Content */}
-      <div className="w-full lg:w-2/3 xl:w-2/3 2xl:w-1/2 space-y-4 md:space-y-6">
+      <div className="relative w-full lg:w-2/3 xl:w-2/3 2xl:w-1/2 space-y-4 md:space-y-6">
+        {!isSubscribed && (
+          <>
+            <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50  w-full h-full" />
+            <div className="absolute z-20 top-[20%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-6 rounded-xl text-center w-[400px]">
+              <img src="/nanny-profile.svg" alt="message" className="mx-auto mb-2" />
+              <p className="text-2xl text-center Livvic-SemiBold text-primary mb-2 whitespace-break-spaces">
+                Upgrade to see {selectedNanny?.name}’s profile informations
+              </p>
+              <p className="mb-4 text-center text-primary Livvic-Medium text-sm">
+                Upgrade now to see past messages and continue your conversation
+              </p>
+              <CustomButton
+                btnText={"Upgrade Now"}
+                action={() => navigate("../pricing")}
+                className="bg-[#D6FB9A] text-[#025747] Livvic-SemiBold text-sm"
+              />
+            </div>
+          </>
+        )}
         {/* About Me Section */}
         <div className="shadow-soft p-4 md:p-6 rounded-[20px]">
           <p className="Livvic-SemiBold text-base md:text-lg text-primary">

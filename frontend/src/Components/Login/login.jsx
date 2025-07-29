@@ -99,7 +99,7 @@ export default function Login() {
                     className="w-6 h-6 sm:w-8 sm:h-8"
                   />
                   <p className="font-bold text-lg sm:text-xl Livvic-Bold">
-                    FamilyLink
+                    Famylink
                   </p>
                 </div>
               </NavLink>

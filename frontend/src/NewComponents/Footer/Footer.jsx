@@ -27,7 +27,7 @@ function Footer() {
               <div className="flex gap-1 items-center">
                 <img src="/logo.svg" alt="logo" />
                 <p className="font-bold text-3xl Livvic-Bold text-white">
-                  FamilyLink
+                  Famlink
                 </p>
               </div>
               <p className="Livvic-Medium text-md text-[#FFFFFFCC] mt-6 leading-[24px]">
@@ -175,7 +175,7 @@ function Footer() {
           <hr className="mt-12 h-px bg-[#FFFFFF33] border-0" />
           <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
             <p className="Livvic-Medium text-sm sm:text-md text-[#FFFFFFCC] text-center sm:text-left">
-              © Familylink 2025 - All rights reserved
+              © Famlink {new Date().getFullYear()} - All rights reserved
             </p>
             <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-4 text-sm sm:text-md">
               <p className="Livvic-Medium text-[#FFFFFFCC] cursor-pointer hover:text-white transition-colors">

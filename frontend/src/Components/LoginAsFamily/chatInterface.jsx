@@ -195,13 +195,15 @@ export default function Component() {
       </div>
       <div className="md:block hidden w-2/3">
         {selectedContact ? (
-          <ChatView
-            messages={messages}
-            handleSendMessage={handleSendMessage}
-            selectedContact={selectedContact}
-            user={user}
-            pathname={pathname}
-          />
+          <div className="min-w-full w-full">
+            <ChatView
+              messages={messages}
+              handleSendMessage={handleSendMessage}
+              selectedContact={selectedContact}
+              user={user}
+              pathname={pathname}
+            />
+          </div>
         ) : (
           <div className="flex justify-center items-center h-full text-muted-foreground">
             Select a contact to start chatting

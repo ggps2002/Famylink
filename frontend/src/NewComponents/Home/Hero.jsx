@@ -84,7 +84,7 @@ function Hero() {
           <div className="flex gap-1 items-center">
             <img src="/logo.svg" alt="logo" className="w-6 h-6 sm:w-8 sm:h-8" />
             <p className="font-bold text-lg sm:text-xl Livvic-Bold text-white">
-              FamilyLink
+              Famlink
             </p>
           </div>
           <div className="flex gap-2 sm:gap-4">

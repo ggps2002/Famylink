@@ -54,16 +54,7 @@ export default function ProfileList({
     nanny
       ? dispatch(fetchAllFamiliesThunk(filters))
       : dispatch(fetchAllNanniesThunk(filters));
-  }, [
-    dispatch,
-    currentPage,
-    availability,
-    location,
-    careOptions,
-    services,
-    start,
-    priceRange,
-  ]);
+  }, [dispatch, currentPage, availability, location, careOptions, services, start, priceRange, nanny]);
   useEffect(() => {
     setCurrentPage(1);
   }, [availability, location, careOptions, services, priceRange]);

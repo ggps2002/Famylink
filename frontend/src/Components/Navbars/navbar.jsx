@@ -50,7 +50,7 @@ export default function Header({ join }) {
                 className="w-6 h-6 sm:w-8 sm:h-8"
               />
               <p className="font-bold text-lg sm:text-xl Livvic-Bold">
-                FamilyLink
+                Famlink
               </p>
             </div>
           </NavLink>

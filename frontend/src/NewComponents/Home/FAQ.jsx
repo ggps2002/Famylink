@@ -6,12 +6,12 @@ const faqs = [
     question:
       "Can I hire someone who also teaches a skill, like piano or Spanish?",
     answer:
-      "FamyLink helps families connect with a variety of caregivers, including private educators, swim instructors, music teachers, and household managers. Whether you need a full-time nanny, a part-time tutor, or a weekend babysitter, you can find the right fit for your needs.",
+      "Famlink helps families connect with a variety of caregivers, including private educators, swim instructors, music teachers, and household managers. Whether you need a full-time nanny, a part-time tutor, or a weekend babysitter, you can find the right fit for your needs.",
   },
   {
     question: "Is this platform only for nannies?",
     answer:
-      "Absolutely! Many caregivers on FamyLink offer additional skills beyond childcare. You can specify your preferences when posting a job or searching for candidates.",
+      "Absolutely! Many caregivers on Famlink offer additional skills beyond childcare. You can specify your preferences when posting a job or searching for candidates.",
   },
   {
     question: "Can I see caregiver pricing before messaging?",
@@ -21,7 +21,7 @@ const faqs = [
   {
     question: "What if I hire someone and it doesn't work out?",
     answer:
-      "If you need to make a change, FamyLink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
+      "If you need to make a change, Famlink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
   },
   {
     question: "Can I find someone for part-time or after-school hours?",

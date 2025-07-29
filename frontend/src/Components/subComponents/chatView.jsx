@@ -20,6 +20,8 @@ import { addOrRemoveFavouriteThunk } from "../Redux/favouriteSlice";
 import { refreshTokenThunk } from "../Redux/authSlice";
 import { formatTime } from "./toCamelStr";
 import { useChats } from "../../Config/useChat";
+import { getSubscriptionStatusThunk } from "../Redux/cardSlice";
+import CustomButton from "../../NewComponents/Button";
 
 export default function ChatView({
   messages,
@@ -41,6 +43,17 @@ export default function ChatView({
   const timerRef = useRef(null);
   const [form] = Form.useForm();
   const [inputValue, setInputValue] = useState("");
+  const navigate = useNavigate();
+
+  const subscription = useSelector(
+    (state) => state.cardData.subscriptionStatus
+  );
+  const isSubscribed = subscription?.active;
+
+  // 🔁 Fetch subscription status on component mount
+  useEffect(() => {
+    dispatch(getSubscriptionStatusThunk());
+  }, [dispatch]);
   //   const { chatList, messages } = useChats({
   //     chatId: selectedContact?._id,
   //     data: selectedContact,
@@ -203,7 +216,7 @@ export default function ChatView({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white w-full">
+    <div className=" relative flex flex-col h-full bg-white w-full">
       <div className="flex justify-between items-center p-4 border-b w-full h-[64px]">
         <div className="flex items-center justify-between w-full">
           {/* <ArrowLeft
@@ -236,9 +249,11 @@ export default function ChatView({
             </span>
           </div>
 
-          {pathname.split("/")[1] === "nanny" && <div className="h-10 w-10 p-2 flex items-center justify-center rounded-full">
-            <MoreVertical />
-          </div>}
+          {pathname.split("/")[1] === "nanny" && (
+            <div className="h-10 w-10 p-2 flex items-center justify-center rounded-full">
+              <MoreVertical />
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           {nannyShare != selectedContact?.otherParticipant?.type &&
@@ -273,11 +288,27 @@ export default function ChatView({
           )}
         </div>
       </div>
+       {!isSubscribed && (
+          <>
+            <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50 top-[80px] w-full" />
+            <div className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-6 rounded-xl text-center w-[400px]">
+            <img src="/message.svg" alt="message" className="mx-auto"/>
+              <p className="text-2xl text-center Livvic-SemiBold text-primary mb-2 whitespace-break-spaces">
+               Upgrade to see your conversation with {selectedContact?.otherParticipant?.name}
+              </p>
+              <p className="mb-4 text-center text-primary Livvic-Medium text-sm">
+               Upgrade now to see past messages and continue your conversation
+              </p>
+              <CustomButton btnText={"Upgrade Now"} action={() => navigate('../pricing')} className="bg-[#D6FB9A] text-[#025747] Livvic-SemiBold text-sm"/>
+            </div>
+          </>
+        )}
       <div
         ref={messageWindowRef}
-        className="flex-1 overflow-y-auto p-4"
-        style={{ height: "calc(100vh - 80px - 64px - 70px)" }} // 64px header + 70px input
+        className="relative w-full flex-1 overflow-y-auto p-4"
+        style={{ minHeight: "calc(100vh - 80px - 64px - 70px)" }} // 64px header + 70px input
       >
+
         {messages.map((message, index) => (
           <div
             key={index}

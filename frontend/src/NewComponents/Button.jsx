@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "classnames";
 import { Loader2 } from "lucide-react";
 
-function Button({
+function CustomButton({
   btnText,
   btnBgColor = "",
   className = "",
@@ -33,4 +33,4 @@ function Button({
   );
 }
 
-export default Button;
+export default CustomButton;

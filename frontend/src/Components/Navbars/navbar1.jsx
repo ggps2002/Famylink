@@ -76,7 +76,7 @@ export default function Navbar1({ nanny }) {
       >
         <div className="flex gap-1 items-center">
           <img src="/logo.svg" alt="logo" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <p className="font-bold text-lg sm:text-xl Livvic-Bold">FamilyLink</p>
+          <p className="font-bold text-lg sm:text-xl Livvic-Bold">Famlink</p>
         </div>
       </NavLink>
 
@@ -539,7 +539,7 @@ export default function Navbar1({ nanny }) {
                 </div>
               </div>
 
-              <div className="my-2">
+              {/* <div className="my-2">
                 <h5 className="mx-8 mb-4 font-semibold text-2xl">Support</h5>
                 <div className="flex justify-center">
                   <div>
@@ -578,7 +578,7 @@ export default function Navbar1({ nanny }) {
                     </NavLink>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Logout */}
               <div className="flex justify-center mt-4 mb-6 Quicksand">

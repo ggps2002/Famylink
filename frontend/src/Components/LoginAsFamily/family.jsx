@@ -3,14 +3,20 @@ import FilterSliders from "../subComponents/filter";
 import ProfileList from "./subcomponents/paginationforprofileData";
 import s1 from "../../assets/images/s1.png";
 import FrequentAskQuestion from "../subComponents/frequentAskQues";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { CustomSelect } from "../subComponents/customSelect";
+import CustomButton from "../../NewComponents/Button";
+import { useNavigate } from "react-router-dom";
+import { getSubscriptionStatusThunk } from "../Redux/cardSlice";
 
 export default function Family() {
   const { pathname } = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { user } = useSelector((s) => s.auth);
+  const isLoading = useSelector((state) => state.nannyData);
   const budgetRange = user?.additionalInfo
     .find((info) => info.key === "totalBudget")
     ?.value.option.split("to")
@@ -24,6 +30,15 @@ export default function Family() {
   const [careOptions, setCareOptions] = useState([]);
   const [services, setServices] = useState([]);
   const [start, setStart] = useState([]);
+  const subscription = useSelector(
+    (state) => state.cardData.subscriptionStatus
+  );
+  const isSubscribed = subscription?.active;
+
+  // 🔁 Fetch subscription status on component mount
+  useEffect(() => {
+    dispatch(getSubscriptionStatusThunk());
+  }, [dispatch]);
 
   const handleLocationChange = (value) => {
     setLocation(value);
@@ -98,13 +113,34 @@ export default function Family() {
               onServicesChange={handleServicesChange}
               onStartChange={handleStartChange}
             />
-            <ProfileList
-              location={location}
-              priceRange={priceRange}
-              availability={availability}
-              services={services}
-              careOptions={careOptions}
-            />
+            <div className="relative w-fit">
+              {(!isSubscribed || !isLoading) && (
+                <>
+                  <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50 w-full" />
+                  <div className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-6 rounded-xl text-center w-[400px]">
+                    <p className="text-2xl text-center Livvic-SemiBold text-primary mb-2 whitespace-break-spaces">
+                      Upgrade to see profiles that matches with you
+                    </p>
+                    <p className="mb-4 text-center text-primary Livvic-Medium text-sm">
+                      Upgrade now to see past messages and continue your
+                      conversation
+                    </p>
+                    <CustomButton
+                      btnText={"Upgrade Now"}
+                      action={() => navigate("pricing")}
+                      className="bg-[#D6FB9A] text-[#025747] Livvic-SemiBold text-sm"
+                    />
+                  </div>
+                </>
+              )}
+              <ProfileList
+                location={location}
+                priceRange={priceRange}
+                availability={availability}
+                services={services}
+                careOptions={careOptions}
+              />
+            </div>
           </div>
         </div>
       )}
