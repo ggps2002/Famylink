@@ -216,7 +216,7 @@ export default function ChatView({
   };
 
   return (
-    <div className=" relative flex flex-col h-full bg-white w-full">
+    <div className=" relative flex flex-col max-h-[calc(100vh-78px)] bg-white w-full">
       <div className="flex justify-between items-center p-4 border-b w-full h-[64px]">
         <div className="flex items-center justify-between w-full">
           {/* <ArrowLeft
@@ -305,7 +305,7 @@ export default function ChatView({
         )}
       <div
         ref={messageWindowRef}
-        className="relative w-full flex-1 overflow-y-auto p-4"
+        className="w-full flex-1 overflow-y-auto p-4"
         style={{ minHeight: "calc(100vh - 80px - 64px - 70px)" }} // 64px header + 70px input
       >
 
