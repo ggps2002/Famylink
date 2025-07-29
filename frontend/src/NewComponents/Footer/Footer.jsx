@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { fireToastMessage } from "../../toastContainer";
+import { api } from "../../Config/api";
 
 function Footer() {
   const { pathname } = useLocation();
   const { user } = useSelector((s) => s.auth);
+  const [email, setEmail] = useState("");
   return (
     <div className="relative">
       {/* Top Curve */}
@@ -162,11 +165,36 @@ function Footer() {
               <div className="flex mt-6 focus-within:ring-2 focus-within:ring-[#4f7eff] rounded-md transition duration-200">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your Email"
                   className="bg-[#152D6F] text-[#FFFFFF] border-none flex-1 pl-6 py-3 rounded-l-md Livvic focus:outline-none placeholder-[#FFFFFF66]"
                 />
                 <div className="p-1 bg-[#152D6F] rounded-r-md">
-                  <button className="bg-[#AEC4FF] p-1 rounded-[6px] flex justify-center items-center hover:bg-[#9BB8FF] transition-colors">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const { data } = await api.post(
+                          "/subscribe/news-letter",
+                          {
+                            email: email,
+                          }
+                        );
+                        fireToastMessage({
+                          message: data?.message || "Subscribed successfully!",
+                        });
+
+                        setEmail("");
+                      } catch (error) {
+                        const msg =
+                          error?.response?.data?.message ||
+                          "Something went wrong. Try again!";
+                        fireToastMessage({ type: "error", message: msg });
+                      }
+                      // your logic here
+                    }}
+                    className="bg-[#AEC4FF] p-1 rounded-[6px] flex justify-center items-center hover:bg-[#9BB8FF] transition-colors"
+                  >
                     <img
                       src="/arrow-right.svg"
                       alt="arrow-right"

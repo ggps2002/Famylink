@@ -105,7 +105,7 @@ export default function Profile() {
                 />
               </NavLink>
               <div className="relative w-full">
-                <Button
+                {/* <Button
                   btnText={
                     <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                       <Link className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-[#555555]" />
@@ -118,12 +118,12 @@ export default function Profile() {
                     </div>
                   }
                   className="w-full py-2 sm:py-2.5 md:py-3 mt-2 border border-gray-200 text-[#555555] Livvic-Medium text-xs sm:text-sm md:text-base lg:text-lg"
-                />
+                /> */}
               </div>
-              <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
+              {/* <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
                 <Info className="text-yellow-400" size={20} />
                 <p className="text-yellow-400">working on copy feature</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
