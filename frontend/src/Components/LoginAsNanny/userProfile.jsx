@@ -82,8 +82,7 @@ export default function Profile() {
     scrollRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
-  
-    const formatLocation = () => {
+  const formatLocation = () => {
     if (!user?.zipCode || !user?.location?.format_location) return "";
     const parts = user?.location?.format_location.split(",") || [];
     const city = parts.at(-3)?.trim();
@@ -151,12 +150,29 @@ export default function Profile() {
                     </div>
                   }
                   className="w-full py-2 sm:py-2.5 md:py-3 mt-2 border border-gray-200 text-[#555555] Livvic-Medium text-xs sm:text-sm md:text-base lg:text-lg"
+                  action={() => {
+                    const fullUrl = `${window.location.origin}/family/profileNanny/${user?._id}`;
+                    navigator.clipboard
+                      .writeText(fullUrl)
+                      .then(() => {
+                        fireToastMessage({
+                          type: "success",
+                          message: "Link copied",
+                        });
+                      })
+                      .catch(() => {
+                        fireToastMessage({
+                          type: "error",
+                          message: "Failed to copy link",
+                        });
+                      });
+                  }}
                 />
               </div>
-              <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
+              {/* <div className="bg-yellow-100 rounded-full px-4 py-1 w-fit mx-auto mt-2 flex gap-2 items-center">
                 <Info className="text-yellow-400" size={20} />
                 <p className="text-yellow-400">working on copy feature</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -206,14 +222,18 @@ export default function Profile() {
             </p>
             <div className="mt-2">
               <ul className="list-disc pl-4 md:pl-6 space-y-2">
-                {
-                  user.additionalInfo.find((info) => info.key === "additionalDetails")?.value?.option?.map((det, i) => (
-  <li key={i} className="text-[#555555] Livvic-Medium text-sm md:text-base">
-                  {det.charAt(0).toUpperCase() + det.slice(1, det.length - 1)}
-                </li>
-                  ))
-                }
-{/*               
+                {user.additionalInfo
+                  .find((info) => info.key === "additionalDetails")
+                  ?.value?.option?.map((det, i) => (
+                    <li
+                      key={i}
+                      className="text-[#555555] Livvic-Medium text-sm md:text-base"
+                    >
+                      {det.charAt(0).toUpperCase() +
+                        det.slice(1, det.length - 1)}
+                    </li>
+                  ))}
+                {/*               
                 <li className="text-[#555555] Livvic-Medium text-sm md:text-base">
                   Does not smoke
                 </li> */}
@@ -286,7 +306,8 @@ export default function Profile() {
           <p className="Livvic-SemiBold text-base md:text-lg text-primary">
             Work Experience -{" "}
             {
-              user.additionalInfo.find((info) => info.key === "experience")?.value?.option
+              user.additionalInfo.find((info) => info.key === "experience")
+                ?.value?.option
             }
           </p>
           <ul className="mt-2 space-y-2">
@@ -320,7 +341,8 @@ export default function Profile() {
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               Start:{" "}
               {
-                user.additionalInfo.find((info) => info.key === "availability")?.value?.option
+                user.additionalInfo.find((info) => info.key === "availability")
+                  ?.value?.option
               }
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
@@ -344,35 +366,40 @@ export default function Profile() {
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               1 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.firstChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  ?.value?.firstChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               2 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.secChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  ?.value?.secChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               3 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.thirdChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  ?.value?.thirdChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               4 Child: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.fourthChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  ?.value?.fourthChild
               }
               /h
             </li>
             <li className="Livvic-Medium text-sm md:text-md text-[#555555]">
               5 Child Or More: $
               {
-                user.additionalInfo.find((info) => info.key === "salaryExp")?.value?.fiveOrMoreChild
+                user.additionalInfo.find((info) => info.key === "salaryExp")
+                  ?.value?.fiveOrMoreChild
               }
               /h
             </li>
