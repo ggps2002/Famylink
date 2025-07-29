@@ -71,9 +71,12 @@ export default function Music() {
                     }
                 })
                 .catch((errorInfo) => {
-                    // Handle validation failure
-                   fireToastMessage({ type: "error", message: errorInfo })
-                });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
+        });
         }
         else if (step == 2) {
             hireStepFormRef.current
@@ -90,10 +93,13 @@ export default function Music() {
                         fireToastMessage({ type: 'error', message: 'Select at least one option' });
                     }
                 })
-                .catch((errorInfo) => {
-                    // Handle validation failure
-                   fireToastMessage({ type: "error", message: errorInfo })
-                });
+               .catch((errorInfo) => {
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
+        });
         }
         else if (step == 3) {
             hireStepFormRef.current
@@ -110,10 +116,13 @@ export default function Music() {
                         fireToastMessage({ type: 'error', message: 'Select at least one option' });
                     }
                 })
-                .catch((errorInfo) => {
-                    // Handle validation failure
-                   fireToastMessage({ type: "error", message: errorInfo })
-                });
+               .catch((errorInfo) => {
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
+        });
         }
         if (step == 4) {
             hireStepFormRef.current
@@ -143,10 +152,13 @@ export default function Music() {
 
                     // setStep((prevStep) => prevStep + 1);
                 })
-                .catch((errorInfo) => {
-                    // Handle validation failure
-                   fireToastMessage({ type: "error", message: errorInfo })
-                });
+               .catch((errorInfo) => {
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
+        });
         }
     }
     const step1Data = [
