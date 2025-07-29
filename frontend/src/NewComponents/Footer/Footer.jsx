@@ -1,6 +1,11 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Footer() {
+  const { pathname } = useLocation();
+  const { user } = useSelector((s) => s.auth);
   return (
     <div className="relative">
       {/* Top Curve */}
@@ -116,14 +121,14 @@ function Footer() {
                     Community
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a
                     href="#"
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     Contact
                   </a>
-                </li>
+                </li> */}
               </ul>
             </div>
 
@@ -133,15 +138,17 @@ function Footer() {
                 Contact
               </p>
               <ul className="mt-4 flex flex-col gap-4">
-                <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
+                {/* <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
                   + (000) 123456789
                 </li>
                 <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
                   A-1, Ipsum HQ, Lorem
-                </li>
-                <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
-                  Info@famylink.us
-                </li>
+                </li> */}
+                <a href="mailto:info@famylink.care">
+                  <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
+                    info@famylink.care
+                  </li>
+                </a>
               </ul>
             </div>
 
@@ -186,9 +193,20 @@ function Footer() {
                 Privacy Policy
               </p>
               <p className="text-[#FFFFFFCC]">|</p>
-              <p className="Livvic-Medium text-[#FFFFFFCC] cursor-pointer hover:text-white transition-colors">
-                Terms & Conditions
-              </p>
+              <NavLink
+                to={
+                  user?.type === "Nanny"
+                    ? "/nanny/terms-and-conditions"
+                    : user?.type === "Parents"
+                    ? "/family/terms-and-conditions"
+                    : "/terms-and-conditions"
+                }
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                <p className="Livvic-Medium text-[#FFFFFFCC] cursor-pointer hover:text-white transition-colors">
+                  Terms & Conditions
+                </p>
+              </NavLink>
             </div>
           </div>
         </div>

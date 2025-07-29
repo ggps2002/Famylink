@@ -16,6 +16,7 @@ export default function PageLayout() {
     "/nannShare",
     "/services",
     "/",
+    "/terms-and-conditions",
     "/pricing",
     "/profile/:id",
   ];
@@ -170,7 +171,7 @@ export default function PageLayout() {
     <>
       {pathsWithHeaderFooter.some((p) => isDynamicPath(pathname, p)) && (
         <>
-          {/* <Header /> */}
+          {pathname.startsWith("/terms-and-conditions") && <Header join={true}/>}
           <Outlet />
           <Footer />
         </>
