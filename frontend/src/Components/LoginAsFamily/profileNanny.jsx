@@ -367,9 +367,7 @@ export default function ProfileNanny() {
                   <span className="text-primary Livvic-SemiBold text-sm">
                     Background Check
                   </span>
-                  {selectedNanny?.additionalInfo.find(
-                    (info) => info.key === "backgroundCheck"
-                  )?.value?.option.length > 0 && (
+                  {selectedNanny?.verified?.nationalIDVer === "true"  && (
                     <img src="/check-circle.svg" alt="verified" />
                   )}
                 </li>

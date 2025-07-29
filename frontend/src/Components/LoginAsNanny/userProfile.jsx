@@ -267,7 +267,7 @@ export default function Profile() {
                   <span className="text-primary Livvic-SemiBold text-sm">
                     National ID
                   </span>
-                  {user?.verified.nationalIDVer !== "false" && (
+                  {user?.verified.nationalIDVer === "true" && (
                     <img src="/check-circle.svg" alt="verified" />
                   )}
                 </li>
