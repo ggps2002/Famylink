@@ -7,6 +7,7 @@ import { fetchAllNanniesThunk } from "../../Redux/nannyData";
 import { toCamelCase } from "../../subComponents/toCamelStr";
 import { fetchAllFamiliesThunk } from "../../Redux/familyData";
 import Loader from "../../subComponents/loader";
+import CustomButton from "../../../NewComponents/Button";
 // ProfileList component
 export default function ProfileList({
   nanny,
@@ -23,6 +24,10 @@ export default function ProfileList({
   const data = useSelector((state) =>
     nanny ? state.familyData : state.nannyData
   );
+    const subscription = useSelector(
+      (state) => state.cardData.subscriptionStatus
+    );
+    const isSubscribed = subscription?.active;
   const pageSize = 4;
   useEffect(() => {
     const filters = {

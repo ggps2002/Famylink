@@ -620,10 +620,10 @@ const PaginationComm = ({ category, searchQuery }) => {
             <Select
               value={selectedTopic}
               onChange={handleTopicChange}
-              placeholder="Select Topic"
+              // placeholder="Select Topic"
               className="w-72 rounded-full shadow-sm border border-gray-200 hover:border-gray-400 focus:border-primary"
               style={{
-                height: "48px",
+                height: "40px",
                 width: "180px",
               }}
               dropdownStyle={{
@@ -631,15 +631,18 @@ const PaginationComm = ({ category, searchQuery }) => {
               }}
               bordered={false}
             >
+              <option value="">Select Topic</option>
               {(Array.isArray(localCommunities)
                 ? localCommunities
                     .flatMap((comm) => comm.topics || [])
                     .slice(0, 8)
-                    .map((topic) => topic.name)
+                    .map((topic) => topic.name !== "Admin" && topic.name)
                 : []
               ).map((opt) => (
                 <Select.Option key={opt} value={opt}>
-                  <span className="text-sm text-gray-800">{opt}</span>
+                  <span className="text-sm Livvic-Medium text-gray-800">
+                    {opt}
+                  </span>
                 </Select.Option>
               ))}
             </Select>
@@ -1138,11 +1141,17 @@ const PaginationComm = ({ category, searchQuery }) => {
                                       }))
                                     )
                                     .slice(0, 5)
-                                    .map((topic) => (
-                                      <option key={topic._id} value={topic._id}>
-                                        {topic.name} — {topic.communityName}
-                                      </option>
-                                    ))}
+                                    .map(
+                                      (topic) =>
+                                        topic.name !== "Admin" && (
+                                          <option
+                                            key={topic._id}
+                                            value={topic._id}
+                                          >
+                                            {topic.name} — {topic.communityName}
+                                          </option>
+                                        )
+                                    )}
                               </select>
 
                               <label className="flex items-center gap-2 text-sm text-gray-600">
@@ -1197,6 +1206,17 @@ const PaginationComm = ({ category, searchQuery }) => {
                                     key={idx}
                                     className="relative aspect-square rounded-lg overflow-hidden"
                                   >
+                                    {/* Remove button */}
+                                    <div
+                                      onClick={() =>
+                                        setMediaFiles((prev) =>
+                                          prev.filter((_, i) => i !== idx)
+                                        )
+                                      }
+                                      className="absolute top-1 right-1 z-30 cursor-pointer w-fit p-1 rounded-full bg-[#151515]"
+                                    >
+                                      <X className=" text-gray-200 w-4 h-4" />
+                                    </div>
                                     {file.type.startsWith("image") ? (
                                       <img
                                         src={URL.createObjectURL(file)}
@@ -1207,6 +1227,10 @@ const PaginationComm = ({ category, searchQuery }) => {
                                       <video
                                         src={URL.createObjectURL(file)}
                                         className="w-full h-full object-cover"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
                                       />
                                     )}
                                   </div>
@@ -1405,16 +1429,19 @@ const PaginationComm = ({ category, searchQuery }) => {
                       localCommunities
                         .flatMap((comm) => comm.topics || [])
                         .slice(0, 8)
-                        .map((topic) => (
-                          <div
-                            key={topic._id}
-                            className="flex items-center justify-between py-2 px-4 border border-[#EEEEEE] w-fit rounded-full"
-                          >
-                            <p className="Livvic-Medium text-[#555555] text-sm">
-                              {topic.name}
-                            </p>
-                          </div>
-                        ))}
+                        .map(
+                          (topic) =>
+                            topic.name !== "Admin" && (
+                              <div
+                                key={topic._id}
+                                className="flex items-center justify-between py-2 px-4 border border-[#EEEEEE] w-fit rounded-full"
+                              >
+                                <p className="Livvic-Medium text-[#555555] text-sm">
+                                  {topic.name}
+                                </p>
+                              </div>
+                            )
+                        )}
                   </div>
                 </div>
 
@@ -1650,11 +1677,14 @@ const PaginationComm = ({ category, searchQuery }) => {
                               }))
                             )
                             .slice(0, 10)
-                            .map((topic) => (
-                              <option key={topic._id} value={topic._id}>
-                                {topic.name} — {topic.communityName}
-                              </option>
-                            ))}
+                            .map(
+                              (topic) =>
+                                topic.name !== "Admin" && (
+                                  <option key={topic._id} value={topic._id}>
+                                    {topic.name} — {topic.communityName}
+                                  </option>
+                                )
+                            )}
                       </select>
 
                       {/* Anonymous Toggle */}
@@ -1699,6 +1729,16 @@ const PaginationComm = ({ category, searchQuery }) => {
                               key={idx}
                               className="relative aspect-square rounded-lg overflow-hidden"
                             >
+                              {/* <div
+                                onClick={() =>
+                                  setMediaFiles((prev) =>
+                                    prev.filter((_, i) => i !== idx)
+                                  )
+                                }
+                                className="absolute top-1 right-1 z-30 cursor-pointer w-fit p-1 rounded-full bg-[#151515]"
+                              >
+                                <X className=" text-gray-200 w-4 h-4" />
+                              </div> */}
                               {file.type.startsWith("image") ? (
                                 <img
                                   src={URL.createObjectURL(file)}
@@ -1709,6 +1749,10 @@ const PaginationComm = ({ category, searchQuery }) => {
                                 <video
                                   src={URL.createObjectURL(file)}
                                   className="w-full h-full object-cover"
+                                  autoPlay
+                                  muted
+                                  loop
+                                  playsInline
                                 />
                               )}
                               <button

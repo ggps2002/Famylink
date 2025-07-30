@@ -164,6 +164,7 @@ export default function NewHireForm() {
             try {
               const { data } = await dispatch(
                 registerThunk({
+                  ...val,
                   ...formData,
                   noOfChildren: {
                     length: Object.keys(values).length,

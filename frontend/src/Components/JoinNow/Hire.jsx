@@ -1606,7 +1606,7 @@ export default function HireForm() {
           )
           setStep(prevStep => prevStep + 1)
         } else {
-          Register()
+          await Register()
         }
       } else {
         fireToastMessage({
