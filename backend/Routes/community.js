@@ -368,7 +368,8 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
     await community.save()
 
     res.status(200).json({
-      message: 'Post deleted successfully'
+      message: 'Post deleted successfully',
+      postId: postId
     })
   } catch (error) {
     console.error('Error deleting post:', error)
@@ -1151,7 +1152,7 @@ router.post("/post", authMiddleware, upload.array("media", 5), async (req, res) 
     await community.save();
 
     res.status(201).json({
-      message: "Post created successfully",
+      message: "Post created successfully. Now you can view the post in your feed",
       post: topic.posts[0],
       topicId: topic._id,
       communityId: community._id,

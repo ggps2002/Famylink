@@ -100,6 +100,10 @@ const userSchema = new Schema({
       type: Schema.Types.Boolean,
       default: false,
     },
+    phoneVer: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
     nationalIDVer: {
       type: Schema.Types.String,
       enum: ["false", "underprocess", "true"],

@@ -19,6 +19,7 @@ import PostJob from './postJob.js'
 import Subscription from './subscription.js'
 import Feedback from './feedback.js'
 import Revenue from './revenue.js'
+import SMSVerification from './SMSVerification.js'
 
 const router = express.Router()
 
@@ -42,5 +43,7 @@ router.use('/verify', Verification)
 router.use('/subscribe', Subscription)
 router.use('/feedback', Feedback);
 router.use('/revenue', Revenue)
+router.use('/sms-verification', SMSVerification)
+
 
 export default router   

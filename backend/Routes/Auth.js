@@ -20,7 +20,7 @@ const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10");
 const generateOTP = () => {
   return Math.floor(1000 + Math.random() * 9000).toString(); // Generates a 4-digit OTP
 };
-const generateTokens = async (userId, oldRefreshToken) => {
+export const generateTokens = async (userId, oldRefreshToken) => {
   const accessToken = jwt.sign(
     {
       userId,

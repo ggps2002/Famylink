@@ -2,6 +2,7 @@ import express from "express";
 import User from "../Schema/user.js";
 import bcrypt from "bcryptjs";
 import { authMiddleware } from "../Services/utils/middlewareAuth.js";
+import { generateTokens } from "./Auth.js";
 
 const router = express.Router();
 const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10");
@@ -132,27 +133,27 @@ router.put('/password', authMiddleware, async (req, res) => {
 });
 
 router.put('/text-notifications', authMiddleware, async (req, res) => {
-  const id = req.userId;
+    const id = req.userId;
 
-  try {
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    try {
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-    const { sms } = req.body;
-    if (typeof sms !== 'boolean') {
-      return res.status(400).json({ message: "Invalid sms value" });
+        const { sms } = req.body;
+        if (typeof sms !== 'boolean') {
+            return res.status(400).json({ message: "Invalid sms value" });
+        }
+
+        user.notifications.sms = sms;
+        await user.save();
+
+        return res.status(200).json({
+            message: "Text notification preference updated successfully",
+            sms: user.notifications.sms,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
     }
-
-    user.notifications.sms = sms;
-    await user.save();
-
-    return res.status(200).json({
-      message: "Text notification preference updated successfully",
-      sms: user.notifications.sms,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Server error", error: error.message });
-  }
 });
 
 
@@ -176,14 +177,35 @@ router.put('/phone', authMiddleware, async (req, res) => {
 
         // Update the phone number
         user.phoneNo = phoneNo;
+        user.verified.phoneVer = false;
+        user.notifications.sms = false;
+        console.log("Updated User:", user);
 
-        // Save changes
-        await user.save();
+        await user.save()
+            .then(() => console.log('User updated successfully'))
+            .catch(err => console.error('Error saving user:', err)); // Save the updated user document
 
-        // Return success response
+        // Generate tokens
+        const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } =
+            await generateTokens(user._id.toString());
+
+        const {
+            password: _password,
+            online,
+            ActiveAt,
+            otp,
+            otpExpiry,
+            ...userDetails
+        } = user.toObject();
+
+        // Return successful response
         return res.status(200).json({
             message: "Phone number updated successfully",
-            phoneNo: user.phoneNo
+            user: userDetails,
+            accessToken,
+            refreshToken,
+            accessTokenExpiry,
+            refreshTokenExpiry,
         });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });
