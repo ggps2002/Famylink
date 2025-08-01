@@ -92,6 +92,7 @@ function Footer() {
                 <li>
                   <NavLink
                     to="/"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     Home
@@ -100,6 +101,7 @@ function Footer() {
                 <li>
                   <NavLink
                     to="/jobSeekers"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     For Job Seekers
@@ -108,6 +110,7 @@ function Footer() {
                 <li>
                   <NavLink
                     to="/nannShare"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     Nanny Share
