@@ -17,7 +17,7 @@ export default function TrustsAndSafety() {
             <div className="flex justify-center text-center my-14">
                 <div className='dashboard-width'>
                     <img className='h-5 mb-5 mx-auto' src={line} alt="line" />
-                    <p className="leading-5 font-normal">At FamyLink, your trust matters. We’ve built our platform to support safe, respectful connections between families and caregivers through secure messaging, detailed profiles, and clear community standards.</p>
+                    <p className="leading-5 font-normal">At Famlink, your trust matters. We’ve built our platform to support safe, respectful connections between families and caregivers through secure messaging, detailed profiles, and clear community standards.</p>
                     <p className="leading-5 my-4 font-normal">We encourage all users to communicate openly, ask questions, and use references when making decisions. Our team is dedicated to providing tools and tips that help you feel confident every step of the way.</p>
                     <p className="leading-5 font-normal">As our community grows, so will our safety features—because your peace of mind is always a priority.</p>
                 </div>

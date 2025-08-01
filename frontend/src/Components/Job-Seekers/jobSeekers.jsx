@@ -55,7 +55,7 @@ export default function JobSeekers() {
       question:
         "Can I offer additional services like tutoring or pet sitting on my profile?",
       answer:
-        "Yes! FamyLink allows job seekers to highlight all of their skills, whether it’s language tutoring, swim instruction, or even occasional pet care. This helps you stand out and increase job opportunities.",
+        "Yes! Famlink allows job seekers to highlight all of their skills, whether it’s language tutoring, swim instruction, or even occasional pet care. This helps you stand out and increase job opportunities.",
     },
     {
       question: "Can I set my own rate, or is it determined by families?",
@@ -87,7 +87,7 @@ export default function JobSeekers() {
           <Sec4
             head={"Join Famlink Community"}
             subHead={
-              "Discover rewarding opportunities in childcare and beyond. Whether you're a nanny, babysitter, tutor, music instructor, sports coach, or specialized caregiver, FamyLink connects you with families seeking your skills and expertise."
+              "Discover rewarding opportunities in childcare and beyond. Whether you're a nanny, babysitter, tutor, music instructor, sports coach, or specialized caregiver, Famlink connects you with families seeking your skills and expertise."
             }
           />
         </div>
@@ -100,8 +100,8 @@ export default function JobSeekers() {
 
         <div className="bg-white  mt-12 py-12 px-1">
           <JoinLink
-            head={"Why Join FamyLink?"}
-            subHead={"Benefits of Joining FamyLink"}
+            head={"Why Join Famlink?"}
+            subHead={"Benefits of Joining Famlink"}
             head1={"Connect with Families"}
             head2={"Flexible Opportunities"}
             head3={"Professional Network"}
@@ -148,7 +148,7 @@ export default function JobSeekers() {
           <GetStarted
             head={"Get Started"}
             subHead={
-              "Kickstart your journey with FamyLink and find the perfect job that matches your skills and passion"
+              "Kickstart your journey with Famlink and find the perfect job that matches your skills and passion"
             }
           />
         </div>

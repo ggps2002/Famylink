@@ -924,8 +924,8 @@ export const NannyShareView = () => {
                 <>
                   <div className="flex gap-x-4 gap-y-2 flex-wrap lg:my-4 my-2">
                     {data?.guideline &&
-                      data?.guideline.map((v) => (
-                        <p className="font-medium text-justify leading-5 max-lg:text-sm">
+                      data?.guideline.map((v,i) => (
+                        <p key={i} className="font-medium text-justify leading-5 max-lg:text-sm">
                           {v}
                         </p>
                       ))}

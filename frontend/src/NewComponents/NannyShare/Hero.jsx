@@ -1,11 +1,11 @@
-import Button from "../Button";
-import { NavLink } from "react-router-dom";
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import Header from "../Header";
 import { Spin, Input } from "antd";
 import { fireToastMessage } from "../../toastContainer";
 import { api } from "../../Config/api";
-import { Star, X } from "lucide-react";
-import Header from "../Header";
+import Button from "../Button";
+import { X, Star } from "lucide-react";
 
 function Hero() {
   const [loading, setLoading] = useState(false);
@@ -80,19 +80,18 @@ function Hero() {
 
   return (
     <div className="Livvic container min-h-screen px-4 sm:px-6 lg:px-8">
-      
-      <Header/>
+      <Header />
 
       <div className="mt-20 sm:mt-32">
         <h1 className="Livvic-Bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tight sm:leading-[50px] md:leading-[60px] lg:leading-[80px]">
-          Find the Right Childcare—
+          Find Your Perfect
           <br className="hidden sm:block" />
           <span className="sm:hidden"> </span>
-          Without the Guesswork
+          Nanny Share Match
         </h1>
         <h2 className="Livvic text-[#FFFFFF99] text-base sm:text-lg md:text-xl mt-4 sm:mt-6 max-w-2xl">
-          Smart matching for nannies, tutors, coaches, and everything your
-          family needs.
+          Smart family compatibility for long-term, affordable childcare
+          partnerships
         </h2>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-7 max-w-md sm:max-w-lg">
           <div className="flex-1">
@@ -104,7 +103,7 @@ function Hero() {
               >
                 <Input
                   name="zipCode"
-                  placeholder="Enter zip code to find caregivers"
+                  placeholder="Enter zip code to find Nanny"
                   onChange={(e) => {
                     const zip = e.target.value;
                     setZipCode(zip);
@@ -118,8 +117,8 @@ function Hero() {
             </div>
           </div>
           <Button
-            btnText="Find a Match"
-            className="bg-[#AEC4FF] w-full sm:w-auto px-6 py-3 sm:py-4"
+            btnText="Find Nanny"
+            className="bg-[#FFADE1] w-full sm:w-auto px-6 py-3 sm:py-4"
             action={() => handleDataRetrieve()}
             isLoading={isLoading}
             loadingBtnText="Searching..."
@@ -138,7 +137,7 @@ function Hero() {
                   Available Caregivers in {zipCode}
                 </h3>
                 <p className="text-[#555555] text-sm sm:text-base mt-1">
-                  {data.length} caregiver{data.length !== 1 ? 's' : ''} found
+                  {data.length} caregiver{data.length !== 1 ? "s" : ""} found
                 </p>
               </div>
               <button
@@ -200,13 +199,18 @@ function Hero() {
                           </p>
 
                           <p className="text-gray-600 text-sm italic leading-relaxed">
-                            "{person.description?.slice(0, 80) || "Dedicated caregiver ready to help your family"}..."
+                            "
+                            {person.description?.slice(0, 80) ||
+                              "Dedicated caregiver ready to help your family"}
+                            ..."
                           </p>
 
                           <div className="bg-gradient-to-r from-[#AEC4FF]/10 to-[#85D1F1]/10 px-3 py-2 rounded-lg border border-[#AEC4FF]/20">
                             <p className="text-sm font-medium">
-                              <span className="text-gray-600">Service:</span> 
-                              <span className="text-[#0f3460] ml-1">{person.service}</span>
+                              <span className="text-gray-600">Service:</span>
+                              <span className="text-[#0f3460] ml-1">
+                                {person.service}
+                              </span>
                             </p>
                           </div>
                         </div>
@@ -214,7 +218,7 @@ function Hero() {
 
                       {/* CTA Button */}
                       <NavLink
-                        to="j/oinNow"
+                        to="/joinNow"
                         onClick={() => {
                           handleCloseResults();
                           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -230,8 +234,12 @@ function Hero() {
                 ) : (
                   <div className="col-span-full text-center py-12">
                     <div className="bg-gradient-to-br from-[#AEC4FF]/10 to-[#85D1F1]/10 backdrop-blur-sm rounded-2xl p-8 border border-[#AEC4FF]/30">
-                      <p className="text-white text-lg mb-2">No caregivers found in this area</p>
-                      <p className="text-[#FFFFFF99] text-sm">Try searching with a different ZIP code</p>
+                      <p className="text-white text-lg mb-2">
+                        No caregivers found in this area
+                      </p>
+                      <p className="text-[#FFFFFF99] text-sm">
+                        Try searching with a different ZIP code
+                      </p>
                     </div>
                   </div>
                 )}

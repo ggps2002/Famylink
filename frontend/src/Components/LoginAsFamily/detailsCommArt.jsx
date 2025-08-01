@@ -97,7 +97,7 @@ export default function DetailsCommArt() {
             />
             <div className='flex justify-between py-5'>
               <p style={{ color: '#C1C1C1' }}>
-                By Famylink &#8226; {formatDate(data?.blog?.createdAt)} @{' '}
+                By Famlink &#8226; {formatDate(data?.blog?.createdAt)} @{' '}
                 {formatTime(data?.blog?.createdAt)}
               </p>
               <div className='flex gap-2'>

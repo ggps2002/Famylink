@@ -275,10 +275,10 @@ export default function Pricing({ nanny }) {
             "Search for jobs",
             "Apply for jobs",
             "Receive and reply to messages",
-            "Join the Famylink Community",
+            "Join the Famlink Community",
           ]
         : [
-            "Connect, share advice and build relationships in the Famylink Community",
+            "Connect, share advice and build relationships in the Famlink Community",
             "Browse a limited list of caregiver profiles",
             "Browse a limited list of families for nanny share",
           ],

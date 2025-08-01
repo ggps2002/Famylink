@@ -95,6 +95,7 @@ export default function ProfileList({
                     zipCode={profile?.user?.zipCode}
                     hr={profile?.noOfChildren?.length}
                     nannyShareView={true}
+                    created={profile?.createdAt}
                   />
                 </NavLink>
               );

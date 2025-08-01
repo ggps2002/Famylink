@@ -381,7 +381,7 @@ export default function ProfileNanny() {
                   <span className="text-primary Livvic-SemiBold text-sm">
                     National ID
                   </span>
-                  {selectedNanny?.verified?.nationalIDVer !== "false" && (
+                  {selectedNanny?.verified?.nationalIDVer === "true" && (
                     <img src="/check-circle.svg" alt="verified" />
                   )}
                 </li>

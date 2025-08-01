@@ -56,8 +56,6 @@ const JobListing = () => {
             {data && data.length > 0 ? (
               data.map((v) => {
                 const formatLocation = () => {
-                  if (!v?.user?.zipCode || !v?.user?.location?.format_location)
-                    return "";
                   const parts =
                     v?.user?.location?.format_location.split(",") || [];
                   const city = parts.at(-3)?.trim();

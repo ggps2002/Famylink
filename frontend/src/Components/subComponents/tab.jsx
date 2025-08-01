@@ -22,7 +22,7 @@ export default function Tab({ first, sec, third }) {
                     <Tabs.Item className="bg-transparent Classico" active title={<span className="bg-transparent Classico">Job Seekers</span>}>
 
                         <TabContent img={j1} head={'Community'} para={'Connect with other nannies in your area to share experiences, seek advice, and  find support.'} />
-                        <TabContent img={j2} head={'Local Meet-ups'} para={'Join local meet-ups organized through FamyLink to build friendships and  professional connections.'} />
+                        <TabContent img={j2} head={'Local Meet-ups'} para={'Join local meet-ups organized through Famlink to build friendships and  professional connections.'} />
                         <TabContent img={j3} head={'Discussion Forums'} para={'Participate in online forums to discuss various aspects of caregiving, share  tips, and offer support.'} />
                         <TabContent img={j4} head={'Professional Growth'} para={'Access resources and opportunities for professional development and personal growth.'} />
 

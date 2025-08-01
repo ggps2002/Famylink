@@ -71,7 +71,7 @@ export default function Services() {
                                         to={"/joinNow"}
                                         className="cursor-pointer text-blue-600 transition-colors duration-300 hover:text-blue-400"
                                     >
-                                        FamyLink,
+                                        Famlink,
                                     </NavLink>{" "}
                                     we offer a range of services to support families and caregivers...
                                 </>

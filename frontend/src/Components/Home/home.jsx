@@ -165,7 +165,7 @@ export default function Home() {
 
           <div className="flex md:gap-6 flex-col md:flex-row md:justify-center">
             <NavLink
-              to="joinNow"
+              to="/joinNow"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <button
@@ -176,7 +176,7 @@ export default function Home() {
               </button>
             </NavLink>
             <NavLink
-              to="joinNow"
+              to="/joinNow"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <button
@@ -217,7 +217,7 @@ export default function Home() {
 
       <Sec4
         btn={false}
-        subHead={`Finding the right childcare shouldn't be guesswork. FamyLink uses smart 
+        subHead={`Finding the right childcare shouldn't be guesswork. Famlink uses smart 
 compatibility matching to connect your family with the perfect providers - whether you 
 need a nanny, tutor, coach, or specialized caregiver. Our proven matching system creates 
 successful long-term relationships while offering cost-sharing opportunities when 
@@ -359,7 +359,7 @@ families want them.`}
               </p>
             </AnimatedWrapper>
             <p className="mx-auto mt-12 mb-14 text-lg home-sec3 line1-20">
-              FamyLink is live and helping families find great care, share a
+              Famlink is live and helping families find great care, share a
               nanny, and connect with others—all in one place.
             </p>
           </div>

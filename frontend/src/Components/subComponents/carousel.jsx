@@ -9,7 +9,7 @@ const testimonials = [
   {
     img: img1,
     fallbackImageText: "ER",
-    para: `"FamyLink's matching system found us the perfect nanny who shares our values 
+    para: `"Famlink's matching system found us the perfect nanny who shares our values 
 about outdoor play and healthy eating. It's been 2 years and we couldn't be 
 happier with the compatibility!`,
     name: "Emily R., San Francisco, CA",
@@ -19,7 +19,7 @@ happier with the compatibility!`,
     img: img2,
     fallbackImageText: "DL",
     para: `Finding a math tutor who could work with our learning-different son seemed 
-impossible. FamyLink matched us with James who has the exact patience and 
+impossible. Famlink matched us with James who has the exact patience and 
 approach our son needed.`,
     name: "DavidL., Brooklyn, NY",
     relation: "~$1,800 monthly savings",
@@ -27,7 +27,7 @@ approach our son needed.`,
   {
     img: img3,
     fallbackImageText: "PM",
-    para: `We needed a piano teacher for our daughter, and FamyLink found someone who 
+    para: `We needed a piano teacher for our daughter, and Famlink found someone who 
 matches our family's classical music preferences perfectly. She's been with us for 
 18 months now.`,
     name: "PriyaM., Chicago, IL",

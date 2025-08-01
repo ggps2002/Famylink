@@ -80,7 +80,7 @@ export default function Header({ join }) {
                   Login
                 </button>
               </NavLink>
-              <NavLink to="joinNow">
+              <NavLink to="/joinNow">
                 <button className="bg-[#85D1F1] text-base px-4 py-1 rounded-full hover:scale-105 transition">
                   Join Now
                 </button>
@@ -145,7 +145,7 @@ export default function Header({ join }) {
               ))}
 
               {/* Join Now button */}
-              <NavLink to="joinNow" onClick={closeNavbar}>
+              <NavLink to="/joinNow" onClick={closeNavbar}>
                 <button className="w-full bg-[#85D1F1] py-1 rounded-md text-base">
                   Join Now
                 </button>

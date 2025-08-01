@@ -225,7 +225,7 @@ export default function ForgetPass() {
                   </div>
 
                   <p className="mt-2 mb-1 font-normal text-base already-acc">
-                    New to Famylink?{" "}
+                    New to Famlink?{" "}
                     <NavLink to="/joinNow">
                       <span className="hover:text-blue-600 underline transition-colors duration-300 cursor-pointer">
                         Sign Up

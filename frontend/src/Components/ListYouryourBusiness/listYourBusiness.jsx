@@ -34,7 +34,7 @@ export default function ListYourBusiness() {
         {
             icon: ns7,
             title: 'Community Engagement',
-            description: 'Join a network of trusted service providers and engage with the FamyLink community.',
+            description: 'Join a network of trusted service providers and engage with the Famlink community.',
         },
         {
             icon: ns8,
@@ -52,15 +52,15 @@ export default function ListYourBusiness() {
 
     const faq = [
         {
-            question: 'I own a childcare-related business. How can FamyLink help me?',
-            answer: 'Whether you run a daycare, a tutoring center, or an after-school program, FamyLink helps you connect with families searching for your services. You can create a business profile, list your services, and even hire staff through our job board.'
+            question: 'I own a childcare-related business. How can Famlink help me?',
+            answer: 'Whether you run a daycare, a tutoring center, or an after-school program, Famlink helps you connect with families searching for your services. You can create a business profile, list your services, and even hire staff through our job board.'
         },
         {
             question: 'Can I post job listings for my business?',
             answer: 'Yes! Businesses can post job listings for positions like childcare providers, private instructors, or administrative staff.'
         },
         {
-            question: 'How does FamyLink help businesses get discovered?',
+            question: 'How does Famlink help businesses get discovered?',
             answer: 'Business listings appear in family searches based on location and service needs. Premium businesses also receive priority placement and additional marketing tools. '
         }
     ]
@@ -69,12 +69,12 @@ export default function ListYourBusiness() {
             background: 'linear-gradient(176.74deg, #E7F1DC -21.31%, rgba(254, 250, 224, 0.612) 49.24%, rgba(255, 255, 255, 0.2) 124.15%)'
         }}>
             <div className="padd-res">
-                <Sec1 head={"Expand Your Reach with FamyLink"} preHead={"List your business and connect with families seeking quality services"} pic={img7} />
+                <Sec1 head={"Expand Your Reach with Famlink"} preHead={"List your business and connect with families seeking quality services"} pic={img7} />
     
                 <div className="bg-white">
                     <Sec4 subHead={
                         <>
-                            Join <NavLink to={'/joinNow'} className="cursor-pointer text-blue-600 transition-colors duration-300 hover:text-blue-400">FamyLink,</NavLink> and showcase your business to families in need of your services. Whether you offer tutoring, sports coaching, music lessons, or specialized care, our platform connects you with a wide audience looking for quality and reliable providers.
+                            Join <NavLink to={'/joinNow'} className="cursor-pointer text-blue-600 transition-colors duration-300 hover:text-blue-400">Famlink,</NavLink> and showcase your business to families in need of your services. Whether you offer tutoring, sports coaching, music lessons, or specialized care, our platform connects you with a wide audience looking for quality and reliable providers.
                         </>
                     } />
                 </div>

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { refreshTokenThunk } from "../Redux/authSlice";
 import { NavLink } from "react-router-dom";
 import Ra from "./rate";
+import { formatCreatedAt } from "../../Config/helpFunction";
 
 function formatJobTitle(jobType) {
   if (!jobType) return "Job Needed";
@@ -34,14 +35,14 @@ export default function ProfileCard({
   totalRatings,
 }) {
   const formatLocation = () => {
-    if (!zipCode || !loc?.format_location) return "";
+    if (!zipCode || !loc?.format_location) return loc;
     const parts = loc.format_location.split(",") || [];
     const city = parts.at(-3)?.trim();
     const state = parts.at(-2)?.trim().split(" ")[0];
     return city && state ? `${city}, ${state}` : "";
   };
   return (
-    <div className="p-6 border rounded-[20px] border-[#EEEEEE] space-y-2">
+    <div className="p-6 border rounded-[20px] border-[#EEEEEE] bg-white space-y-2 h-[311px] w-[330px]">
       <div className="flex justify-between gap-4">
         {img ? (
           <img
@@ -61,7 +62,7 @@ export default function ProfileCard({
           />
         )}
         <div className="flex flex-col items-end gap-2">
-          <div className="py-2 px-4 bg-primary text-primary rounded-full w-fit Livvic-SemiBold text-xs">
+          <div className="py-2 px-4 bg-[#ECF1FF] text-primary rounded-full w-fit Livvic-SemiBold text-xs">
             {time}
           </div>
           <div className="flex gap-2">
@@ -84,7 +85,7 @@ export default function ProfileCard({
         {exp && exp !== "N/A" && exp !== "0" && `${exp} of experience`}
       </p>
       <p className="text-sm text-[#777777]">
-        {intro.length > 400 ? `${intro.substring(0, 400)}...` : intro}
+        {intro.length > 150 ? `${intro.substring(0, 150)}...` : intro}
       </p>
     </div>
     // <div
@@ -248,7 +249,7 @@ export function ProfileCard1({
           <span className="onboarding-form-label">|</span>
           <span className="onboarding-form-label">{formatLocation()}</span>
           <span className="onboarding-form-label">|</span>
-          <span className="onboarding-form-label">{created}</span>
+          <span className="onboarding-form-label">{formatCreatedAt(created)}</span>
         </p>
       </div>
     </NavLink>

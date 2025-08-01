@@ -69,7 +69,7 @@ export default function TipsAndArticles() {
       <div className='padding-navbar1  Quicksand'>
         <div className='shadow border-[1px] border-[#D6DDEB] bg-white my-10 rounded-xl'>
           <p className='font-bold lg:text-3xl text-2xl uppercase edit-padding'>
-            famylink {val.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}
+            Famlink {val.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}
           </p>
           <div className='flex justify-end padding-navbar1'>
             <div>

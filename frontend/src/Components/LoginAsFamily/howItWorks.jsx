@@ -41,7 +41,7 @@ export default function HowItWorks() {
         {
             title: "Step 5",
             head: "Hire with Confidence",
-            description: "Use FamyLink to run background checks, access contract templates, and manage communication all in one place.",
+            description: "Use Famlink to run background checks, access contract templates, and manage communication all in one place.",
             img: st4 // You’ll need to define/import `st5` if it isn’t already
         }
     ];
@@ -52,7 +52,7 @@ export default function HowItWorks() {
                 <div style={{ background: "#DEEBEB99" }} className="absolute rounded-3xl inset-0 bg-opacity-60"></div>
                 <div className="relative z-10 text-center max-w-3xl px-4">
                     <h2 className="text-4xl font-semibold">How It Works</h2>
-                    <p className="mt-2 font-normal text-black leading-5">FamyLink makes it easy to find the right care—or the right opportunity. Whether you're a family
+                    <p className="mt-2 font-normal text-black leading-5">Famlink makes it easy to find the right care—or the right opportunity. Whether you're a family
                         looking for support or a caregiver looking for your next role, we’ve made the process simple and
                         stress-free.
                     </p>
@@ -64,10 +64,10 @@ export default function HowItWorks() {
 
             <div className="flex justify-center text-center my-14">
                 <div className='dashboard-width'>
-                    <p className='lg:text-3xl text-2xl font-bold'>Why use Famylink?</p>
+                    <p className='lg:text-3xl text-2xl font-bold'>Why use Famlink?</p>
                     <img className='h-5 my-5 mx-auto' src={line} alt="line" />
                     <p className="leading-5 font-normal">{boolean ? 'Because your skills deserve the right fit.' : `Because your time matters—and so does your trust.`}</p>
-                    <p className="leading-5 font-normal mt-5">{boolean ? 'FamyLink isn’t just another gig platform. We’re a community built for nannies, educators, and caregivers who want to showcase their talents and connect with families who truly value them. From flexible job opportunities to nanny shares and private lessons, FamyLink gives you the tools to find the right match, communicate clearly, and get hired with confidence.' : 'FamyLink is more than just a job board. We’re a community built around parents, caregivers, and educators. From nanny shares and private educators to coaches and house managers, FamyLink gives you smart tools to match, message, and manage—with less guesswork and more confidence.'}</p>
+                    <p className="leading-5 font-normal mt-5">{boolean ? 'Famlink isn’t just another gig platform. We’re a community built for nannies, educators, and caregivers who want to showcase their talents and connect with families who truly value them. From flexible job opportunities to nanny shares and private lessons, Famlink gives you the tools to find the right match, communicate clearly, and get hired with confidence.' : 'Famlink is more than just a job board. We’re a community built around parents, caregivers, and educators. From nanny shares and private educators to coaches and house managers, Famlink gives you smart tools to match, message, and manage—with less guesswork and more confidence.'}</p>
                 </div>
             </div>
 

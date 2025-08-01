@@ -99,7 +99,7 @@ export default function Login() {
                     className="w-6 h-6 sm:w-8 sm:h-8"
                   />
                   <p className="font-bold text-lg sm:text-xl Livvic-Bold">
-                    Famylink
+                    Famlink
                   </p>
                 </div>
               </NavLink>
@@ -178,7 +178,7 @@ export default function Login() {
                     className="bg-[#AEC4FF] w-full !py-3"
                   />
                   <p className="mt-2 mb-10 font-normal text-base already-acc">
-                    New to Famylink?{" "}
+                    New to Famlink?{" "}
                     <NavLink
                       to="/joinNow"
                       onClick={() =>

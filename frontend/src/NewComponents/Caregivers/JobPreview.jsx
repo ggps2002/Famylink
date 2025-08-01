@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ZipInput from "../ZipInput";
 import Button from "../Button";
 import { NavLink } from "react-router-dom";
 import { Spin, Input } from "antd";
@@ -7,7 +6,7 @@ import { fireToastMessage } from "../../toastContainer";
 import { api } from "../../Config/api";
 import { Star, X } from "lucide-react";
 
-function CaregiverPreview() {
+function JobPreview() {
   const [loading, setLoading] = useState(false);
   const [zipCode, setZipCode] = useState("");
   const [caregiverData, setCaregiverData] = useState([]);
@@ -39,35 +38,6 @@ function CaregiverPreview() {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleFindCare = async () => {
-    if (!zipCode) {
-      fireToastMessage({
-        type: "error",
-        message: "Enter a valid US zip code first",
-      });
-      return;
-    }
-    setIsLoading(true);
-    setSearchType("caregivers");
-
-    try {
-      const { data } = await api.get(`userData/service-providers/${zipCode}`);
-      const response = data?.data || [];
-      console.log("Service provider response:", response);
-      setCaregiverData(response);
-      setJobData([]);
-      setShowResults(true);
-    } catch (err) {
-      console.error("Error fetching service providers:", err);
-      fireToastMessage({
-        type: "error",
-        message: "Could not load service providers. Try again later.",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -119,13 +89,13 @@ function CaregiverPreview() {
 
         <div className="text-center">
           <h1 className="Livvic-Bold text-2xl sm:text-5xl sm:leading-[70px] ">
-            Find nannies, tutors, babysitters, or house
+           Start Your Journey with Meaningful 
             <br className="hidden sm:block" />
             <span className="sm:hidden"> </span>
-            managers near you. Search by location to
+           and Well-Paid Child Caregiver Jobs 
             <br className="hidden sm:block" />
             <span className="sm:hidden"> </span>
-            get matched faster.
+           Close to Home.
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 sm:mt-12 justify-center items-center">
@@ -137,7 +107,7 @@ function CaregiverPreview() {
               >
                 <Input
                   name="zipCode"
-                  placeholder="Enter zip code"
+                  placeholder="Enter zip code to find jobs"
                   onChange={(e) => {
                     const zip = e.target.value;
                     setZipCode(zip);
@@ -150,7 +120,7 @@ function CaregiverPreview() {
               </Spin>
             </div>
 
-            <Button
+            {/* <Button
               btnText={
                 isLoading && searchType === "caregivers"
                   ? "Searching..."
@@ -160,14 +130,14 @@ function CaregiverPreview() {
               action={handleFindCare}
               isLoading={isLoading && searchType === "caregivers"}
               loadingBtnText="Searching..."
-            />
+            /> */}
             <Button
               btnText={
                 isLoading && searchType === "jobs"
                   ? "Searching..."
-                  : "Post a Job"
+                  : "Find Care"
               }
-              className="bg-[#F6F3EE] w-full sm:w-auto px-6 py-3 sm:py-4"
+              className="bg-[#AEC4FF] w-full sm:w-auto px-6 py-3 sm:py-4"
               action={handlePostJob}
               isLoading={isLoading && searchType === "jobs"}
               loadingBtnText="Searching..."
@@ -372,7 +342,7 @@ function CaregiverPreview() {
                     ))
                   ) : (
                     <div className="col-span-full text-center py-12">
-                      <div className="bg-gradient-to-br from-[#AEC4FF]/10 to-[#85D1F1]/10 backdrop-blur-sm rounded-2xl p-8 border border-[#AEC4FF]/30">
+                      <div>
                         <p className="text-white text-lg mb-2">
                           No job opportunities found in this area
                         </p>
@@ -392,4 +362,4 @@ function CaregiverPreview() {
   );
 }
 
-export default CaregiverPreview;
+export default JobPreview;

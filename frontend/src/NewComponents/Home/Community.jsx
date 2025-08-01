@@ -44,7 +44,7 @@ function Community() {
           </p>
         </div>
         <div className="sm:self-start">
-          <NavLink to="joinNow">
+          <NavLink to="/joinNow">
             <Button
               btnText={"Explore the Community"}
               className="bg-[#9FEEF8] text-[#00333B] w-full sm:w-auto"

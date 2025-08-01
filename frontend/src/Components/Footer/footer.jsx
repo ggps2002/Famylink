@@ -53,7 +53,7 @@ export default function Footer() {
               <Mail className="text-white max-lg:size-4" />
             </div>
 
-            <p className="text-lg">Info@famylink.us</p>
+            <p className="text-lg">Info@Famlink.us</p>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function Footer() {
               alt="tw"
             />
             <a
-              href="https://www.instagram.com/famylink.us?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
+              href="https://www.instagram.com/Famlink.us?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -4,11 +4,13 @@ import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { fireToastMessage } from "../../toastContainer";
 import { api } from "../../Config/api";
+import { Loader2 } from "lucide-react";
 
 function Footer() {
   const { pathname } = useLocation();
   const { user } = useSelector((s) => s.auth);
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
   return (
     <div className="relative">
       {/* Top Curve */}
@@ -28,10 +30,10 @@ function Footer() {
 
       {/* Footer content */}
       <div className="bg-[#001243] text-white -mt-1">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Brand Section */}
-            <div className="sm:col-span-2 lg:col-span-1">
+            <div className="sm:col-span-2 lg:col-span-1 order-2 sm:order-1">
               <div className="flex gap-1 items-center">
                 <img src="/logo.svg" alt="logo" />
                 <p className="font-bold text-3xl Livvic-Bold text-white">
@@ -54,13 +56,15 @@ function Footer() {
                     className="cursor-pointer hover:opacity-80 transition-opacity"
                   />
                 </a>
-                <img
+
+                {/* <img
                   src="/icons/Socials/twitter-icon.svg"
                   alt="twitter"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
-                />
-                <a
-                  href="https://www.instagram.com/famylink.us?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
+                /> */}
+
+                {/* <a
+                  href="https://www.instagram.com/Famlink.us?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -69,60 +73,45 @@ function Footer() {
                     alt="instagram"
                     className="cursor-pointer hover:opacity-80 transition-opacity"
                   />
-                </a>
-                <img
+                </a> */}
+
+                {/* <img
                   src="/icons/Socials/youtube-icon.svg"
                   alt="youtube"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
-                />
+                /> */}
               </div>
             </div>
 
             {/* Links Section */}
-            <div>
+            <div className="order-3 sm:order-2">
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
                 Links
               </p>
               <ul className="mt-4 flex flex-col gap-4">
                 <li>
-                  <a
-                    href="#"
+                  <NavLink
+                    to="/"
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     Home
-                  </a>
+                  </NavLink>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
-                  >
-                    Services
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
+                  <NavLink
+                    to="/jobSeekers"
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
                     For Job Seekers
-                  </a>
+                  </NavLink>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <NavLink
+                    to="/nannShare"
                     className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
                   >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors"
-                  >
-                    Community
-                  </a>
+                    Nanny Share
+                  </NavLink>
                 </li>
                 {/* <li>
                   <a
@@ -147,16 +136,16 @@ function Footer() {
                 <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
                   A-1, Ipsum HQ, Lorem
                 </li> */}
-                <a href="mailto:info@famylink.care">
+                <a href="mailto:info@Famlink.care">
                   <li className="Livvic-Medium text-md underline hover:text-[#AEC4FF] transition-colors cursor-pointer">
-                    info@famylink.care
+                    info@Famlink.care
                   </li>
                 </a>
               </ul>
             </div>
 
             {/* Newsletter Section */}
-            <div>
+            <div className="order-1 sm:order-4">
               <p className="Livvic-SemiBold text-lg leading-[30px]">
                 Stay in the loop—get helpful
                 <br className="hidden sm:block" /> childcare tips and platform
@@ -173,6 +162,7 @@ function Footer() {
                 <div className="p-1 bg-[#152D6F] rounded-r-md">
                   <button
                     onClick={async () => {
+                      setIsLoading(true)
                       try {
                         const { data } = await api.post(
                           "/subscribe/news-letter",
@@ -185,21 +175,26 @@ function Footer() {
                         });
 
                         setEmail("");
+                        setIsLoading(false)
                       } catch (error) {
                         const msg =
                           error?.response?.data?.message ||
                           "Something went wrong. Try again!";
                         fireToastMessage({ type: "error", message: msg });
+                      }finally {
+                        setIsLoading(false)
                       }
                       // your logic here
                     }}
-                    className="bg-[#AEC4FF] p-1 rounded-[6px] flex justify-center items-center hover:bg-[#9BB8FF] transition-colors"
+                    className="bg-[#AEC4FF] w-10 h-10 p-1 rounded-[6px] flex justify-center items-center hover:bg-[#9BB8FF] transition-colors"
                   >
-                    <img
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-primary"/>
+                    ) : (<img
                       src="/arrow-right.svg"
                       alt="arrow-right"
                       className="w-10 h-10"
-                    />
+                    />)}
                   </button>
                 </div>
               </div>
@@ -212,7 +207,7 @@ function Footer() {
             <p className="Livvic-Medium text-sm sm:text-md text-[#FFFFFFCC] text-center sm:text-left">
               © Famlink {new Date().getFullYear()} - All rights reserved
             </p>
-            <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-4 text-sm sm:text-md">
+            {/* <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-4 text-sm sm:text-md">
               <p className="Livvic-Medium text-[#FFFFFFCC] cursor-pointer hover:text-white transition-colors">
                 Help & Feedback
               </p>
@@ -235,7 +230,7 @@ function Footer() {
                   Terms & Conditions
                 </p>
               </NavLink>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

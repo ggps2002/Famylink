@@ -91,7 +91,7 @@ export default function NannyShare() {
     {
       question: "Can I set my own terms when participating in a nanny share?",
       answer:
-        "Yes! Families have full control over their nanny share arrangement, including scheduling, pay-splitting, and responsibilities. FamyLink provides tools like cost calculators and agreement templates to make the process seamless. ",
+        "Yes! Families have full control over their nanny share arrangement, including scheduling, pay-splitting, and responsibilities. Famlink provides tools like cost calculators and agreement templates to make the process seamless. ",
     },
     {
       question:
@@ -108,7 +108,7 @@ export default function NannyShare() {
       question:
         "What if one family wants to leave the nanny share arrangement?",
       answer:
-        "We recommend using a nanny share agreement to outline how transitions will be handled. FamyLink provides templates to help families create a structured arrangement that works for everyone. ",
+        "We recommend using a nanny share agreement to outline how transitions will be handled. Famlink provides templates to help families create a structured arrangement that works for everyone. ",
     },
   ];
   return (
@@ -158,7 +158,7 @@ export default function NannyShare() {
         <div className="bg-white mt-12 py-12">
           <JoinLink
             head={"How It Works"}
-            subHead={"Benefits of Joining FamyLink"}
+            subHead={"Benefits of Joining Famlink"}
             head1={"Find a Family"}
             subHead1={
               "Connect with another family in your area looking to share a nanny."

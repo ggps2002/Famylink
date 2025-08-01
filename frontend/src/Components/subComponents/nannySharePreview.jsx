@@ -308,7 +308,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
                 </div>
 
                 <NavLink
-                  to="joinNow"
+                  to="/joinNow"
                   onClick={() =>
                     window.scrollTo({ top: 0, behavior: "smooth" })
                   }
@@ -355,7 +355,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
                   {job.type && `• ${job.type}`}
                 </p>
                 <NavLink
-                  to="joinNow"
+                  to="/joinNow"
                   onClick={() =>
                     window.scrollTo({ top: 0, behavior: "smooth" })
                   }
@@ -390,7 +390,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
                   "{provider.description.slice(0, 20)}..."
                 </p>
                 <NavLink
-                  to="joinNow"
+                  to="/joinNow"
                   onClick={() =>
                     window.scrollTo({ top: 0, behavior: "smooth" })
                   }

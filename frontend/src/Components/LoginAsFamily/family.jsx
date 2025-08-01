@@ -69,15 +69,15 @@ export default function Family() {
   const faq = [
     {
       question:
-        "Is FamyLink only for finding nannies, or can I hire other types of caregivers?",
+        "Is Famlink only for finding nannies, or can I hire other types of caregivers?",
       answer:
-        "FamyLink helps families connect with a variety of caregivers, including private educators, swim instructors, music teachers, and household managers.Whether you need a full- time nanny, a part - time tutor, or a weekend babysitter, you can find the right fit for your needs.",
+        "Famlink helps families connect with a variety of caregivers, including private educators, swim instructors, music teachers, and household managers.Whether you need a full- time nanny, a part - time tutor, or a weekend babysitter, you can find the right fit for your needs.",
     },
     {
       question:
         "Can I hire a caregiver who also teaches my child a skill, like a second language or piano?",
       answer:
-        "Absolutely! Many caregivers on FamyLink offer additional skills beyond childcare. You can specify your preferences when posting a job or searching for candidates.",
+        "Absolutely! Many caregivers on Famlink offer additional skills beyond childcare. You can specify your preferences when posting a job or searching for candidates.",
     },
     {
       question: " Can I see caregiver rates before messaging them?",
@@ -88,7 +88,7 @@ export default function Family() {
       question:
         "What happens if I hire someone and later decide they’re not the right fit? ",
       answer:
-        "If you need to make a change, FamyLink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
+        "If you need to make a change, Famlink allows you to keep your job posting active and find a new caregiver easily. We also provide contract templates to help set clear expectations upfront.",
     },
   ];
   return (

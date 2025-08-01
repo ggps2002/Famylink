@@ -36,7 +36,7 @@ export default function Favorites({ nanny }) {
       <p className="Livvic-SemiBold lg:text-3xl text-2xl mb-8">Favorite</p>
        <div
         className={
-          "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4"
+          "grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
         }
       >
         {data.length > 0 ? (

@@ -3,23 +3,23 @@ import React from "react";
 const TermsAndConditions = () => {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 text-[#333] text-base leading-7">
-      <h1 className="text-3xl font-bold mb-6">FamyLink Terms and Conditions</h1>
+      <h1 className="text-3xl font-bold mb-6">Famlink Terms and Conditions</h1>
       <p className="text-sm text-gray-500 mb-10">Effective Date: April 1, 2025</p>
 
       <p className="mb-6">
-        Welcome to FamyLink. These Terms and Conditions ("Terms") govern your access to and use of our website,
-        mobile application, and services (collectively, the "Platform"). By accessing or using FamyLink, you agree
+        Welcome to Famlink. These Terms and Conditions ("Terms") govern your access to and use of our website,
+        mobile application, and services (collectively, the "Platform"). By accessing or using Famlink, you agree
         to be bound by these Terms. If you do not agree, please do not use the Platform.
       </p>
 
       <Section title="1. Introduction">
-        FamyLink, Inc. ("FamyLink," "we," "our," or "us") provides a digital platform for families, caregivers, and
-        childcare-related businesses to connect, communicate, and coordinate childcare arrangements. FamyLink is a
+        Famlink, Inc. ("Famlink," "we," "our," or "us") provides a digital platform for families, caregivers, and
+        childcare-related businesses to connect, communicate, and coordinate childcare arrangements. Famlink is a
         neutral marketplace and does not provide, employ, or supervise childcare providers.
       </Section>
 
       <Section title="2. Eligibility">
-        You must be at least 18 years of age to use this Platform. By using FamyLink, you represent and warrant that
+        You must be at least 18 years of age to use this Platform. By using Famlink, you represent and warrant that
         you have the right, authority, and capacity to enter into these Terms.
       </Section>
 
@@ -29,15 +29,15 @@ const TermsAndConditions = () => {
         confidentiality of your login credentials and for all activities under your account.
       </Section>
 
-      <Section title="4. Role of FamyLink">
-        FamyLink is solely a platform to facilitate connections. We do not verify, endorse, or guarantee the
+      <Section title="4. Role of Famlink">
+        Famlink is solely a platform to facilitate connections. We do not verify, endorse, or guarantee the
         qualifications, background, or conduct of users. You are solely responsible for evaluating and engaging
         with other users.
         <p className="mt-3 font-semibold">Important Disclaimer:</p>
         <p>
-          FamyLink is not a party to any agreement made between users. We do not supervise, direct, or control the
+          Famlink is not a party to any agreement made between users. We do not supervise, direct, or control the
           services, conduct, or communications of families, caregivers, or businesses. By using the platform, you
-          agree that FamyLink is not responsible or liable for any outcome, dispute, injury, or loss—whether
+          agree that Famlink is not responsible or liable for any outcome, dispute, injury, or loss—whether
           financial, personal, or legal—that may arise from user interactions or arrangements.
         </p>
       </Section>
@@ -50,16 +50,16 @@ const TermsAndConditions = () => {
           <li>Complying with applicable local, state, and federal laws</li>
         </ul>
         <p className="mt-3">
-          FamyLink does not guarantee the outcome of any interaction. Users are expected to do their own due
-          diligence before engaging with other users. FamyLink is not responsible or obligated to conduct
+          Famlink does not guarantee the outcome of any interaction. Users are expected to do their own due
+          diligence before engaging with other users. Famlink is not responsible or obligated to conduct
           background checks, verify credentials, or oversee any interactions on the platform.
         </p>
       </Section>
 
       <Section title="6. Payments and Subscriptions">
         Certain features of the Platform require payment. All fees are non-refundable unless otherwise stated. You
-        authorize FamyLink to charge your provided payment method for applicable fees. Prices are subject to
-        change with notice. FamyLink uses third-party payment processors. We are not responsible for any issues
+        authorize Famlink to charge your provided payment method for applicable fees. Prices are subject to
+        change with notice. Famlink uses third-party payment processors. We are not responsible for any issues
         arising from those services.
       </Section>
 
@@ -71,31 +71,31 @@ const TermsAndConditions = () => {
           <li>Impersonate another person or entity</li>
         </ul>
         <p className="mt-3">
-          FamyLink reserves the right to remove content or suspend accounts that violate these Terms.
+          Famlink reserves the right to remove content or suspend accounts that violate these Terms.
         </p>
       </Section>
 
       <Section title="8. Intellectual Property">
         All content on the Platform (excluding user-generated content), including logos, designs, and code, is the
-        property of FamyLink, Inc. and protected by copyright and trademark laws. You may not copy, modify,
+        property of Famlink, Inc. and protected by copyright and trademark laws. You may not copy, modify,
         distribute, or use our content without prior written consent.
       </Section>
 
       <Section title="9. Limitation of Liability">
-        To the fullest extent permitted by law, FamyLink, Inc. and its officers, directors, employees, or agents
+        To the fullest extent permitted by law, Famlink, Inc. and its officers, directors, employees, or agents
         shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss
         of profits, revenues, or data arising from your use of the Platform or interactions with other users.
       </Section>
 
       <Section title="10. Disclaimer of Warranties">
-        The Platform is provided "as is" and "as available" without warranties of any kind. FamyLink disclaims all
+        The Platform is provided "as is" and "as available" without warranties of any kind. Famlink disclaims all
         warranties, express or implied, including but not limited to merchantability, fitness for a particular
         purpose, and non-infringement. We do not warrant that the Platform will be secure, uninterrupted,
         error-free, or free of viruses or other harmful components.
       </Section>
 
       <Section title="11. Indemnification">
-        You agree to defend, indemnify, and hold harmless FamyLink, Inc. and its affiliates, officers, directors,
+        You agree to defend, indemnify, and hold harmless Famlink, Inc. and its affiliates, officers, directors,
         employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including
         legal fees, arising out of or related to:
         <ul className="list-disc ml-6 mt-2">
@@ -107,7 +107,7 @@ const TermsAndConditions = () => {
       </Section>
 
       <Section title="12. Data Privacy and Cybersecurity">
-        FamyLink implements industry-standard security measures to protect your personal information and account
+        Famlink implements industry-standard security measures to protect your personal information and account
         data. However, no method of transmission over the internet or electronic storage is 100% secure. By using
         the Platform, you acknowledge that you provide your information at your own risk. You are responsible for
         keeping your account credentials confidential. We are not liable for any unauthorized access to or use of
@@ -115,7 +115,7 @@ const TermsAndConditions = () => {
       </Section>
 
       <Section title="13. Termination">
-        FamyLink may suspend or terminate your access to the Platform at any time for any reason, including
+        Famlink may suspend or terminate your access to the Platform at any time for any reason, including
         violation of these Terms. You may also delete your account at any time. All provisions of these Terms that
         should survive termination shall do so.
       </Section>
@@ -135,8 +135,8 @@ const TermsAndConditions = () => {
       <Section title="16. Contact">
         For questions about these Terms, contact us at:
         <br />
-        <a href="mailto:support@famylink.us" className="text-blue-600 underline">
-          support@famylink.us
+        <a href="mailto:support@Famlink.us" className="text-blue-600 underline">
+          support@Famlink.us
         </a>
       </Section>
     </div>
