@@ -26,6 +26,14 @@ router.post("/send-otp", authMiddleware, async (req, res) => {
         if (user.verified?.phoneVer) {
             return res.status(404).json({ message: "User already varified" });
         }
+        const existingUser = await User.find({
+              _id: { $ne: id }, // exclude self
+            phoneNo: phoneNo,
+            "verified.phoneVer": true
+        })
+        if (existingUser.length > 0) {
+             return res.status(404).json({ message: "Verified phone number already exist" });
+        }
         const otp = generateOTP();
         const otpExpiry = new Date(Date.now() + 2 * 60 * 1000); // 15 minutes expiry
 
