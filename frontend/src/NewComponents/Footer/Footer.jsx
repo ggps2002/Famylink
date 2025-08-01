@@ -125,7 +125,7 @@ function Footer() {
             </div>
 
             {/* Contact Section */}
-            <div>
+            <div className="order-4 sm:order-3">
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
                 Contact
               </p>
