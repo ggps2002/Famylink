@@ -229,7 +229,7 @@ function CaregiverPreview() {
                             <h4 className="text-lg sm:text-xl font-bold text-gray-800 Livvic-Bold">
                               {person.name}
                             </h4>
-                            <span className="inline-block border border-[#EEEEEE] text-[#555555] text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
+                            <span className="inline-block w-fit border border-[#EEEEEE] text-[#555555] text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
                               {person.role}
                             </span>
                           </div>

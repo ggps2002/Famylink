@@ -110,7 +110,7 @@ export default function ProfileList({
               nanny={true}
               zipCode={profile?.user?.zipCode}
               jobType={profile?.jobType}
-              created={formatRelativeTime(profile?.createdAt)}
+              created={profile?.createdAt}
             />
           ))
         ) : (

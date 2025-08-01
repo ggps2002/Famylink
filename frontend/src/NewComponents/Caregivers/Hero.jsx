@@ -134,7 +134,7 @@ function Hero() {
                     <div className="flex justify-between items-center p-6 sm:p-8 ">
                       <div>
                         <h3 className=" text-xl sm:text-2xl md:text-3xl font-bold Livvic-Bold">
-        Job Opportunities in ${zipCode}
+        Job Opportunities in {zipCode}
                         </h3>
                         <p className=" text-sm sm:text-base mt-1">
                             { `${data.length} job${

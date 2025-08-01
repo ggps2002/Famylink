@@ -89,13 +89,13 @@ function JobPreview() {
 
         <div className="text-center">
           <h1 className="Livvic-Bold text-2xl sm:text-5xl sm:leading-[70px] ">
-           Start Your Journey with Meaningful 
+            Start Your Journey with Meaningful
             <br className="hidden sm:block" />
             <span className="sm:hidden"> </span>
-           and Well-Paid Child Caregiver Jobs 
+            and Well-Paid Child Caregiver Jobs
             <br className="hidden sm:block" />
             <span className="sm:hidden"> </span>
-           Close to Home.
+            Close to Home.
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 sm:mt-12 justify-center items-center">
@@ -159,18 +159,10 @@ function JobPreview() {
             <div className="flex justify-between items-center p-6 sm:p-8 ">
               <div>
                 <h3 className=" text-xl sm:text-2xl md:text-3xl font-bold Livvic-Bold">
-                  {searchType === "caregivers"
-                    ? `Available Caregivers in ${zipCode}`
-                    : `Job Opportunities in ${zipCode}`}
+                  Job Opportunities in {zipCode}
                 </h3>
                 <p className=" text-sm sm:text-base mt-1">
-                  {searchType === "caregivers"
-                    ? `${caregiverData.length} caregiver${
-                        caregiverData.length !== 1 ? "s" : ""
-                      } found`
-                    : `${jobData.length} job${
-                        jobData.length !== 1 ? "s" : ""
-                      } found`}
+                  {jobData.length} job{jobData.length !== 1 ? "s" : ""} found
                 </p>
               </div>
               <button
