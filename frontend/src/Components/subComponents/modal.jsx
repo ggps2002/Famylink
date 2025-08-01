@@ -29,7 +29,7 @@ import {
   updateEmailThunk,
   updatePasswordThunk,
   updatePhoneThunk,
-  updateTextNotifThunk
+  updateTextNotifThunk,
 } from "../Redux/updateSlice";
 import {
   refreshTokenThunk,
@@ -39,6 +39,8 @@ import {
   deleteUserThunk,
 } from "../Redux/authSlice";
 import useSocket from "../../Config/socket";
+import { number } from "prop-types";
+import PhoneVerification from "./PhoneVerification";
 const App = ({ head, enable, withDraw, payNow, emailVer = false }) => {
   const dispatch = useDispatch();
   const cardElementOptions = {
@@ -119,6 +121,7 @@ const App = ({ head, enable, withDraw, payNow, emailVer = false }) => {
   const { user } = useSelector((s) => s.auth);
   const [timeLeft, setTimeLeft] = useState(120); // 120 seconds for 2 minutes
   const [isResendEnabled, setIsResendEnabled] = useState(false);
+  const [smsNoti, setSMSNoti] = useState(user?.notifications?.sms);
   const trueKeys = Object.entries(user?.notifications?.email)
     .filter(([key, value]) => value === true)
     .map(([key]) => key);
@@ -807,10 +810,8 @@ const App = ({ head, enable, withDraw, payNow, emailVer = false }) => {
                 // Email already verified - show simple verification status
                 <div className="flex items-center mb-8 py-6">
                   <div className="flex items-center gap-3 text-green-600">
-                   <img src="/check-circle.svg" alt="" />
-                    <span className="text-lg">
-                      {user.email}
-                    </span>
+                    <img src="/check-circle.svg" alt="" />
+                    <span className="text-lg">{user.email}</span>
                   </div>
                 </div>
               ) : (
@@ -920,21 +921,25 @@ const App = ({ head, enable, withDraw, payNow, emailVer = false }) => {
       case "SMS Notifications":
         return (
           <>
-          
+            <PhoneVerification />
             <Form.Item>
               <div className="flex justify-between items-center h-12 w-[90%] md:w-1/2 ml-6 pb-4">
                 <span className="text-primary Livvic-SemiBold text-lg">
                   Text Notification Service
                 </span>
                 <Switch
-                  checked={user?.notifications?.sms}
+                  checked={smsNoti}
                   loading={loading}
                   onChange={async (checked) => {
                     setLoading(true);
                     try {
+                      if (!user?.verified?.phoneVer) {
+                        throw new Error("Please verify your phone number.");
+                      }
                       await dispatch(
                         updateTextNotifThunk({ sms: checked }) // 📤 see thunk below
                       ).unwrap();
+                      setSMSNoti(checked);
                       fireToastMessage({
                         type: "success",
                         message: "Saved successfully",
@@ -949,9 +954,7 @@ const App = ({ head, enable, withDraw, payNow, emailVer = false }) => {
                     }
                   }}
                   style={{
-                    backgroundColor: user?.notifications?.sms
-                      ? "#22c55e"
-                      : undefined,
+                    backgroundColor: smsNoti ? "#22c55e" : undefined,
                   }}
                 />
               </div>

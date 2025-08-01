@@ -70,12 +70,12 @@ export const updateTextNotifThunk = createAsyncThunk(
         },
       };
 
-      const { data } = await api.put(
+      const { data, status } = await api.put(
         "/update/text-notifications",
         { sms },
         config
       );
-      return data;
+      return {data, status};
     } catch (error) {
       return rejectWithValue(
         error.response?.data || "Error updating text notifications"
@@ -99,7 +99,7 @@ export const updatePhoneThunk = createAsyncThunk(
 
       const { data, status } = await api.put(
         "/update/phone",
-        { phoneNo },
+        { phoneNo : phoneNo },
         config
       );
 

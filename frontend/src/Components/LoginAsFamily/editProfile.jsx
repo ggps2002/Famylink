@@ -10,6 +10,8 @@ import Autocomplete from "react-google-autocomplete";
 import { api } from "../../Config/api";
 import { formatSentence, toCamelCase } from "../subComponents/toCamelStr";
 import { useNavigate } from "react-router-dom";
+import OptionSelector from "../subComponents/LanguageSelector";
+import CustomButton from "../../NewComponents/Button"
 
 export default function EditProfile() {
   const { TextArea } = Input;
@@ -254,12 +256,10 @@ export default function EditProfile() {
     }
   }, [zipCode, form]);
   return (
-    <div className="padding-navbar1 Quicksand">
-      <div className="shadow border-[1px] border-[#D6DDEB] bg-white my-10 rounded-xl">
-        <p className="font-bold lg:text-3xl text-2xl edit-padding">
-          Edit Profile
-        </p>
-        <div className="pb-10 padding-sub">
+    <div className="padding-navbar1">
+      <div className="bg-white my-10">
+        <p className="Livvic-SemiBold lg:text-3xl text-2xl">Edit Profile</p>
+        <div className="mt-6">
           <div className="relative w-24">
             {/* Profile Picture */}
             {image ? (
@@ -292,7 +292,9 @@ export default function EditProfile() {
               <img src={cameraIcons} alt="cameraIcons" />
             </label>
           </div>
-          <p className="my-5 font-bold text-2xl">My Information</p>
+          <p className="my-5 Livvic-SemiBold text-lg text-primary">
+            Basic Information
+          </p>
           <div>
             <Form
               onFinish={onFinish}
@@ -305,22 +307,26 @@ export default function EditProfile() {
               }}
             >
               <div className="flex flex-wrap gap-6">
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Full Name
-                  </p>
+                <div className="relative w-72">
                   <Form.Item
                     style={{ margin: 0, padding: 0 }}
                     name="fullName"
                     initialValue={user?.name}
                   >
                     <Input
+                      id="fullName"
                       type="text"
-                      style={{ borderColor: "#D6DDEB" }}
                       defaultValue={user?.name}
-                      className="border- border-2 py-2 rounded-3xl"
+                      className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Full Name"
                     />
                   </Form.Item>
+                  <label
+                    htmlFor="fullName"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Full Name
+                  </label>
                 </div>
                 {/* <div>
                   <p className="mb-2 font-semibold text-lg capitalize">
@@ -340,22 +346,20 @@ export default function EditProfile() {
                     />
                   </Form.Item>
                 </div> */}
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Address
-                  </p>
+                <div className="relative w-72">
                   <Form.Item
                     name="location"
+                    initialValue={user?.location}
                     rules={[{ required: true, message: "Address is required" }]}
                   >
                     <Spin spinning={loading} size="small">
                       <Autocomplete
-                        className="input-width"
+                        className="peer"
                         apiKey={import.meta.env.VITE_GOOGLE_KEY}
                         style={{
                           width: "100%",
-                          borderRadius: "1.5rem",
-                          padding: "0.75rem",
+                          borderRadius: "10px",
+                          padding: "1.7rem 0.75rem 0.75rem 0.75rem",
                           border: "1px solid #D6DDEB",
                         }}
                         value={location || ""}
@@ -413,32 +417,49 @@ export default function EditProfile() {
                       />
                     </Spin>
                   </Form.Item>
+                  <label
+                    htmlFor="address"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Address
+                  </label>
                 </div>
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">
-                    Gender
-                  </p>
+
+                <div className="relative w-72">
                   <Form.Item
-                    initialValue={user?.gender}
-                    style={{ margin: 0, padding: 0, width: 200 }}
                     name="gender"
+                    initialValue={user?.gender}
+                    style={{ margin: 0, padding: 0 }}
                   >
                     <Select
-                      style={{
-                        borderColor: "#D6DDEB",
-                        borderRadius: "100px", // Adjust height
-                      }}
-                      className="custom-select1 rounded-full w-full"
-                      placeholder="Select Gender"
+                      bordered={false}
                       defaultValue={user?.gender}
+                      className="peer w-full pt-6 pb-2 px-2 border border-[#EEEEEE] rounded-[10px]"
+                      style={{
+                        height: "64px",
+                      }}
+                      placeholder="Gender"
                     >
-                      <Select.Option value="Male">Male</Select.Option>
-                      <Select.Option value="Female">Female</Select.Option>
+                      <Select.Option value="Male">
+                        {" "}
+                        <span className="Livvic-SemiBold text-sm text-primary">
+                          Male
+                        </span>
+                      </Select.Option>
+                      <Select.Option value="Female">
+                        {" "}
+                        <span className="Livvic-SemiBold text-sm text-primary">
+                          Female
+                        </span>
+                      </Select.Option>
                     </Select>
                   </Form.Item>
+                  <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                    Gender
+                  </label>
                 </div>
-                <div>
-                  <p className="mb-2 font-semibold text-lg capitalize">Age</p>
+
+                <div className="relative w-72">
                   <Form.Item
                     style={{ margin: 0, padding: 0 }}
                     name="age"
@@ -446,28 +467,36 @@ export default function EditProfile() {
                   >
                     <Input
                       type="number"
-                      style={{ borderColor: "#D6DDEB" }}
                       defaultValue={user?.age}
-                      className="border- border-2 py-2 rounded-3xl"
+                      className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Age"
                     />
                   </Form.Item>
+                  <label
+                    htmlFor="age"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Age
+                  </label>
                 </div>
               </div>
+
               <div className="">
-                <div>
-                  <p className="mt-8 mb-2 font-semibold text-lg capitalize">
-                    No. of Child
-                  </p>
+                <div className="relative w-72">
                   <Form.Item
-                    style={{ margin: 0, padding: 0 }}
                     name="totalChild"
                     initialValue={selectedChildren}
+                    style={{ margin: 0, padding: 0 }}
                   >
                     <Select
+                      bordered={false}
                       defaultValue={selectedChildren}
                       onChange={handleChildrenChange}
-                      className="custom-select1 "
-                      style={{ width: "200px", borderRadius: "50px" }}
+                      className="peer w-full pt-6 pb-2 px-2 border border-[#EEEEEE] rounded-[10px]"
+                      style={{
+                        height: "64px",
+                      }}
+                      placeholder="Gender"
                     >
                       {[1, 2, 3, 4].map((num) => (
                         <Select.Option key={num} value={num}>
@@ -476,17 +505,21 @@ export default function EditProfile() {
                       ))}
                     </Select>
                   </Form.Item>
+                  <label className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10">
+                    No. of Child
+                  </label>
+                </div>
 
-                  <div className="flex flex-wrap gap-x-4 mt-4">
-                    {childrenAges.map((age, index) => (
+                <div className="flex flex-wrap gap-x-4 mt-4">
+                  {childrenAges.map((age, index) => (
+                    <div key={index} className="relative w-72">
                       <Form.Item
-                        key={index}
-                        style={{ marginBottom: "16px" }}
+                        style={{ margin: 0, padding: 0 }}
                         name={`Child${index + 1}`}
                         initialValue={age}
                       >
-                        <p>{`Age of Child ${index + 1}`}</p>
                         <Input
+                          id="fullName"
                           type="number"
                           value={age}
                           onChange={(e) => {
@@ -498,40 +531,70 @@ export default function EditProfile() {
                               [`Child${index + 1}`]: e.target.value,
                             });
                           }}
+                          defaultValue={user?.name}
+                          className="peer border border-[#EEEEEE] rounded-[10px] px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
                           placeholder={`Age of Child ${index + 1}`}
-                          style={{ borderColor: "#D6DDEB" }}
-                          className="border-2 py-2 rounded-3xl w-52"
                         />
                       </Form.Item>
-                    ))}
-                  </div>
+                      <label
+                        htmlFor="fullName"
+                        className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                      >
+                        {`Child${index + 1}`}
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               <div>
-                <p className="mt-5 mb-2 font-bold text-2xl capitalize">
-                  Description
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
+                  About me
                 </p>
-                <Form.Item
-                  name="description"
-                  initialValue={user?.aboutMe}
-                  style={{ margin: 0, padding: 0 }}
-                >
-                  <TextArea
-                    rows={4}
-                    defaultValue={user?.aboutMe}
-                    placeholder="Write a short description"
-                    className="border-2 rounded-xl p-4 !resize-none"
-                    style={{ borderColor: "#D6DDEB" }}
-                  />
-                </Form.Item>
+                <div className="relative w-full">
+                  <Form.Item
+                    style={{ margin: 0, padding: 0 }}
+                    name="description"
+                    initialValue={user?.aboutMe}
+                    rules={[
+                      {
+                        required: false,
+                        message: "",
+                      },
+                    ]}
+                  >
+                    <TextArea
+                      id="jobDescription"
+                      placeholder="Enter detail"
+                  defaultValue={user?.aboutMe}
+                      rows={6}
+                      className="peer border border-[#D6DDEB] rounded-3xl px-4 pt-7 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                      style={{
+                        width: "100%",
+                        resize: "none",
+                      }}
+                    />
+                  </Form.Item>
+                  <label
+                    htmlFor="jobDescription"
+                    className="absolute left-4 top-2 text-sm text-gray-500 bg-white px-1 z-10"
+                  >
+                    Description
+                  </label>
+                </div>
               </div>
 
               <div>
-                <p className="mt-5 mb-2 font-bold text-2xl capitalize">
+                <p className="my-5 Livvic-SemiBold text-lg text-primary">
                   Services for
                 </p>
-                <Form.Item
+                     <OptionSelector
+                                  options={options5}
+                                  defaultCheckedValues={formattedServiceLabels}
+                                  form={form}
+                                  name={"services"}
+                                />
+                {/* <Form.Item
                   style={{ margin: 0, padding: 0 }}
                   name="services"
                   initialValue={formattedServiceLabels} // Default checked values for form submission
@@ -542,33 +605,34 @@ export default function EditProfile() {
                     className="rounded-3xl custom-checkbox-group"
                     style={{ borderColor: "#D6DDEB", margin: 0, padding: 0 }}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </div>
 
-              <div className="flex justify-center mt-5">
+              <div className="flex justify-end mt-5">
                 <Form.Item className="m-0 p-0">
-                  <Button
+                  {/* <Button
                     style={{ color: "#38AEE3", border: "1px solid #38AEE3" }}
                     className="bg-[#FFFFFF] rounded-3xl"
                     onClick={() => navigate(-1)}
                   >
                     Cancel
-                  </Button>
-                  <Button
+                  </Button> */}
+                  <CustomButton className="mr-4 !w-48 text-lg Livvic-Medium text-[#555555] border border-[#EEEEEE]" btnText={"Cancel"} action={() => navigate(-1)}/>
+                  {/* <Button
                     type="primary"
                     loading={loading}
                     htmlType="submit"
                     className="bg-[#38AEE3] ml-4 px-6 rounded-3xl text-white"
                   >
                     Save
-                  </Button>
+                  </Button> */}
+                  <CustomButton btnText={"Save"} htmlType="submit" isLoading={loading} loadingBtnText="Saving..." className="bg-[#AEC4FF] text-primary Livvic-Medium !w-48 text-lg"/>
                 </Form.Item>
               </div>
             </Form>
           </div>
         </div>
       </div>
-      <div></div>
     </div>
   );
 }
