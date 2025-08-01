@@ -82,40 +82,63 @@ function Header() {
           className="lg:hidden flex flex-col justify-center items-center w-8 h-8 focus:outline-none"
           aria-label="Toggle menu"
         >
-          <span className={`block w-6 h-0.5 bg-white transform transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'rotate-45 translate-y-1.5' : ''
-          }`}></span>
-          <span className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'opacity-0' : ''
-          }`}></span>
-          <span className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
-            isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
-          }`}></span>
+          <span
+            className={`block w-6 h-0.5 bg-white transform transition-all duration-300 ease-in-out ${
+              isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+            }`}
+          ></span>
+          <span
+            className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
+              isMenuOpen ? "opacity-0" : ""
+            }`}
+          ></span>
+          <span
+            className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
+              isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+            }`}
+          ></span>
         </button>
       </div>
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={closeMenu}
         ></div>
       )}
 
       {/* Mobile Menu */}
-      <div className={`lg:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
-        isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        
+      <div
+        className={`lg:hidden fixed top-0 right-0 h-full w-80 bg-[#001243] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {/* Close Button */}
-        <div className="flex justify-end p-4">
+        <div className="flex justify-between items-center p-4 pt-9">
+            <div className="flex gap-1 items-center">
+                <img src="/logo.svg" alt="logo" />
+                <p className="font-bold text-3xl Livvic-Bold text-white">
+                  Famlink
+                </p>
+              </div>
           <button
             onClick={closeMenu}
-            className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200"
+            className="w-8 h-8 flex items-center justify-center text-white rounded-full transition-colors duration-200"
             aria-label="Close menu"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -129,9 +152,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive 
-                    ? "text-gray-900 bg-gray-100" 
-                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
                 }`
               }
             >
@@ -143,9 +164,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive 
-                    ? "text-gray-900 bg-gray-100" 
-                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
                 }`
               }
             >
@@ -157,9 +176,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive 
-                    ? "text-gray-900 bg-gray-100" 
-                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
                 }`
               }
             >
@@ -172,7 +189,7 @@ function Header() {
             <NavLink to="/login" onClick={closeMenu} className="block">
               <Button
                 btnText="Log in"
-                className="w-full text-gray-700 text-base py-3 justify-center border border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+                className="w-full text-white text-base py-3 justify-center border border-gray-300 transition-colors duration-200"
               />
             </NavLink>
             <NavLink to="/joinNow" onClick={closeMenu} className="block">

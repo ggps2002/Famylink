@@ -77,7 +77,7 @@ function Community() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         {communityResource.map((resource, i) => (
           <CommunityResourceCard
             key={i}
