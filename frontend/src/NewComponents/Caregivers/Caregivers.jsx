@@ -44,7 +44,7 @@ function Caregivers() {
         <Community />
       </div>
       <div className="bg-[#F6F3EE] py-24">
-        <Testimonial />
+        <Testimonial type="Caregiver"/>
       </div>
       <FAQ />
     </>

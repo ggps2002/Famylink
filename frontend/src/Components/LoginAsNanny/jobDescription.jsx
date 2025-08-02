@@ -308,13 +308,13 @@ export default function ProfileNanny() {
           <h1 className="Livvic-SemiBold text-2xl text-primary mb-2">
             Children Information
           </h1>
-          {data?.user?.noOfChildren?.info &&
-            Object.entries(data.user.noOfChildren.info)
-              .map(
-                ([child, age]) => `• ${child}, ${age ? ` ${age} yrs old` : ""}`
-              )
-              .filter(Boolean)
-              .join(", ")}
+        {data?.user?.noOfChildren?.info &&
+  Object.entries(data.user.noOfChildren.info).map(([child, age], index) => (
+    <div key={index}>
+      •
+      {age ? ` ${age} yrs old` : ""}
+    </div>
+  ))}
         </div>
         <div className="shadow-soft p-6 w-full lg:w-1/2 rounded-[20px] space-y-2">
           <h1 className="Livvic-SemiBold text-2xl text-primary mb-4">

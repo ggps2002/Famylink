@@ -135,7 +135,7 @@ function JobPreview() {
               btnText={
                 isLoading && searchType === "jobs"
                   ? "Searching..."
-                  : "Find Care"
+                  : "Find Jobs"
               }
               className="bg-[#AEC4FF] w-full sm:w-auto px-6 py-3 sm:py-4"
               action={handlePostJob}

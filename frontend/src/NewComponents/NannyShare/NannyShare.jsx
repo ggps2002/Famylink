@@ -54,7 +54,7 @@ function NannyShare() {
        <div className='bg-[#F6F3EE] py-12'>
         <Timeline/>
        </div>
-       <Testimonial/>
+       <Testimonial type="NannyShare"/>
        <div className="bg-[#E7FCFF] py-24">
          <Community/>
        </div>

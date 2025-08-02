@@ -31,6 +31,7 @@ import { fireToastMessage } from "../../../toastContainer";
 import { SwalFireDelete } from "../../../swalFire";
 import { createChatThunk } from "../../Redux/chatSlice";
 import Button from "../../../NewComponents/Button";
+import CustomButton from "../../../NewComponents/Button";
 
 export const NannyShareView = () => {
   const { id } = useParams();
@@ -66,6 +67,10 @@ export const NannyShareView = () => {
   const { user } = useSelector((s) => s.auth);
   const navigate = useNavigate();
   const { data, isLoading } = useSelector((state) => state.postNannyShare);
+    const subscription = useSelector(
+    (state) => state.cardData.subscriptionStatus
+  );
+  const isSubscribed = subscription?.active;
 
   const [daysState, setDaysState] = useState(() => {
     return days.reduce((acc, day) => {
@@ -243,7 +248,25 @@ export const NannyShareView = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="padding-navbar1 Quicksand">
+        <div className="relative padding-navbar1 Quicksand">
+            {!isSubscribed && (
+        <>
+        <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50 w-full h-full min-h-full" />
+          <div className="absolute z-20 top-[20%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-6 rounded-xl shadow-xl text-center w-[400px]">
+            <p className="text-2xl Livvic-SemiBold text-primary mb-2 whitespace-break-spaces">Upgrade to see the Nanny share details</p>
+            <p className="mb-4 text-primary Livvic-Medium text-sm">
+              Unlock full details and messaging
+            </p>
+            {/* <Button
+              onClick={() => navigate("/pricing")}
+              className="bg-[#D6FB9A] px-4 py-1 rounded-full !border-none"
+            >
+              <span className="text-[#025747] Livvic-SemiBold text-sm ">Upgrade Now</span>
+            </Button> */}
+                <CustomButton btnText={"Upgrade Now"} action={() => navigate('../pricing')} className="bg-[#D6FB9A] text-[#025747] Livvic-SemiBold text-sm"/>
+          </div>
+        </>
+      )}
           <p className="lg:text-4xl lg:mb-4 mb-2 text-2xl Livvic-SemiBold text-primary">
             Nanny Share
           </p>

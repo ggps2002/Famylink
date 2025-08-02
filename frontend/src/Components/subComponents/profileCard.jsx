@@ -10,7 +10,7 @@ import Ra from "./rate";
 import { formatCreatedAt } from "../../Config/helpFunction";
 
 function formatJobTitle(jobType) {
-  if (!jobType) return "Job Needed";
+  if (!jobType) return "Nanny Share Needed";
 
   const withSpaces = jobType.replace(/([a-z])([A-Z])/g, "$1 $2");
   const capitalized = withSpaces

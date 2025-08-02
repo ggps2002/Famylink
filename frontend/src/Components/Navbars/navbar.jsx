@@ -45,7 +45,7 @@ export default function Header({ join }) {
           >
             <div className="flex gap-1 items-center">
               <img
-                src="/logo.svg"
+                src="/logo3.png"
                 alt="logo"
                 className="w-6 h-6 sm:w-8 sm:h-8"
               />

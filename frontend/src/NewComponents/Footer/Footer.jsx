@@ -35,7 +35,7 @@ function Footer() {
             {/* Brand Section */}
             <div className="sm:col-span-2 lg:col-span-1 order-2 sm:order-1">
               <div className="flex gap-1 items-center">
-                <img src="/logo.svg" alt="logo" />
+                <img src="/logo3.png" alt="logo" className="w-10 h-10"/>
                 <p className="font-bold text-3xl Livvic-Bold text-white">
                   Famlink
                 </p>

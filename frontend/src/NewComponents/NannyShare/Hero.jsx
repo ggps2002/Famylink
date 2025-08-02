@@ -55,9 +55,11 @@ function Hero() {
     setIsLoading(true);
 
     try {
-      const { data } = await api.get(`userData/service-providers/${zipCode}`);
+      const { data } = await api.get(
+        `nannyShare/nanny-share-opportunities/${zipCode}`
+      );
       const response = data?.data || [];
-      console.log("Service provider response:", response);
+      // console.log("Nanny share response:", response);
       // const shuffled = [...response].sort(() => 0.5 - Math.random());
       // return shuffled.slice(0, 3);
       setData(response);
@@ -103,7 +105,7 @@ function Hero() {
               >
                 <Input
                   name="zipCode"
-                  placeholder="Enter zip code to find Nanny"
+                  placeholder="Enter zip code to find Nanny Share"
                   onChange={(e) => {
                     const zip = e.target.value;
                     setZipCode(zip);
@@ -117,7 +119,7 @@ function Hero() {
             </div>
           </div>
           <Button
-            btnText="Find Nanny"
+            btnText="Find Nanny Share"
             className="bg-[#FFADE1] w-full sm:w-auto px-6 py-3 sm:py-4"
             action={() => handleDataRetrieve()}
             isLoading={isLoading}
@@ -134,10 +136,10 @@ function Hero() {
             <div className="flex justify-between items-center p-6 sm:p-8 border-b border-[#AEC4FF]/20 bg-gradient-to-r from-[#AEC4FF]/5 to-[#85D1F1]/5">
               <div>
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-bold Livvic-Bold">
-                  Available Caregivers in {zipCode}
+                  Available Nanny Shares in {zipCode}
                 </h3>
                 <p className="text-[#555555] text-sm sm:text-base mt-1">
-                  {data.length} caregiver{data.length !== 1 ? "s" : ""} found
+                  {data.length} nanny share{data.length !== 1 ? "s" : ""} found
                 </p>
               </div>
               <button
@@ -153,63 +155,54 @@ function Hero() {
             <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-6 sm:p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {data.length > 0 ? (
-                  data.map((person, index) => (
+                  data.map((share, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300 "
+                      className="rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full transition-all duration-300"
                     >
                       <div className="mb-4">
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-3">
                           <h4 className="text-lg sm:text-xl font-bold text-gray-800 Livvic-Bold">
-                            {person.name}
+                            {share.families}
                           </h4>
                           <span className="inline-block w-fit text-[#555555] border border-[#EEEEEE] text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
-                            {person.role}
+                            {share.location}
                           </span>
                         </div>
 
-                        {/* Rating */}
-                        <div className="flex items-center gap-1 mb-3">
-                          <div className="flex items-center">
-                            {[...Array(person.rating || 5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className="w-4 h-4 fill-yellow-400 stroke-yellow-400"
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-600 ml-1">
-                            ({person.rating || 5}.0)
+                        {/* Rate and Savings */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <p className="text-green-600 font-bold text-lg">
+                            {share.rate}
+                          </p>
+                          <span className="text-sm text-gray-500">
+                            ({share.savings})
                           </span>
                         </div>
 
                         {/* Details */}
                         <div className="space-y-2 mb-4">
                           <p className="text-sm text-gray-700 flex flex-wrap gap-2">
-                            <span className=" text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                              {person.rate}
+                            <span className="text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                              {share.schedule}
                             </span>
-                            <span className=" text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                              {person.availability?.option || "Available"}
-                            </span>
-                            <span className=" text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                              {person.experience?.option || "Experienced"}
+                            <span className="text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                              {share.kids}
                             </span>
                           </p>
 
                           <p className="text-gray-600 text-sm italic leading-relaxed">
-                            "
-                            {person.description?.slice(0, 80) ||
-                              "Dedicated caregiver ready to help your family"}
-                            ..."
+                            "{share.description}"
                           </p>
 
                           <div className="bg-gradient-to-r from-[#AEC4FF]/10 to-[#85D1F1]/10 px-3 py-2 rounded-lg border border-[#AEC4FF]/20">
                             <p className="text-sm font-medium">
-                              <span className="text-gray-600">Service:</span>
+                              <span className="text-gray-600">
+                                Share Details:
+                              </span>
                               <span className="text-[#0f3460] ml-1">
-                                {person.service}
+                                {share.families} • {share.location}
                               </span>
                             </p>
                           </div>
@@ -226,7 +219,7 @@ function Hero() {
                         className="mt-auto"
                       >
                         <button className="w-full font-bold text-sm sm:text-base px-4 py-3 rounded-full transition-all duration-300 bg-primary text-primary">
-                          {person.cta || "Connect Now"}
+                          {share.cta}
                         </button>
                       </NavLink>
                     </div>
