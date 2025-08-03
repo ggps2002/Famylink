@@ -277,13 +277,22 @@ router.get("/nanny-share-opportunities/:zipCode", async (req, res) => {
 
   try {
     // Step 1: Find users in the zip code
-    const users = await User.find({ zipCode }).select("_id name format_location");
-
+    const users = await User.find({ zipCode }).select("_id name location");
     const userMap = {};
+
+    const formatLocation = (zip, format_location) => {
+      if (!zip || !format_location)
+        return "";
+      const parts = format_location.split(",") || [];
+      const city = parts.at(-3)?.trim();
+      const state = parts.at(-2)?.trim().split(" ")[0];
+      return city && state ? `${city}, ${state}` : "";
+    };
+
     users.forEach((u) => {
       userMap[u._id.toString()] = {
         name: u.name,
-        location: u.format_location || "Unknown Neighborhood",
+        location: formatLocation(zipCode, u.location?.format_location) || "Unknown Neighborhood",
       };
     });
 
