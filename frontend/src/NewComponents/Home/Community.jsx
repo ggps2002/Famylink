@@ -32,7 +32,7 @@ const communityResource = [
 
 function Community() {
   return (
-    <div className="container Livvic px-4 sm:px-0">
+    <div className="container Livvic px-4">
       <div className="flex flex-col sm:flex-row sm:justify-between mt-6 sm:mt-12 gap-4 sm:gap-0">
         <div>
           <h1 className="Livvic-Bold text-4xl sm:text-5xl">

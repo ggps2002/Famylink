@@ -32,12 +32,12 @@ function About() {
             <img
               src="/nanny/nanny-share-about-1.jpg"
               alt="nanny"
-              className="absolute top-0 left-0 w-[60%] sm:w-[55%] lg:w-[50%] h-[60%] sm:h-[65%] lg:h-[70%] object-cover z-20 rounded-[15px] sm:rounded-[20px] lg:rounded-[25px]"
+              className="absolute top-0 left-0 w-[60%] sm:w-[55%] lg:w-[50%] h-[60%] sm:h-[65%] lg:h-[70%] object-cover rounded-[15px] sm:rounded-[20px] lg:rounded-[25px]"
             />
             <img
               src="/nanny/nanny-share-about-2.jpg"
               alt="nanny"
-              className="absolute bottom-0 right-6 w-[60%] sm:w-[55%] lg:w-[50%] h-[60%] sm:h-[65%] lg:h-[70%] object-cover z-30 rounded-[15px] sm:rounded-[20px] lg:rounded-[25px]"
+              className="absolute bottom-0 right-6 w-[60%] sm:w-[55%] lg:w-[50%] h-[60%] sm:h-[65%] lg:h-[70%] object-cover rounded-[15px] sm:rounded-[20px] lg:rounded-[25px]"
             />
           </div>
         </div>

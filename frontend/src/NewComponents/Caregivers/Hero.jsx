@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Header from "../Header";
 import { Spin, Input } from "antd";
@@ -13,6 +13,19 @@ function Hero() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
+
+    useEffect(() => {
+    if (showResults) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  
+    // Clean up on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showResults]);
 
   const handleZipValidation = async (zip) => {
     if (!zip) return;
