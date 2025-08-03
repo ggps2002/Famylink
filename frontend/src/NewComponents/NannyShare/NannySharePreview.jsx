@@ -2,49 +2,82 @@ import React from "react";
 import CustomButton from "../Button";
 import { NavLink } from "react-router-dom";
 import ProfileCard from "../../Components/subComponents/profileCard";
+import NannyShareCard from "../NannyShareCard";
 
-const nannyData = [
+const nannyShareData = [
+  {
+    name: "The Kim Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny1.jpeg",
+    location: "Brooklyn, NY",
+    schedule: "M–F, 8AM–4PM",
+    child: "1 toddler (18 months)",
+    req: "Another family with a toddler nearby",
+    start: "Sept 1, 2025",
+    description:
+      "We’re a laid-back family looking to split costs with another family in the neighborhood. We’d love to connect and meet up!",
+  },
+   {
+    name: "The Patel Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny2.jpeg",
+    location: "Oakland, CA",
+    schedule: "M–Th, 9AM–5PM",
+    child: "2-year-old girl",
+    req: "A family open to alternating homes weekly",
+    start: "ASAP",
+    description:
+      "We’re hoping to create a fun social environment for our daughter and split the cost of care with a reliable nearby family",
+  },
+   {
+    name: "The Johnson Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny3.jpeg",
+    location: "Silver Lake, Los Angeles",
+    schedule: "Mon–Fri, 9AM–3PM",
+    child: "10-month-old boy",
+    req: "A family with a child under 2",
+    start: "Mid-September",
+    description:
+      "We work from home and would love to share a nanny with another mellow family nearby. Open to rotating houses.",
+  },
+   {
+    name: "The Rivera Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny4.jpeg",
+    location: "Astoria, Queens",
+    schedule: "M/W/F, 8AM–6PM",
+    child: "3-year-old girl",
+    req: "Family with a preschool-aged child",
+    start: "Flexible",
+    description:
+      "Our daughter is very social — we’d love to team up with a family to reduce cost and make care more fun!",
+  },
     {
-        imageUrl: "/nanny/nanny1.jpg",
-        totalRatings: 126,
-        averageRating: 5,
-        time: "Full Time",
-        name: "Sheena F.",
-        intro: "Hi! I’m Sheena, a full-time nanny with 7 years of experience supporting families with children aged 6 months to 10 years. I bring a calm, playful energy...",
-        exp: "3 years",
-        loc: "Long Island City, Queens"
-    },
-     {
-        imageUrl: "/nanny/nanny2.jpg",
-        totalRatings: 126,
-        averageRating: 5,
-        time: "Full Time",
-        name: "Jennie M.",
-        intro: "I’m Jennie — a caregiver and former educator who blends academic support with engaging care. Whether it’s math homework or after-school play, I’m here to make your child feel supported and confident.",
-        exp: "3 years",
-        loc: "Long Island City, Queens"
-    },
-     {
-        imageUrl: "/nanny/nanny3.jpg",
-        totalRatings: 126,
-        averageRating: 5,
-        time: "Full Time",
-        name: "Alisa M.",
-        intro: "Hi, I’m Alisa — a certified newborn care provider with a passion for helping new parents feel rested, informed, and cared for. From feeding to sleep routines, I offer gentle, attentive support.",
-        exp: "3 years",
-        loc: "Long Island City, Queens"
-    },
-     {
-        imageUrl: "/nanny/nanny4.jpg",
-        totalRatings: 126,
-        averageRating: 5,
-        time: "Full Time",
-        name: "Tasha S.",
-        intro: "My name is Tasha, and I specialize in working with neurodiverse kids, including those with autism and ADHD. I focus on empathy, consistency, and building trust through everyday moments.",
-        exp: "3 years",
-        loc: "Long Island City, Queens"
-    }
-] 
+    name: "The Nguyen Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny5.jpeg",
+    location: "South San Jose, CA",
+    schedule: "Tues–Fri, 7:30AM–4:30PM",
+    child: "2-year-old girl",
+    req: "Family in same ZIP willing to host part-time",
+    start: " October 1st",
+    description:
+      "I’m a single mom working hybrid — looking for a nearby family to split care and build some community too.",
+  },
+    {
+    name: "The Williams Family",
+    profile: "Profile Available",
+    img: "/nanny/nanny6.jpeg",
+    location: "Capitol Hill, Seattle",
+    schedule: "Full-time (40 hrs/week)",
+    child: "14-month-old girl",
+    req: "A family open to rotating locations weekly",
+    start: "September",
+    description:
+      "We love the idea of creating a pod-like setup with another family. Let’s connect if you’re close by!e",
+  },
+];
 
 function NannySharePreview() {
   return (
@@ -52,7 +85,8 @@ function NannySharePreview() {
       <div className="flex flex-col sm:flex-row sm:justify-between mt-6 sm:mt-12 gap-4 sm:gap-0">
         <div>
           <h1 className="Livvic-Bold text-4xl sm:text-5xl">
-            Nannies Open to <br className="hidden lg:block"/>Sharing Arrangements
+            Nannies Open to <br className="hidden lg:block" />
+            Sharing Arrangements
           </h1>
         </div>
         <div className="sm:self-start">
@@ -64,23 +98,21 @@ function NannySharePreview() {
           </NavLink>
         </div>
       </div>
-      <div className="flex flex-wrap mt-12 gap-6">
-        {
-            nannyData.map((nanny, i) => (
-                <ProfileCard
-                    key={i}
-                    totalRatings={nanny.totalRatings}
-                    img={nanny.imageUrl}
-                    averageRating={nanny.averageRating}
-                    time={nanny.time}
-                    name={nanny.name}
-                    intro={nanny.intro}
-                    loc={nanny.loc}
-                    exp={nanny.exp}
-                   nanny={true}
-                />
-            ))
-        }
+      <div className="flex flex-wrap mt-12 gap-2">
+        {nannyShareData.map((f, i) => (
+          <NannyShareCard
+            key={i}
+            name={f.name}
+            img={f.img}
+            profile={f.profile}
+            location={f.location}
+            schedule={f.schedule}
+            child={f.child}
+            req={f.req}
+            start={f.start}
+            description={f.description}
+          />
+        ))}
       </div>
     </div>
   );

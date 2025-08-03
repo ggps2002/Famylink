@@ -227,7 +227,7 @@ function Hero() {
 
                       {/* CTA Button */}
                       <NavLink
-                        to="j/oinNow"
+                        to="/joinNow"
                         onClick={() => {
                           handleCloseResults();
                           window.scrollTo({ top: 0, behavior: "smooth" });

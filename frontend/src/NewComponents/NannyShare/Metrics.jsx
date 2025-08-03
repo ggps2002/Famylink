@@ -4,18 +4,18 @@ import MetricCard from "../MetricCard";
 const metrics = [
   {
     title: "",
-    metric: "47",
-    subText: "Nanny share opportunities in Brooklyn",
+    metric: "2,300+",
+    subText: "Families actively looking to nanny share",
   },
   {
     title: "",
-    metric: "156",
+    metric: "5,800+",
     subText: "Nannies open to shared arrangements",
   },
   {
     title: "",
-    metric: "23",
-    subText: "Families currently looking to share in Manhattan",
+    metric: "720",
+    subText: "Nanny share posts added this month",
   },
 ];
 
