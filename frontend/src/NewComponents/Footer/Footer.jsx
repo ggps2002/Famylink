@@ -33,7 +33,7 @@ function Footer() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Brand Section */}
-            <div className="sm:col-span-2 lg:col-span-1 order-2 sm:order-1">
+            <div className="sm:col-span-2 lg:col-span-1 order-1">
               <div className="flex gap-1 items-center">
                 <img src="/logo3.png" alt="logo" className="w-10 h-10"/>
                 <p className="font-bold text-3xl Livvic-Bold text-white">
@@ -84,7 +84,7 @@ function Footer() {
             </div>
 
             {/* Links Section */}
-            <div className="order-3 sm:order-2">
+            <div className="order-3">
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
                 Links
               </p>
@@ -128,7 +128,7 @@ function Footer() {
             </div>
 
             {/* Contact Section */}
-            <div className="order-4 sm:order-3">
+            <div className="order-4">
               <p className="no-underline Livvic-SemiBold text-lg leading-[18px]">
                 Contact
               </p>
@@ -148,7 +148,7 @@ function Footer() {
             </div>
 
             {/* Newsletter Section */}
-            <div className="order-1 sm:order-4">
+            <div className="order-2 ">
               <p className="Livvic-SemiBold text-lg leading-[30px]">
                 Stay in the loop—get helpful
                 <br className="hidden sm:block" /> childcare tips and platform
