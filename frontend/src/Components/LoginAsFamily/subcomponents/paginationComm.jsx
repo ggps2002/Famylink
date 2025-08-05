@@ -222,7 +222,7 @@ const PaginationComm = ({ category, searchQuery }) => {
             const data = res.data?.data;
             userMap[id] = {
               name: data?.name || "User",
-              profilePic: data?.profilePic || null,
+              profilePic: data?.imageUrl || null,
               type: data?.type || "User",
             };
           } catch {
@@ -524,7 +524,7 @@ const PaginationComm = ({ category, searchQuery }) => {
                               name={
                                 reply.isAnonymous
                                   ? "Anonymous"
-                                  : replyUser?.name || "User"
+                                  : replyUser?.name
                               }
                               size="32"
                               round
@@ -538,7 +538,7 @@ const PaginationComm = ({ category, searchQuery }) => {
                                 <h4 className="Livvic-SemiBold text-sm text-gray-900">
                                   {reply.isAnonymous
                                     ? "Anonymous"
-                                    : replyUser?.name || "User"}
+                                    : replyUser?.name}
                                 </h4>
                                 {replyUser?.type === "Admin" && (
                                   <Shield className="w-3 h-3 text-blue-600" />
@@ -558,7 +558,7 @@ const PaginationComm = ({ category, searchQuery }) => {
                               >
                                 Like ({reply.likes?.length || 0})
                               </button>
-                              <button
+                              {/* <button
                                 onClick={() => {
                                   setReplyToCommentId(originalComment._id);
                                   setQuotedText(reply.comment);
@@ -567,7 +567,7 @@ const PaginationComm = ({ category, searchQuery }) => {
                                 className="hover:text-blue-500 font-medium"
                               >
                                 Reply
-                              </button>
+                              </button> */}
                               {currentUserId === reply.user?._id && (
                                 <button
                                   onClick={() => {
@@ -965,9 +965,9 @@ const PaginationComm = ({ category, searchQuery }) => {
                     {/* Comment Input */}
                     <div className="border-t border-gray-100 pt-6">
                       <div className="flex items-start space-x-3">
-                        {user?.profilePic ? (
+                        {user?.imageUrl ? (
                           <img
-                            src={user.profilePic}
+                            src={user.imageUrl}
                             alt="Profile"
                             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                           />
@@ -990,7 +990,7 @@ const PaginationComm = ({ category, searchQuery }) => {
                           />
                           <div className="flex items-center justify-between mt-3">
                             <div className="flex items-center space-x-4">
-                              <Smile className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
+                              {/* <Smile className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" /> */}
                               <label className="flex items-center gap-2 text-sm text-gray-600">
                                 <input
                                   type="checkbox"
@@ -1097,9 +1097,9 @@ const PaginationComm = ({ category, searchQuery }) => {
                   {/* Create Post - Hidden on mobile */}
                   <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                     <div className="flex items-start space-x-3">
-                      {user?.profilePic ? (
+                      {user?.imageUrl ? (
                         <img
-                          src={user.profilePic}
+                          src={user.imageUrl}
                           alt="Profile"
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -1634,9 +1634,9 @@ const PaginationComm = ({ category, searchQuery }) => {
                   {/* Content */}
                   <div className="p-4 max-h-[70vh] overflow-y-auto">
                     <div className="flex items-start space-x-3">
-                      {user?.profilePic ? (
+                      {user?.imageUrl ? (
                         <img
-                          src={user.profilePic}
+                          src={user.imageUrl}
                           alt="Profile"
                           className="w-10 h-10 rounded-full object-cover"
                         />
