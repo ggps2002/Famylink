@@ -43,8 +43,8 @@ router.post(
       const frontImage = req.files.frontImage[0]
       const backImage = req.files.backImage[0]
 
-      const frontImageUrl = await uploadImage(frontImage.buffer, user.email, "front_image_id")
-      const backImageUrl = await uploadImage(backImage.buffer, user.email, "back_image_id")
+      const frontImageUrl = await uploadImage(frontImage.buffer, user.email, "front_image_")
+      const backImageUrl = await uploadImage(backImage.buffer, user.email, "back_image_")
 
       const verificationRecord = new Verify({
         user: id,

@@ -7,6 +7,7 @@ import {
   createPublicUrlForFile,
 } from "../Services/utils/upload.js";
 import fs from "fs";
+import uploadImage from "../Services/utils/uplaodImage.js";
 
 const router = express.Router();
 
@@ -46,31 +47,30 @@ router.put("/user", authMiddleware, upload.any(), async (req, res) => {
 
     // Handle image upload
     if (req.files && req.files.length > 0) {
-      req.files.forEach((file) => {
-        const filePath = createPublicUrlForFile(req, file); // Generate public URL for the file
-        const localFilePath = createLocalUrlForFile(filePath); // Generate the local file system path for comparison
+      for (const file of req.files) {
+        const imgUrl = await uploadImage(file.buffer, user.email, `${user._id}`);
+        // const filePath = createPublicUrlForFile(req, file); // Generate public URL for the file
+        // const localFilePath = createLocalUrlForFile(filePath); // Generate the local file system path for comparison
 
-        if (file.fieldname === "imageUrl") {
-          // Check if the user already has an image and delete the old one if necessary
-          if (user.imageUrl) {
-            const existingImagePath = createLocalUrlForFile(user.imageUrl); // Convert user image URL to local file path
+        // if (file.fieldname === "imageUrl") {
+        //   // Check if the user already has an image and delete the old one if necessary
+        //   if (user.imageUrl) {
+        //     const existingImagePath = createLocalUrlForFile(user.imageUrl); // Convert user image URL to local file path
 
-            // If the image exists in the local file system and it's not the same as the newly uploaded image
-            if (
-              fs.existsSync(existingImagePath) &&
-              existingImagePath !== localFilePath
-            ) {
-              // Delete the old image
-              fs.unlinkSync(existingImagePath);
-            }
-          }
+        //     // If the image exists in the local file system and it's not the same as the newly uploaded image
+        //     if (
+        //       fs.existsSync(existingImagePath) &&
+        //       existingImagePath !== localFilePath
+        //     ) {
+        //       // Delete the old image
+        //       fs.unlinkSync(existingImagePath);
+        //     }
+        //   }
 
-          // Now assign the new image URL to the user object
-          user.imageUrl = filePath; // Update the user with the new file URL
-        }
-
+        // Now assign the new image URL to the user object
+        user.imageUrl = imgUrl; // Update the user with the new file URL
         // Add more conditions for other file fields if needed
-      });
+      }
     }
 
     // Update basic fields

@@ -382,6 +382,7 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
 router.delete('/:postId/comment/:commentId', authMiddleware, async (req, res) => {
   const { postId, commentId } = req.params;
   const userId = req.userId;
+  console.log(req.params)
 
   try {
     // Find the community with the given post ID
