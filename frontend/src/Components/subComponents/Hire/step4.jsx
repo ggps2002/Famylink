@@ -189,7 +189,7 @@ export default function HireStep4({
               </p>
             )}
 
-            {!inputNot && inputName.length > 0 && (
+            {!inputNot && inputName?.length > 0 && (
               <InputTextArea
                 form={form}
                 name={inputName ? toCamelCase(inputName) : "specify"}

@@ -52,6 +52,7 @@ const App = () => {
       formRef.current = form;
     }
   }, [form, formRef]);
+  
   useEffect(() => {
     if (formRef) {
       formRef.current = form;

@@ -124,7 +124,7 @@ export default function MultiFormContainer({
               ))}
               {v?.input && (
                 <div style={{ marginBottom: "-20px" }}>
-                  <InputTextArea name={v.input} placeholder={v.input} />
+                  <InputTextArea form={form} name={toCamelCase(v.input)} placeholder={v.input} />
                 </div>
               )}
 
@@ -150,6 +150,7 @@ export default function MultiFormContainer({
             </p>
             <div className="flex justify-center">
               <InputTextArea
+                form={form}
                 name={addInput.val ? addInput.val : toCamelCase(addInput.name)}
                 placeholder={addInput.placeholder}
               />

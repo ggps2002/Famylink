@@ -79,6 +79,7 @@ export const NannyJob = () => {
         { name: "CPR/First Aid Certified" },
         { name: "Early Childhood Education" },
         { name: "Special Needs Training" },
+        { name: "None" },
       ],
     },
 
@@ -89,6 +90,7 @@ export const NannyJob = () => {
         { name: "Owns a car" },
         { name: "Using caregiver's car" },
         { name: "Using family's car" },
+        { name: "None" },
       ],
     },
     {
@@ -101,6 +103,7 @@ export const NannyJob = () => {
         { name: "Pet care" },
         { name: "Homework assistance" },
         { name: "Swimming supervision" },
+        { name: "None" },
       ],
     },
   ];
@@ -111,6 +114,7 @@ export const NannyJob = () => {
       data: [
         { name: "Child-related only" },
         { name: "Child-related and general household tasks" },
+        { name: "None" },
       ],
     },
     {
@@ -118,6 +122,7 @@ export const NannyJob = () => {
       data: [
         { name: "For children only" },
         { name: "For children and parents" },
+        { name: "None" },
       ],
     },
 
@@ -126,6 +131,7 @@ export const NannyJob = () => {
       data: [
         { name: "Child-related only" },
         { name: "Child-related and household tasks" },
+        { name: "None" },
       ],
     },
     {
@@ -133,6 +139,7 @@ export const NannyJob = () => {
       data: [
         { name: "Transporting children only" },
         { name: "Transporting children and running household errands" },
+        { name: "None" },
       ],
     },
     {
@@ -142,6 +149,7 @@ export const NannyJob = () => {
           name: "Planning and supervising educational activities for children",
         },
         { name: "Tutoring or homework assistance" },
+        { name: "None" },
       ],
     },
   ];
@@ -177,11 +185,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-                fireToastMessage({
+          fireToastMessage({
             type: "error",
             message:
               errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
-          });;
+          });
         });
     } else if (currentStep == 2) {
       const selectedDays = Object.entries(daysState).filter(
@@ -248,14 +256,16 @@ export const NannyJob = () => {
         .validateFields()
         .then((values) => {
           // console.log(values)
-          if (values.option) {
+          if (values.option || values.specify) {
             // If form is valid, submit it and move to the next step
 
             const cleanData = cleanFormData1(values);
 
             let updatedValues = {
               ...formValues,
-              hourlyRate: parseHourlyRate(cleanData.option),
+              hourlyRate: parseHourlyRate(
+                cleanData.option ?? cleanData.specify
+              ),
               ...(cleanData.specify && {
                 hourlyRateSpecify: cleanData.specify,
               }), // Correct conditional property assignment
@@ -274,11 +284,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-                fireToastMessage({
+          fireToastMessage({
             type: "error",
             message:
               errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
-          });;
+          });
         });
     } else if (currentStep === 4) {
       nannyJobFormRef.current
@@ -286,9 +296,20 @@ export const NannyJob = () => {
         .then((values) => {
           // Get the keys of the form values to dynamically check all arrays
           const requiredFields = Object.keys(values);
+          console.log("values", values);
 
           // Check if all required arrays have at least one value
           const hasErrors = requiredFields.some((field) => {
+            if (field === "languageSkills") {
+              const specificLanguage = values["specifyLanguage"];
+              if (
+                specificLanguage && // make sure it's not empty/null
+                !values["languageSkills"].includes(specificLanguage)
+              ) {
+                values["languageSkills"].push(specificLanguage);
+              }
+            }
+
             const fieldValue = values[field];
             return Array.isArray(fieldValue) && fieldValue.length === 0; // Only check if the field is an array and is empty
           });
@@ -362,11 +383,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-                fireToastMessage({
+          fireToastMessage({
             type: "error",
             message:
               errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
-          });;
+          });
         });
     } else if (currentStep == 6) {
       if (textAreaValue.length > 0) {
@@ -412,6 +433,7 @@ export const NannyJob = () => {
         return (
           <HireStep4
             formRef={nannyJobFormRef || {}}
+            inputName={"Specify"}
             subHead2={"(Select an hourly rate or weekly salary range.)"}
             head={"What is your budget for this position?"}
             data={step2Data}
