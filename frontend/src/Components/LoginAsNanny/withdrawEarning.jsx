@@ -63,7 +63,7 @@ export default function WithdrawEarning() {
                                         src={v?.card?.brand === 'visa' ? visa : master}
                                         alt="card type"
                                     />
-                                    <p className="Classico text-base font-bold mt-2">{v?.billing_details?.name}</p>
+                                    <p className="Livvic text-base font-bold mt-2">{v?.billing_details?.name}</p>
                                     <p className="Belleza text-base">**** **** **** {v?.card?.last4}</p>
                                 </div>
                                 <div>
@@ -93,7 +93,7 @@ export default function WithdrawEarning() {
                     ))
                 ) : (
                     <div className="border rounded-2xl text-center py-8">
-                        <p className="text-4xl Classico font-normal">To withdraw earnings, first you need to set up a withdrawal method.</p>
+                        <p className="text-4xl Livvic font-normal">To withdraw earnings, first you need to set up a withdrawal method.</p>
                         <p className="pt-8 pb-10">You haven't set up any withdrawal methods yet.</p>
                         <div className="flex justify-center">
                             <App head="Payments" withDraw={true} />

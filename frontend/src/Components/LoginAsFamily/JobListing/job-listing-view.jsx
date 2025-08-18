@@ -696,7 +696,7 @@ const JobListingView = () => {
                             {/* Example input fields */}
                             <div className="flex flex-col gap-4">
                                 <div>
-                                    <p className="lg:text-lg text-xl font-bold Classico">Job Description</p>
+                                    <p className="lg:text-lg text-xl font-bold Livvic">Job Description</p>
                                     <Input.TextArea
                                         className="w-full border rounded-md p-2 mt-1 !resize-none"
                                         rows={4}
@@ -713,7 +713,7 @@ const JobListingView = () => {
                                 </div>
 
                                 <div>
-                                    <p className="lg:text-lg text-xl font-bold Classico">What is your preferred schedule for childcare?</p>
+                                    <p className="lg:text-lg text-xl font-bold Livvic">What is your preferred schedule for childcare?</p>
                                     <Radio.Group
                                         options={prefer.map(option => ({
                                             label: option.name,
@@ -727,7 +727,7 @@ const JobListingView = () => {
                                 </div>
 
                                 <div>
-                                    <p className="lg:text-lg text-xl font-bold Classico">What is your preferred hourly rate?</p>
+                                    <p className="lg:text-lg text-xl font-bold Livvic">What is your preferred hourly rate?</p>
                                     <Radio.Group
                                         options={hourlyData.map(option => ({
                                             label: option.name,
@@ -741,7 +741,7 @@ const JobListingView = () => {
                                 </div>
 
                                 {/* Specific Days */}
-                                <p className="lg:text-lg text-xl font-bold Classico leading-none">Specific Days</p>
+                                <p className="lg:text-lg text-xl font-bold Livvic leading-none">Specific Days</p>
                                 <div className="flex flex-wrap">
                                     {days.map((day) => (
                                         <div className="flex mb-4" key={day}>

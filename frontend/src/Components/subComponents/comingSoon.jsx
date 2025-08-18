@@ -48,7 +48,7 @@ export default function ComingSoon({ bg }) {
     <div className="padding-navbar1 Quicksand">
       <div className={` ${!bg && 'bg-white shadow-custom-shadow'} gap-6 flex flex-col justify-center items-center h-screen rounded-2xl p-6 `}>
         <img src={img} alt="coming-soon" className="max-lg:size-48" />
-        <p className="text-4xl font-bold Classico">Coming Soon</p>
+        <p className="text-4xl font-bold Livvic">Coming Soon</p>
         <p className="lg:w-[570px] lg:text-lg text-[#4E545F] text-center">
           Are you ready to get something new from us? Subscribe to the
           newsletter to get the latest updates!

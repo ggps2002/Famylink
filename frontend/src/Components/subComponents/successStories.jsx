@@ -10,7 +10,7 @@ export default function SuccessStories() {
   return (
     <section className=" py-12 px-4">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="font-2xl uppercase font-bold Classico mb-8">
+        <h2 className="font-2xl uppercase font-bold Livvic mb-8">
           Recent Success Stories
         </h2>
         <ul className="space-y-5 text-gray-700 text-base md:text-lg">

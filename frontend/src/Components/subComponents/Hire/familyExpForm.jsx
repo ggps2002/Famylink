@@ -151,7 +151,7 @@ const FamilyExperienceForm = ({ formRef }) => {
                 {/* Age Groups Section */}
                 <div className="rounded-xl p-6 mb-8">
                     <h3 className="text-lg font-semibold text-gray-700 mb-2">Age Group(s) of Children</h3>
-                    <p className="Classico text-xl mt-2 mb-4 capitalize">Select all age groups that apply</p>
+                    {/* <p className="Livvic text-xl mt-2 mb-4 capitalize">Select all age groups that apply</p> */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                         {options.map((option) => (
                             <Form.Item
@@ -198,7 +198,7 @@ const FamilyExperienceForm = ({ formRef }) => {
                 {/* Key Responsibilities Section */}
                 <div className=" rounded-xl p-6 mb-8">
                     <h3 className="text-lg font-semibold text-gray-700 mb-2">Key Responsibilities</h3>
-                    <p className="Classico text-xl mb-4 capitalize">Select all responsibilities that applied</p>
+                    {/* <p className="Livvic text-xl mb-4 capitalize">Select all responsibilities that applied</p> */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                         {options1.map((option) => (
                             <Form.Item

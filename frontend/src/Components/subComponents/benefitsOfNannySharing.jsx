@@ -12,7 +12,7 @@ const BenefitCard = ({ icon, title, description }) => {
         />
       </div>
       <div>
-        <h3 className="text-lg font-semibold Classico line1-20">{title}</h3>
+        <h3 className="text-lg font-semibold Livvic line1-20">{title}</h3>
         <p className="text-gray-600 line1-20">{description}</p>
       </div>
     </div>
@@ -30,7 +30,7 @@ const BenefitsSection = ({ benefits, head }) => {
               to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
             }}
           >
-            <h2 className="font-normal text-center Classico uppercase px-3 offer-font mb-10">
+            <h2 className="font-normal text-center Livvic uppercase px-3 offer-font mb-10">
               {head}
             </h2>
           </AnimatedWrapper>

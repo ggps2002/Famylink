@@ -133,7 +133,7 @@ export default function ForgetPass() {
                 {step == 1 && (
                   <>
                     <div>
-                      {/* <p className="mb-1 text-xl capitalize Classico">OTP</p> */}
+                      {/* <p className="mb-1 text-xl capitalize Livvic">OTP</p> */}
                       <Form.Item
                         name="otp"
                         rules={[{ required: true, message: "" }]}
@@ -147,7 +147,7 @@ export default function ForgetPass() {
                     </div>
 
                     <div>
-                      {/* <p className="mb-1 text-xl capitalize Classico">
+                      {/* <p className="mb-1 text-xl capitalize Livvic">
                         New Password
                       </p> */}
                       {/* <Form.Item

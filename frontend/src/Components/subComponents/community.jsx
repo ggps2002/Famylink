@@ -29,7 +29,7 @@ export default function CommunityPost() {
         <div className='padding-navbar1 Quicksand'>
             <div className='shadow my-10 bg-white lg:p-10 p-5 rounded-xl'>
                 <div className="flex gap-6 justify-between items-end">
-                    <h2 className="font-semibold text-4xl Classico">Community</h2>
+                    <h2 className="font-semibold text-4xl Livvic">Community</h2>
                     <div className="max-lg:hidden">
                         <Search1 onSearch={handleSearch} />
                     </div>
@@ -88,7 +88,7 @@ export default function CommunityPost() {
                 <div className="grid items-start grid-cols-4 gap-4">
                     {/* Column 3 */}
                     <div className="border rounded-2xl border-[#D6DDEB] p-4 ">
-                        <p className="lg:text-3xl text-xl Classico">Post 1</p>
+                        <p className="lg:text-3xl text-xl Livvic">Post 1</p>
                         <p className="py-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                         <p>Created by: Admin</p>
                         <p className="py-3">Posted on: 20 June 2024 @ 9:30am</p>

@@ -141,7 +141,11 @@ export default function NewHireForm() {
           });
         }
       } catch (errorInfo) {
-        fireToastMessage({ type: "error", message: errorInfo });
+              fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
       }
     } else if (step === 3) {
       hireStep2FormRef.current

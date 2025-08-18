@@ -103,6 +103,8 @@ const PaginationComm = ({ category, searchQuery }) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAdminPosts, setShowAdminPosts] = useState(false);
   const [showTopicsDropdown, setShowTopicsDropdown] = useState(false);
+  const [isLiking, setIsLiking] = useState({})
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   const handleTopicChange = (value) => {
     setSelectedTopic(value);
@@ -244,12 +246,32 @@ const PaginationComm = ({ category, searchQuery }) => {
     }
   }, [dispatch]);
 
-  const filteredPosts =
-    posts?.filter(
-      (post) =>
-        post.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.description.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+ useEffect(() => {
+  setFilteredPosts(() => {
+    if (!posts) return [];
+
+    let filtered = posts;
+
+    // Filter by topic first
+    if (selectedTopic) {
+      filtered = filtered.filter(
+        post => post.topicName?.toLowerCase() === selectedTopic.toLowerCase()
+      );
+    }
+
+    // Then filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(
+        post =>
+          post.topicName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  });
+}, [posts, searchQuery, selectedTopic]);
+
 
   useEffect(() => {
     if (user?._id) {
@@ -288,6 +310,7 @@ const PaginationComm = ({ category, searchQuery }) => {
     if (!activePostId || !commentId) return;
 
     try {
+       setIsLiking((prev) => ({ ...prev, [commentId]: true }));
       await dispatch(postCommentLikeThunk({ postId: activePostId, commentId }));
       const res = await dispatch(fetchPostByIdThunk(activePostId));
       const updated = res.payload?.data;
@@ -300,6 +323,8 @@ const PaginationComm = ({ category, searchQuery }) => {
       }
     } catch (error) {
       console.error("Error liking comment:", error);
+    }finally {
+       setIsLiking((prev) => ({ ...prev, [commentId]: false }));
     }
   };
 
@@ -465,7 +490,11 @@ const PaginationComm = ({ category, searchQuery }) => {
                         onClick={() => handleCommentLike(originalComment._id)}
                         className="hover:text-red-500 font-medium"
                       >
-                        Like ({originalComment.likes?.length || 0})
+                        {isLiking[originalComment._id] ? (
+                          <Loader2 className="inline w-3 h-3 animate-spin text-red-500" />
+                        ) : (
+                          `Like (${originalComment.likes?.length || 0})`
+                        )}
                       </button>
                       <button
                         onClick={() => {
@@ -556,7 +585,11 @@ const PaginationComm = ({ category, searchQuery }) => {
                                 onClick={() => handleCommentLike(reply._id)}
                                 className="hover:text-red-500 font-medium"
                               >
-                                Like ({reply.likes?.length || 0})
+                                {isLiking[reply._id] ? (
+                                  <Loader2 className="inline w-3 h-3 animate-spin text-red-500" />
+                                ) : (
+                                  `Like (${reply.likes?.length || 0})`
+                                )}
                               </button>
                               {/* <button
                                 onClick={() => {
@@ -1434,7 +1467,8 @@ const PaginationComm = ({ category, searchQuery }) => {
                             topic.name !== "Admin" && (
                               <div
                                 key={topic._id}
-                                className="flex items-center justify-between py-2 px-4 border border-[#EEEEEE] w-fit rounded-full"
+                                className={`flex items-center justify-between py-2 px-4 border border-[#EEEEEE] w-fit rounded-full cursor-pointer ${selectedTopic === topic.name && "bg-primary"}`}
+                                onClick={() => setSelectedTopic(topic.name)}
                               >
                                 <p className="Livvic-Medium text-[#555555] text-sm">
                                   {topic.name}

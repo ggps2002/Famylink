@@ -6,7 +6,7 @@ const BenefitCard = ({ icon, title, description }) => {
                 <img src={icon} alt={title} className="rounded-full w-full h-full object-contain" />
             </div>
             <div>
-                <h3 className="text-lg font-semibold Classico line1-20">{title}</h3>
+                <h3 className="text-lg font-semibold Livvic line1-20">{title}</h3>
                 <p className="text-gray-600 line1-20">{description}</p>
             </div>
 
@@ -18,7 +18,7 @@ export default function BenefitsSer({ benefits, head }) {
     return (
         <div>
             <div>
-                <h2 className="font-normal text-center Classico uppercase px-3 offer-font mb-10">
+                <h2 className="font-normal text-center Livvic uppercase px-3 offer-font mb-10">
                     {head}
                 </h2>
                 <div className="flex flex-wrap justify-center gap-y-12 gap-x-24">

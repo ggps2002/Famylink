@@ -22,7 +22,7 @@ const nannies = [
 const AvailableNanniesSharing = () => {
   return (
     <section className="py-12 px-4">
-      <h2 className="font-2xl uppercase font-bold Classico mb-8 text-center">
+      <h2 className="font-2xl uppercase font-bold Livvic mb-8 text-center">
         Nannies Open to Sharing Arrangements
       </h2>
       <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">

@@ -125,10 +125,10 @@ export default function Home() {
               to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
             }}
           >
-            <p className="font-normal uppercase Classico home-sec1-head">
+            <p className="font-normal uppercase Livvic home-sec1-head">
               Find Your Perfect Childcare Match
             </p>
-            <p className="font-semibold Classico home-sec1-subHead">
+            <p className="font-semibold Livvic home-sec1-subHead">
               Smart matching for nannies, tutors, coaches, and all your family's
               needs
             </p>
@@ -246,7 +246,7 @@ families want them.`}
                 borderBottom: '16px solid #DEEBEB',
                 display: 'inline-block' // Ensures the border matches the text width
               }}
-              className='px-3 font-normal text-4xl uppercase Classico'
+              className='px-3 font-normal text-4xl uppercase Livvic'
             >
               Who We Serve
             </p>
@@ -353,7 +353,7 @@ families want them.`}
                   borderBottom: "16px solid #DEEBEB",
                   display: "inline-block", // Ensures the border matches the text width
                 }}
-                className="px-3 font-normal lg:leading-[12px] leading-tight uppercase Classico family-font"
+                className="px-3 font-normal lg:leading-[12px] leading-tight uppercase Livvic family-font"
               >
                 What our families are saying
               </p>

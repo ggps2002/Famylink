@@ -9,6 +9,7 @@ import Featurres from "./Features";
 import Testimonial from "./Testimonial";
 import FAQ from "./FAQ";
 import Footer from "../Footer/Footer";
+import Feedback from "../Feedback";
 
 function NewHome() {
   return (
@@ -50,6 +51,7 @@ function NewHome() {
         <Testimonial />
       </div>
       <FAQ />
+      <Feedback/>
     </>
   );
 }

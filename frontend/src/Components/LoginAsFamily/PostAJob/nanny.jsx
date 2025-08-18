@@ -177,7 +177,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 2) {
       const selectedDays = Object.entries(daysState).filter(
@@ -270,7 +274,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep === 4) {
       nannyJobFormRef.current
@@ -354,7 +362,11 @@ export const NannyJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 6) {
       if (textAreaValue.length > 0) {

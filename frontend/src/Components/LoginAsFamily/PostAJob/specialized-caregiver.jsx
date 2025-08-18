@@ -149,7 +149,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 2) {
       jobFormRef.current
@@ -180,7 +184,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 3) {
       jobFormRef.current
@@ -210,7 +218,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 4) {
       jobFormRef.current
@@ -240,7 +252,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 5) {
       jobFormRef.current
@@ -269,7 +285,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 6) {
       jobFormRef.current
@@ -301,7 +321,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 7) {
       jobFormRef.current
@@ -333,7 +357,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 8) {
       jobFormRef.current
@@ -362,7 +390,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 9) {
       jobFormRef.current
@@ -392,7 +424,11 @@ export const SpecializedCaregiverJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 10) {
       const selectedDays = Object.entries(daysState).filter(

@@ -22,6 +22,10 @@ export default function HireStep4({
   const allValues = data.map((v) => (v.val ? v.val : toCamelCase(v.name)));
   const [selectedValues, setSelectedValues] = useState([]);
 
+  useEffect(() => {
+  console.log("Form fields registered:", form.getFieldsValue(true));
+}, []);
+
   const onRadioChange = (radioValue) => {
     setValue(radioValue);
     form.setFieldsValue({
@@ -32,6 +36,7 @@ export default function HireStep4({
   useEffect(() => {
     if (formRef) {
       formRef.current = form;
+      console.log("Form fields registered:", form.getFieldsValue(true));
     }
   }, [formRef, form]);
 
@@ -60,15 +65,12 @@ export default function HireStep4({
         {head}
       </p>
 
-
       <div
         className={`flex items-center flex-col justify-center ${
           !subHead2 ? "my-10" : "mb-10"
         }`}
       >
         <div>
-         
-
           <Form form={form} name="validateOnly" autoComplete="off">
             {checkBox ? (
               <div className="flex flex-col justify-center items-center">
@@ -187,12 +189,14 @@ export default function HireStep4({
               </p>
             )}
 
-            {!inputNot && (
+            {!inputNot && inputName.length > 0 && (
               <InputTextArea
+                form={form}
                 name={inputName ? toCamelCase(inputName) : "specify"}
                 placeholder={inputName || "Specify"}
                 grid={data.length > 3}
-                labelText={textAreaHead} // optional, if you want floating label
+                labelText={textAreaHead}
+                req={false} // optional, if you want floating label
               />
             )}
 

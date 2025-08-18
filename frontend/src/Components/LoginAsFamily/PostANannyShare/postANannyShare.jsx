@@ -160,11 +160,11 @@ export const PostANannyShare = () => {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              schedule: cleanData.option,
+              schedule: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && { scheduleSpecify: cleanData.specify }),
             };
             setFormValues(updatedValues);
@@ -182,17 +182,21 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 3) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              style: cleanData.option,
+              style: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && { styleSpecify: cleanData.specify }),
             };
             setFormValues(updatedValues);
@@ -209,19 +213,26 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 4) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
           // Check if the preferredLocation (or whatever your field is) has been set
-          if (Array.isArray(values.option) && values.option?.length > 0) {
+          if (
+            (Array.isArray(values.option) && values.option?.length > 0) ||
+            values.specify
+          ) {
             // If form is valid, submit it and move to the next step
 
             let updatedValues = {
               ...formValues,
-              responsibility: values.option,
+              responsibility: values.option ?? values.specify,
               ...(values.specify && { responsibilitySpecify: values.specify }),
             }; // Merge with previous values
             setFormValues(updatedValues);
@@ -238,26 +249,31 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 5) {
       jobFormRef.current
-        .validateFields()
+        .validateFields(["option", "specify"])
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             // If form is valid, submit it and move to the next step
 
             const cleanData = cleanFormData1(values);
 
             let updatedValues = {
               ...formValues,
-              hourlyRate: parseHourlyRate(cleanData.option),
+                hourlyRate: parseHourlyRate(cleanData.option ?? cleanData.specify),
               ...(cleanData.specify && {
                 hourlyRateSpecify: cleanData.specify,
               }), // Correct conditional property assignment
             };
             // Merge with previous values
             setFormValues(updatedValues);
+            jobFormRef.current.resetFields();
             stepRef.current?.next();
             window.scrollTo({ top: 0, behavior: "smooth" });
           } else {
@@ -269,18 +285,27 @@ export const PostANannyShare = () => {
           }
         })
         .catch((errorInfo) => {
-          // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          console.group("Form validation failed");
+          console.log("Full errorInfo:", errorInfo); // whole object
+          console.log("Error fields:", errorInfo.errorFields);
+          console.log("Out-of-date fields:", errorInfo.outOfDate);
+          console.groupEnd();
+
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 6) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              pets: cleanData.option,
+              pets: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && { petsSpecify: cleanData.specify }),
             }; // Merge with previous values
             setFormValues(updatedValues);
@@ -297,17 +322,21 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 7) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              communicate: cleanData.option,
+              communicate: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && {
                 communicateSpecify: cleanData.specify,
               }),
@@ -326,17 +355,21 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 8) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              backupCare: cleanData.option,
+              backupCare: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && {
                 backupCareSpecify: cleanData.specify,
               }),
@@ -355,17 +388,21 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 9) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              involve: cleanData.option,
+              involve: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && { involveSpecify: cleanData.specify }),
             }; // Merge with previous values
             setFormValues(updatedValues);
@@ -382,18 +419,22 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 10) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
           // Check if the preferredLocation (or whatever your field is) has been set
-          if (Array.isArray(values.option) && values.option?.length > 0) {
+          if (Array.isArray(values.option) && values.option?.length > 0 || values.specify) {
             // If form is valid, submit it and move to the next step
             let updatedValues = {
               ...formValues,
-              activity: values.option,
+              activity: values.option ?? values.specify,
               ...(values.specify && { activitySpecify: values.specify }),
             }; // Merge with previous values
             setFormValues(updatedValues);
@@ -410,18 +451,22 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 11) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
           // Check if the preferredLocation (or whatever your field is) has been set
-          if (Array.isArray(values.option) && values.option?.length > 0) {
+          if (Array.isArray(values.option) && values.option?.length > 0 || values.specify) {
             // If form is valid, submit it and move to the next step
             let updatedValues = {
               ...formValues,
-              guideline: values.option,
+              guideline: values.option ?? values.specify,
               ...(values.specify && { guidelineSpecify: values.specify }),
             }; // Merge with previous values
             setFormValues(updatedValues);
@@ -438,7 +483,11 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 12) {
       jobFormRef.current
@@ -446,11 +495,11 @@ export const PostANannyShare = () => {
         .then((values) => {
           // Check if the preferredLocation (or whatever your field is) has been set
           // console.log(values)
-          if (Array.isArray(values.option) && values.option?.length > 0) {
+          if (Array.isArray(values.option) && values.option?.length > 0 || values.specify) {
             // If form is valid, submit it and move to the next step
             let updatedValues = {
               ...formValues,
-              healthConsideration: values.option,
+              healthConsideration: values.option ?? values.specify,
               ...(values.specify && {
                 healthConsiderationSpecify: values.specify,
               }),
@@ -469,17 +518,21 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 13) {
       jobFormRef.current
         .validateFields()
         .then((values) => {
-          if (values.option) {
+          if (values.option || values.specify) {
             const cleanData = cleanFormData1(values);
             let updatedValues = {
               ...formValues,
-              scheduleAndArrangement: cleanData.option,
+              scheduleAndArrangement: cleanData.option ?? cleanData.specify,
               ...(cleanData.specify && {
                 scheduleAndArrangementSpecify: cleanData.specify,
               }),
@@ -498,7 +551,11 @@ export const PostANannyShare = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         });
     } else if (currentStep == 14) {
       setIsLoading(true);
@@ -586,6 +643,7 @@ export const PostANannyShare = () => {
         return (
           <HireStep4
             formRef={jobFormRef || {}}
+            inputName={"Specify"}
             head={"What is your hourly budget for a nanny share?"}
             subHead2={
               "This is the total hourly rate for the nanny. If split between two families, you will each pay half of the selected amount."

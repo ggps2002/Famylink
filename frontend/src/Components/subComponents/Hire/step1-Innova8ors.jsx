@@ -58,7 +58,7 @@ export default function HireStep1({ formRef, head, comm }) {
 
   return (
     <div>
-      <p className="px-3 width-form font-normal text-center uppercase Classico offer-font">
+      <p className="px-3 width-form font-normal text-center uppercase Livvic offer-font">
         {head}
       </p>
       <div className="flex justify-center my-10">
@@ -89,7 +89,7 @@ export default function HireStep1({ formRef, head, comm }) {
             <InputDOB />
 
             <div>
-              <h4 className="mb-2 text-xl capitalize Classico">Zip Code</h4>
+              <h4 className="mb-2 text-xl capitalize Livvic">Zip Code</h4>
               <Form.Item
                 name="zipCode"
                 rules={[{ required: true, message: "ZIP code is required" }]}
@@ -116,7 +116,7 @@ export default function HireStep1({ formRef, head, comm }) {
           <div className="flex flex-wrap justify-start gap-x-6">
             {comm && (
               <div className="flex flex-col">
-                <p className="mb-2 text-xl capitalize text-start Classico">
+                <p className="mb-2 text-xl capitalize text-start Livvic">
                   As an
                 </p>
                 <Form.Item

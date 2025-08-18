@@ -19,7 +19,7 @@ export default function Tab({ first, sec, third }) {
             <Tabs className="mb-6" aria-label="tabs" variant="fullWidth">
                 {
                     first &&
-                    <Tabs.Item className="bg-transparent Classico" active title={<span className="bg-transparent Classico">Job Seekers</span>}>
+                    <Tabs.Item className="bg-transparent Livvic" active title={<span className="bg-transparent Livvic">Job Seekers</span>}>
 
                         <TabContent img={j1} head={'Community'} para={'Connect with other nannies in your area to share experiences, seek advice, and  find support.'} />
                         <TabContent img={j2} head={'Local Meet-ups'} para={'Join local meet-ups organized through Famlink to build friendships and  professional connections.'} />
@@ -30,7 +30,7 @@ export default function Tab({ first, sec, third }) {
                 }
                 {
                     sec &&
-                    <Tabs.Item title={<span className="bg-transparent Classico">Families</span>}>
+                    <Tabs.Item title={<span className="bg-transparent Livvic">Families</span>}>
 
                         <TabContent img={j1} head={'Community'} para={'Join our community of families to share advice, experiences, and build local connections.'} />
                         <TabContent img={j5} head={'Child Care Resources'} para={'Access valuable resources, articles, and tips on various aspects of childcare and parenting.'} />
@@ -41,7 +41,7 @@ export default function Tab({ first, sec, third }) {
 
                 {
                     third &&
-                    <Tabs.Item title={<span className="bg-transparent Classico">Business</span>}>
+                    <Tabs.Item title={<span className="bg-transparent Livvic">Business</span>}>
 
                         <TabContent img={j10} head={'Customizable Profile'} para={'Showcase your business with a personalized profile including photos, descriptions, and contact information.'} />
                         <TabContent img={j11} head={'Service Listings'} para={'Create multiple service listings to highlight different offerings and attract a diverse clientele.'} />

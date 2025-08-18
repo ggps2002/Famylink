@@ -226,7 +226,7 @@ export default function ProfileNanny() {
             {selectedNanny?.imageUrl ? (
               <img
                 className="mx-auto rounded-[16px] w-20 md:w-24 object-contain"
-                src={user?.imageUrl}
+                src={selectedNanny?.imageUrl}
                 alt="img"
               />
             ) : (

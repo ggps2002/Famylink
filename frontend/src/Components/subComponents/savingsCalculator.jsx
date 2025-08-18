@@ -70,7 +70,7 @@ export default function SavingsCalculator({head}) {
             to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
           }}
         >
-          <h2 className="font-normal text-center Classico uppercase px-3 offer-font">
+          <h2 className="font-normal text-center Livvic uppercase px-3 offer-font">
             {head}
           </h2>
         </AnimatedWrapper>

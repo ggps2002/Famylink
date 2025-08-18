@@ -11,7 +11,7 @@ export default function Sec1({ pic, head, preHead , btnText}) {
             to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
           }}
         >
-          <p className="Classico sec1-head">{head}</p>
+          <p className="Livvic sec1-head">{head}</p>
         </AnimatedWrapper>
         <p className="Elliana-Samantha sec1-pre-head">
           {" "}

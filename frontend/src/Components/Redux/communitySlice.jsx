@@ -441,14 +441,14 @@ const communitySlice = createSlice({
       })
 
       .addCase(fetchPostByIdThunk.pending, (state) => {
-        state.isLoading = true;
+        // state.isLoading = true;
       })
       .addCase(fetchPostByIdThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
+        // state.isLoading = false;
         state.data = action?.payload?.data; // Assuming `blogs` key in respons
       })
       .addCase(fetchPostByIdThunk.rejected, (state, action) => {
-        state.isLoading = false;
+        // state.isLoading = false;
         state.error = action.payload || "Error fetching topic";
       })
 

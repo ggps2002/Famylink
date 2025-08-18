@@ -10,7 +10,7 @@ export default function GetStarted({ head, subHead, btn, link }) {
           to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
         }}
       >
-        <p className='px-3 font-normal uppercase Classico offer-font'>{head}</p></AnimatedWrapper>
+        <p className='px-3 font-normal uppercase Livvic offer-font'>{head}</p></AnimatedWrapper>
       <p className='text-lg'>{subHead}</p>
       <NavLink to='/joinNow' onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
         <button

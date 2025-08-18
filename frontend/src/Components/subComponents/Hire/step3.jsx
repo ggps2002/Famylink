@@ -57,7 +57,7 @@ export default function HireStep3({ daysState, setDaysState, head, subHead }) {
 
       <div className="flex justify-center">
         <div>
-          <p className="Classico text-xl my-2 line1-20">{subHead}</p>
+          <p className="Livvic text-xl my-2 line1-20">{subHead}</p>
 
           {daysOfWeek.map((day) => (
             <div className="flex mb-4" key={day}>

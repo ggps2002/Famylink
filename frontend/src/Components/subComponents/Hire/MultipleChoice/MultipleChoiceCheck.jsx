@@ -64,7 +64,7 @@ export default function MultiFormContainer({
   return (
     <Form form={form} initialValues={formValues}>
       <p className="px-3 onboarding-head text-center width-form mb-3">{head}</p>
-      {/* <p className="Classico px-3 text-xl text-center width-form mb-5 mt-6">
+      {/* <p className="Livvic px-3 text-xl text-center width-form mb-5 mt-6">
                 {subHead}
             </p> */}
 

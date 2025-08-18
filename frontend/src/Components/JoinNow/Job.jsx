@@ -483,7 +483,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 2) {
       jobStepFormRef.current
@@ -509,7 +513,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 3) {
       const selectedDays = Object.entries(daysState).filter(
@@ -654,7 +662,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 6) {
       jobStepFormRef.current
@@ -680,7 +692,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 7) {
       jobStepFormRef.current
@@ -709,7 +725,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 8) {
       jobStepFormRef.current
@@ -738,7 +758,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 9) {
       jobStepFormRef.current
@@ -768,7 +792,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 10) {
       jobStepFormRef.current
@@ -820,7 +848,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 11) {
       jobStepFormRef.current
@@ -849,7 +881,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 12) {
       jobStepFormRef.current
@@ -878,7 +914,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 13) {
       jobStepFormRef.current
@@ -904,7 +944,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 14) {
       jobStepFormRef.current
@@ -933,7 +977,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 15) {
       dispatch(clearFamilyExp());
@@ -1091,7 +1139,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 20) {
       jobStepFormRef.current
@@ -1117,7 +1169,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 21) {
       jobStepFormRef.current
@@ -1144,7 +1200,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 22) {
       jobStepFormRef.current
@@ -1174,7 +1234,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 23) {
       jobStepFormRef.current
@@ -1226,7 +1290,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 25) {
       jobStepFormRef.current
@@ -1255,7 +1323,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 26) {
       jobStepFormRef.current
@@ -1285,7 +1357,11 @@ export default function Job() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 27) {
       if (form.getFieldValue(["describeSkills"])?.length > 0) {
@@ -1518,12 +1594,12 @@ export default function Job() {
       case 17:
         return (
           <div>
-            <p className="mt-5 mb-10 px-3 font-normal text-center leading-6 Classico offer-font">
+            <p className="mt-5 mb-10 px-3 text-center leading-6 Livvic-Bold offer-font">
               Experience Entry for Nanny and Babysitter
             </p>
             {familyExp?.map((d, i) => (
               <div key={i} className="bg-white mb-4 p-4 rounded-3xl">
-                <p className="mb-4 font-bold text-2xl Classico">
+                <p className="mb-4 font-bold text-2xl Livvic">
                   Family {i + 1}
                 </p>
                 <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">

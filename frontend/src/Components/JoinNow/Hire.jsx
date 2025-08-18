@@ -572,7 +572,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
         : selectedValue
           ? hireStep2FormRef.current
@@ -588,7 +592,11 @@ export default function HireForm() {
             })
             .catch(errorInfo => {
               // Handle validation failure
-              fireToastMessage({ type: "error", message: errorInfo })
+                    fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
             })
           : fireToastMessage({ type: 'error', message: 'Select number of child' })
       // setStep(prevStep => prevStep + 1);
@@ -610,7 +618,11 @@ export default function HireForm() {
             })
             .catch(errorInfo => {
               // Handle validation failure
-              fireToastMessage({ type: "error", message: errorInfo })
+                    fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
             })
           : fireToastMessage({
             type: 'error',
@@ -734,7 +746,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       } else {
         hireStep4FormRef.current
@@ -756,7 +772,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
       // setStep(prevStep => prevStep + 1);
@@ -784,7 +804,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       } else {
         hireStep4FormRef.current
@@ -809,7 +833,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
       //setStep(prevStep => prevStep + 1);
@@ -835,7 +863,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       } else {
         const selectedDays = Object.entries(daysState).filter(
@@ -991,7 +1023,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
     } else if (step === 9 && hireStep4FormRef.current) {
@@ -1043,7 +1079,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       } else {
         hireStep4FormRef.current
@@ -1066,7 +1106,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
     } else if (step === 10 && hireStep4FormRef.current) {
@@ -1096,7 +1140,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       } else {
         hireStep4FormRef.current
@@ -1119,7 +1167,11 @@ export default function HireForm() {
           })
           .catch(errorInfo => {
             // Handle validation failure
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
 
@@ -1164,7 +1216,11 @@ export default function HireForm() {
             }
           })
           .catch(errorInfo => {
-            fireToastMessage({ type: "error", message: errorInfo })
+                  fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
           })
       }
     } else if (step === 12 && hireStep4FormRef.current) {
@@ -1188,7 +1244,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 13 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1211,7 +1271,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 14 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1234,7 +1298,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 15 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1257,7 +1325,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 16 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1280,7 +1352,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 17 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1305,7 +1381,11 @@ export default function HireForm() {
           }
         })
         .catch(errorInfo => {
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 18 && hireStep4FormRef.current) {
       hireStep2FormRef.current
@@ -1329,7 +1409,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 19 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1357,7 +1441,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 20 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1384,7 +1472,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 21 && hireStep4FormRef.current) {
       const selectedDays = Object.entries(daysState).filter(
@@ -1566,7 +1658,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 24 && hireStep4FormRef.current) {
       hireStep4FormRef.current
@@ -1593,7 +1689,11 @@ export default function HireForm() {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     } else if (step === 25 && hireStep4FormRef.current) {
       if (textAreaValue.length > 0) {
@@ -1629,7 +1729,7 @@ export default function HireForm() {
       case 2:
         return (
           <div className='step-content'>
-            <p className='px-3 width-form font-normal text-center uppercase Classico offer-font'>
+            <p className='px-3 width-form font-normal text-center uppercase Livvic offer-font'>
               Are you looking for a nanny share ?
             </p>
             <div className='flex justify-center my-10'>
@@ -1835,7 +1935,7 @@ export default function HireForm() {
               />
             ) : (
               <div>
-                <p className='px-3 width-form font-normal text-center Classico offer-font'>
+                <p className='px-3 width-form font-normal text-center Livvic offer-font'>
                   Write job description
                 </p>
                 <Form
@@ -1845,7 +1945,7 @@ export default function HireForm() {
                   autoComplete='off'
                 >
                   <div>
-                    <p className='mt-10 mb-1 text-xl Classico'>
+                    <p className='mt-10 mb-1 text-xl Livvic'>
                       Job Description
                     </p>
                     <Form.Item
@@ -2069,7 +2169,7 @@ export default function HireForm() {
           <div>
             {nannyShare == 'yes' && (
               <div>
-                <p className='px-3 width-form font-normal text-center Classico offer-font'>
+                <p className='px-3 width-form font-normal text-center Livvic offer-font'>
                   Write job description
                 </p>
                 <Form
@@ -2079,7 +2179,7 @@ export default function HireForm() {
                   autoComplete='off'
                 >
                   <div>
-                    <p className='mt-10 mb-1 text-xl Classico'>
+                    <p className='mt-10 mb-1 text-xl Livvic'>
                       Job Description
                     </p>
                     <Form.Item

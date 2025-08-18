@@ -108,7 +108,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 3) {
@@ -130,7 +134,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 4) {
@@ -153,7 +161,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 5) {
@@ -175,7 +187,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 6) {
@@ -198,7 +214,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 7) {
@@ -220,7 +240,11 @@ export default function Tutor() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 8) {
@@ -530,12 +554,12 @@ export default function Tutor() {
             )
             case 9: return (
                 <>
-                    <p className='font-normal Classico uppercase px-3 offer-font text-center mb-5 width-form'>
+                    <p className='font-normal Livvic uppercase px-3 offer-font text-center mb-5 width-form'>
                         Tutor/Private Educator
                     </p>
                     <Form className='flex justify-center' form={form} name="validateOnly" autoComplete="off">
                         <div>
-                            <p className='Classico text-xl mb-2 input-text line1-20'>Do you have any special requirements or preferences for the tutor?</p>
+                            <p className='Livvic text-xl mb-2 input-text line1-20'>Do you have any special requirements or preferences for the tutor?</p>
                             <Form.Item
                                 name={'anySpecialRequirements'}
                                 rules={[

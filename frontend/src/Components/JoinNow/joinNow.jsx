@@ -59,7 +59,7 @@ export default function JoinNow() {
     //     </div>
     //     <div className="step-content text-center">
     //       <div className="flex justify-center w-full">
-    //         <p className="px-3 width-form font-normal uppercase Classico offer-font">
+    //         <p className="px-3 width-form font-normal uppercase Livvic offer-font">
     //           Tell us what {`you're`} looking for
     //         </p>
     //       </div>
@@ -72,7 +72,7 @@ export default function JoinNow() {
     //           <div className="flex justify-between">
     //             <div className="flex items-center gap-2">
     //               <img src={hire} alt="hire" />
-    //               <p className="text-xl font-bold Classico">Parents</p>
+    //               <p className="text-xl font-bold Livvic">Parents</p>
     //             </div>
 
     //             <Radio checked={value === 1}></Radio>
@@ -91,7 +91,7 @@ export default function JoinNow() {
     //           <div className="flex justify-between">
     //             <div className="flex items-center gap-2">
     //               <img src={job} alt="job" />
-    //               <p className="text-xl font-bold Classico">Caregivers</p>
+    //               <p className="text-xl font-bold Livvic">Caregivers</p>
     //             </div>
 
     //             <Radio checked={value === 2}></Radio>

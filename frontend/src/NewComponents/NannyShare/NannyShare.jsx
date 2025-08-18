@@ -14,6 +14,7 @@ import Timeline from './Timeline'
 import Community from "../Home/Community"
 import Testimonial from "../Home/Testimonial" 
 import FAQ from "../Home/FAQ"
+import Feedback from '../Feedback'
 
 function NannyShare() {
   return (
@@ -59,6 +60,7 @@ function NannyShare() {
          <Community/>
        </div>
        <FAQ/>
+       <Feedback/>
 {/* <JobPreview/>
     <div className="bg-[#F6F3EE] py-12">
         <ServicesHomePage/>

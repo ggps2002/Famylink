@@ -52,7 +52,7 @@ export default function AddSer({ formRef }) {
 
     return (
         <div>
-            <p className='font-normal Classico px-3 offer-font text-center mb-10 width-form'>
+            <p className='font-normal Livvic px-3 offer-font text-center mb-10 width-form'>
                 Do you need any additional services?
             </p>
             <div className="flex justify-center">

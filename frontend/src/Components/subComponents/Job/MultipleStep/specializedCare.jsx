@@ -220,16 +220,16 @@ export default function SpecialCaregiver() {
     const renderStepContent = () => {
         switch (step) {
             case 1: return (
-                <HireStep4 formRef={hireStepFormRef} head={"Specialized Caregiver"} data={step1Data} checkBox={true} inputName={"Type here..."} textAreaHead={"Other Preferences"} subHead1={"What type of specialized care are you trained to provide?"} />
+                <HireStep4 formRef={hireStepFormRef} head={"What type of specialized care are you trained to provide?"} data={step1Data} checkBox={true} inputName={"Type here..."} textAreaHead={"Other Preferences"} subHead1={"What type of specialized care are you trained to provide?"} />
             )
             case 2: return (
-                <HireStep4 formRef={hireStepFormRef} head={"Specialized Caregiver"} data={step2Data} inputName={"Type here..."} textAreaHead={"Please Specify"} subHead1={"Do you hold any certifications relevant to your specialized care services?"} />
+                <HireStep4 formRef={hireStepFormRef} head={"Do you hold any certifications relevant to your specialized care services?"} data={step2Data} inputName={"Type here..."} textAreaHead={"Please Specify"} subHead1={"Do you hold any certifications relevant to your specialized care services?"} />
             )
             case 3: return (
-                <HireStep4 formRef={hireStepFormRef} head={"Specialized Caregiver"} data={step3Data} inputNot={true} subHead1={"Do you have experience managing medical needs or medications?"} />
+                <HireStep4 formRef={hireStepFormRef} head={"Do you have experience managing medical needs or medications?"} data={step3Data} inputNot={true} subHead1={"Do you have experience managing medical needs or medications?"} />
             )
             case 4: return (
-                <HireStep4 formRef={hireStepFormRef} head={"Specialized Caregiver"} data={step4Data} checkBox={true} subHead1={"Are you available for overnight care or live-in arrangements?"} inputNot={true} />
+                <HireStep4 formRef={hireStepFormRef} head={"Are you available for overnight care or live-in arrangements?"} data={step4Data} checkBox={true} subHead1={"Are you available for overnight care or live-in arrangements?"} inputNot={true} />
             )
         }
     }

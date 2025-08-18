@@ -156,7 +156,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 2) {
       jobFormRef.current
@@ -187,7 +191,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 3) {
       jobFormRef.current
@@ -216,7 +224,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 4) {
       jobFormRef.current
@@ -242,7 +254,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 5) {
       jobFormRef.current
@@ -272,7 +288,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 6) {
       jobFormRef.current
@@ -298,7 +318,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 7) {
       jobFormRef.current
@@ -330,7 +354,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 8) {
       jobFormRef.current
@@ -356,7 +384,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 9) {
       jobFormRef.current
@@ -380,7 +412,11 @@ export const MusicInstructorJob = () => {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (currentStep == 10) {
       const selectedDays = Object.entries(daysState).filter(
@@ -625,7 +661,7 @@ export const MusicInstructorJob = () => {
               autoComplete="off"
             >
               <div>
-                <p className="mt-10 mb-1 text-xl Classico">Job Description</p>
+                <p className="mt-10 mb-1 text-xl Livvic">Job Description</p>
                 <div className="relative w-full">
                   <Form.Item
                     style={{ margin: 0, padding: 0 }}

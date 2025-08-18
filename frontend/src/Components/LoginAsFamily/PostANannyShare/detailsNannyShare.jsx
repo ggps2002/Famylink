@@ -67,7 +67,7 @@ export const NannyShareView = () => {
   const { user } = useSelector((s) => s.auth);
   const navigate = useNavigate();
   const { data, isLoading } = useSelector((state) => state.postNannyShare);
-    const subscription = useSelector(
+  const subscription = useSelector(
     (state) => state.cardData.subscriptionStatus
   );
   const isSubscribed = subscription?.active;
@@ -93,6 +93,8 @@ export const NannyShareView = () => {
       },
     }));
   };
+
+  console.log("Nanny share", data);
 
   const handleTimeChange = (day, type, time) => {
     setDaysState((prev) => ({
@@ -249,7 +251,7 @@ export const NannyShareView = () => {
         <Loader />
       ) : (
         <div className="relative padding-navbar1 Quicksand">
-            {!isSubscribed && (
+            {!isSubscribed && data?.user?._id !== user._id && (
         <>
         <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/50 w-full h-full min-h-full" />
           <div className="absolute z-20 top-[20%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-6 rounded-xl shadow-xl text-center w-[400px]">

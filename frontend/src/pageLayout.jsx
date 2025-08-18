@@ -6,6 +6,7 @@ import Navbar1 from "./Components/Navbars/navbar1";
 import Footer from "./NewComponents/Footer/Footer";
 import { api } from "./Config/api";
 import { refreshTokenThunk, logout } from "./Components/Redux/authSlice";
+import Feedback from "./NewComponents/Feedback";
 
 export default function PageLayout() {
   const { user } = useSelector((s) => s.auth);
@@ -204,6 +205,10 @@ export default function PageLayout() {
             pathname.startsWith("/family/post-a-job") ||
             pathname.startsWith("/family/post-a-nannyShare") ||  pathname.startsWith("/family/message")
           ) && <Footer />}
+             {!(
+            pathname.startsWith("/family/post-a-job") ||
+            pathname.startsWith("/family/post-a-nannyShare") ||  pathname.startsWith("/family/message") || pathname.startsWith("/family/community")
+          ) && <Feedback />}
         </>
       )}
       {pathname.startsWith("/nanny") && (
@@ -234,6 +239,7 @@ export default function PageLayout() {
             <Outlet />
           </div>
           {!pathname.startsWith("/nanny/message") && <Footer />}
+          {!(pathname.startsWith("/nanny/message") || pathname.startsWith("/nanny/community")) && <Feedback/>}
         </>
       )}
     </>

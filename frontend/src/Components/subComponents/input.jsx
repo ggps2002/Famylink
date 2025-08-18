@@ -247,7 +247,7 @@ export function SelectComponent({
 }) {
   return (
     // <div>
-    //   <p className="mb-2 text-xl capitalize Classico">{placeholder}</p>
+    //   <p className="mb-2 text-xl capitalize Livvic">{placeholder}</p>
     //   <Select
     //     className="custom-select h-12" // Apply custom class here
     //     value={selectedValue}
@@ -293,6 +293,7 @@ export function InputTextArea({
   rows,
   grid,
   labelText,
+  form,
 }) {
   return (
     <div>
@@ -306,10 +307,18 @@ export function InputTextArea({
               message: "",
             },
           ]}
+          preserve={false}
         >
           <Input.TextArea
             placeholder={placeholder}
             rows={rows || 6}
+            onChange={async (e) => {
+              form.setFieldsValue({
+                [name]: e.target.value,
+              })
+
+            }
+            }
             className={`peer border text-primary border-[#EEEEEE] rounded-[10px] px-4 pt-8 pb-2 w-full placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary ${
               !grid && "input-width"
             } no-resize`}
@@ -327,4 +336,3 @@ export function InputTextArea({
     </div>
   );
 }
-

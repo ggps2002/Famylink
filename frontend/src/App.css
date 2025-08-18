@@ -25,8 +25,8 @@
 }
 
 @font-face {
-  font-family: Classico;
-  src: url('./assets/fonts/TextFonts.net_classico-serif-font/Classico/Classico.otf');
+  font-family: Livvic;
+  src: url('./assets/fonts/TextFonts.net_Livvic-serif-font/Livvic/Livvic.otf');
 }
 
 @font-face {
@@ -169,8 +169,8 @@ input::placeholder{
   width: 540px;
 }
 
-.Classico {
-  font-family: Classico;
+.Livvic {
+  font-family: Livvic;
 }
 
 .Elliana-Samantha {

@@ -90,9 +90,17 @@ export const deletePostJobThunk = createAsyncThunk(
 
 export const fetchPostJobByCurrentUserThunk = createAsyncThunk(
   "postJob/user-jobs",
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const { data } = await api.get(`/postJob/user-jobs`);
+          const state = getState();
+      const { accessToken } = state.auth;
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization header
+        },
+      };
+      const { data } = await api.get(`/postJob/user-jobs`, config);
       return data.data; // Assuming message contains the nanny details
     } catch (error) {
       return rejectWithValue(error.response.data);

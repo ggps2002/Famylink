@@ -87,7 +87,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 2 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -111,7 +115,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 3 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -135,7 +143,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 4 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -159,7 +171,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 5 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -183,7 +199,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 6 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -207,7 +227,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 7) {
       hireStepFormRef.current
@@ -258,7 +282,11 @@ export default function SpecialCaregiver() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
       if (trueValuesAfterSpecialized.length > 0) {
         if (v.sportsCoaches) {
@@ -399,7 +427,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Type of Specialized Care Needed"}
             data={step1Data}
             checkBox={true}
             inputName={"Type here..."}
@@ -411,7 +439,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Specific Care Requirements"}
             data={step2Data}
             checkBox={true}
             inputName={"Type here..."}
@@ -423,7 +451,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Duration of Care"}
             data={step3Data}
             checkBox={true}
             inputName={"Type here..."}
@@ -435,7 +463,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Experience and Qualifications Required"}
             data={step4Data}
             checkBox={true}
             subHead1={"Experience and Qualifications Required"}
@@ -447,7 +475,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Availability"}
             data={step5Data}
             checkBox={true}
             subHead1={"Availability"}
@@ -459,7 +487,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Additional Skills and Competencies"}
             data={step6Data}
             checkBox={true}
             subHead1={"Additional Skills and Competencies"}
@@ -471,7 +499,7 @@ export default function SpecialCaregiver() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Specialized Caregiver"}
+            head={"Personal Fit and Preferences"}
             data={step7Data}
             checkBox={true}
             subHead1={"Personal Fit and Preferences"}

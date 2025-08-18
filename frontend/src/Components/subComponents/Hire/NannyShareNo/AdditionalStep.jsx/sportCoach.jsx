@@ -96,7 +96,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 2 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -120,7 +124,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 3 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -144,7 +152,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 4 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -168,7 +180,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 5 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -192,7 +208,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 6 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -216,7 +236,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 7 && hireStepFormRef.current) {
       hireStepFormRef.current
@@ -240,7 +264,11 @@ export default function SportCoach() {
         })
         .catch((errorInfo) => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo });
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });;
         });
     } else if (step == 8 && hireStepFormRef.current) {
       const selectedDays = Object.entries(daysState).filter(
@@ -528,7 +556,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"Which sport do you want your child to learn or improve in?"}
             data={step1Data}
             checkBox={true}
             subHead1={
@@ -542,7 +570,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"What is the current skill level of your child?"}
             data={step2Data}
             checkBox={true}
             inputNot={true}
@@ -553,7 +581,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"How often do you require coaching sessions?"}
             data={step3Data}
             checkBox={true}
             inputNot={true}
@@ -564,7 +592,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"How long do you want each coaching session to be?"}
             data={step4Data}
             checkBox={true}
             subHead1={"How long do you want each coaching session to be?"}
@@ -575,7 +603,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"Do you prefer sessions at a specific location?"}
             data={step5Data}
             checkBox={true}
             subHead1={"Do you prefer sessions at a specific location?"}
@@ -586,7 +614,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"What are your specific goals for the coaching sessions?"}
             data={step6Data}
             checkBox={true}
             subHead1={"What are your specific goals for the coaching sessions?"}
@@ -597,7 +625,7 @@ export default function SportCoach() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"Sports Coach"}
+            head={"Do you have a preference for the coach's style?"}
             data={step7Data}
             checkBox={true}
             subHead1={"Do you have a preference for the coach's style?"}
@@ -618,7 +646,7 @@ export default function SportCoach() {
       case 9:
         return (
           <>
-            <p className="font-normal Classico uppercase px-3 offer-font text-center mb-5 width-form">
+            <p className="font-normal Livvic uppercase px-3 offer-font text-center mb-5 width-form">
               Sports Coach
             </p>
             <Form
@@ -628,7 +656,7 @@ export default function SportCoach() {
               autoComplete="off"
             >
               <div>
-                <p className="Classico text-xl mb-2 input-text line1-20">
+                <p className="Livvic text-xl mb-2 input-text line1-20">
                   Do you have any special requirements or preferences for the
                   sport coach ?
                 </p>

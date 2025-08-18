@@ -12,7 +12,7 @@ export default function ShareNanny() {
                     to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
                 }}
             >
-                <p className='font-normal Classico uppercase offer-font mb-10 text-center'>Most Common Ways to Share a Nanny</p>
+                <p className='font-normal Livvic uppercase offer-font mb-10 text-center'>Most Common Ways to Share a Nanny</p>
             </AnimatedWrapper>
             <div className="flex justify-evenly gap-y-12 flex-wrap items-center">
                 <AnimatedWrapper
@@ -23,7 +23,7 @@ export default function ShareNanny() {
                 >
                     <div className="w-96 max-lg:px-2 max-lg:w-full flex justify-center text-center ">
                         <div>
-                            <p className="font-2xl uppercase font-bold Classico">Share at One Family's Home</p>
+                            <p className="font-2xl uppercase font-bold Livvic">Share at One Family's Home</p>
                             <img className='my-6' src={share1} alt="share1" />
                             <p className='line1-20 text-lg'>Families agree to have the nanny provide care at one of their homes. This setup simplifies logistics and allows the children to become familiar with a single environment.</p>
                         </div>
@@ -40,7 +40,7 @@ export default function ShareNanny() {
                 >
                     <div className="w-96 max-lg:px-2 max-lg:w-full flex justify-center text-center ">
                         <div>
-                            <p className="font-2xl uppercase font-bold Classico">Alternate Between Homes</p>
+                            <p className="font-2xl uppercase font-bold Livvic">Alternate Between Homes</p>
                             <img className='my-6' src={share2} alt="share2" />
                             <p className='line1-20 text-lg'>Families alternate hosting the nanny at their respective homes. This arrangement ensures that both families share the hosting responsibilities and children get comfortable in different settings.</p>
                         </div>

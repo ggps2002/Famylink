@@ -15,7 +15,7 @@ export default function JoinLink({ head, subHead, head1, subHead1, img1, head2, 
                         to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
                     }}
                 >
-                    <p className='font-normal Classico uppercase px-3 offer-font'>{head}</p>
+                    <p className='font-normal Livvic uppercase px-3 offer-font'>{head}</p>
                 </AnimatedWrapper>
 
                 <p className="font-lg">{subHead}</p>
@@ -25,7 +25,7 @@ export default function JoinLink({ head, subHead, head1, subHead1, img1, head2, 
                         <div className={share ? `border-res-share` : `w-52`}>
                             <img className="mx-auto my-0" src={img1} alt="img1" />
                             <div>
-                                <p style={{ lineHeight: "25px" }} className='Classico text-2xl font-bold my-4'>{head1}</p>
+                                <p style={{ lineHeight: "25px" }} className='Livvic text-2xl font-bold my-4'>{head1}</p>
                                 <p className='line1-20'>{subHead1}</p>
                             </div>
                         </div>
@@ -35,7 +35,7 @@ export default function JoinLink({ head, subHead, head1, subHead1, img1, head2, 
                         <div className={share ? `border-res-share` : `w-52`}>
                             <img className="mx-auto my-0" src={img2} alt="img2" />
                             <div>
-                                <p style={{ lineHeight: "25px" }} className='Classico text-2xl font-bold my-4'>{head2}</p>
+                                <p style={{ lineHeight: "25px" }} className='Livvic text-2xl font-bold my-4'>{head2}</p>
                                 <p className='line1-20'>{subHead2}</p>
                             </div>
                         </div>
@@ -46,7 +46,7 @@ export default function JoinLink({ head, subHead, head1, subHead1, img1, head2, 
                         <div className={share ? `border-radius-share` : `w-52`}>
                             <img className="mx-auto my-0" src={img3} alt="img3" />
                             <div>
-                                <p style={{ lineHeight: "25px" }} className='Classico text-2xl font-bold my-4'>{head3}</p>
+                                <p style={{ lineHeight: "25px" }} className='Livvic text-2xl font-bold my-4'>{head3}</p>
                                 <p className='line1-20'>{subHead3}</p>
                             </div>
                         </div>
@@ -57,7 +57,7 @@ export default function JoinLink({ head, subHead, head1, subHead1, img1, head2, 
                         <div className={share ? `w-80` : `w-52`}>
                             <img className="mx-auto my-0" src={img4} alt="img4" />
                             <div>
-                                <p style={{ lineHeight: "25px" }} className='Classico text-2xl font-bold my-4'>{head4}</p>
+                                <p style={{ lineHeight: "25px" }} className='Livvic text-2xl font-bold my-4'>{head4}</p>
                                 <p className='line1-20'>{subHead4}</p>
                             </div>
                         </div>

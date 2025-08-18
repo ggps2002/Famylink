@@ -7,6 +7,7 @@ import Timeline from './Timeline'
 import Community from "../Home/Community"
 import Testimonial from "../Home/Testimonial"
 import FAQ from "../Home/FAQ"
+import Feedback from '../Feedback'
 
 function Caregivers() {
   return (
@@ -47,6 +48,7 @@ function Caregivers() {
         <Testimonial type="Caregiver"/>
       </div>
       <FAQ />
+      <Feedback/>
     </>
   )
 }

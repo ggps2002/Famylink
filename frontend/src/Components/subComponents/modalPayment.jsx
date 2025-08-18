@@ -229,7 +229,7 @@ function PayRevModel({
                                             src={v?.card?.brand === 'visa' ? visa : master}
                                             alt="card type"
                                         />
-                                        <p className="mt-2 font-bold text-base Classico">{v?.billing_details?.name}</p>
+                                        <p className="mt-2 font-bold text-base Livvic">{v?.billing_details?.name}</p>
                                         <p className="text-base Belleza">**** **** **** {v?.card?.last4}</p>
                                     </div>
                                     <div>

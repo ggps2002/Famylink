@@ -58,7 +58,7 @@ export default function VerticalTimeline({ steps, head, subHead, btn, bg, btnTex
                     to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
                 }}
             >
-                <p className='font-normal text-center Classico uppercase px-3 offer-font'>{head}</p>
+                <p className='font-normal text-center Livvic uppercase px-3 offer-font'>{head}</p>
             </AnimatedWrapper>
 
             <p className="font-lg text-center pb-10">{subHead}</p>
@@ -102,7 +102,7 @@ export default function VerticalTimeline({ steps, head, subHead, btn, bg, btnTex
                                         <img className="w-20 h-20 object-contain" src={step.img} alt={step.img} />
                                     </div>
                                     <div>
-                                        <p className="lg:text-2xl text-[8px] font-bold Classico lg:leading-[24px] leading-[10px]">{step.head}</p>
+                                        <p className="lg:text-2xl text-[8px] font-bold Livvic lg:leading-[24px] leading-[10px]">{step.head}</p>
                                         <p className="lg:text-base lg:leading-[16px] leading-[10px] text-[8px] lg:mt-3 mt-[3px]">{step.description}</p>
                                     </div>
                                 </div>

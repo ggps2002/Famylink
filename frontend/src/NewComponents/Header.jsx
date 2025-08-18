@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Button from "./Button";
 
@@ -12,6 +12,14 @@ function Header() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isMenuOpen]);
 
   return (
     <header className="relative">
@@ -79,21 +87,27 @@ function Header() {
         {/* Hamburger Menu Button - Visible on mobile */}
         <button
           onClick={toggleMenu}
-          className="lg:hidden flex flex-col justify-center items-center w-8 h-8 focus:outline-none"
+          className="lg:hidden relative flex flex-col justify-center items-center w-8 h-8 focus:outline-none z-50"
           aria-label="Toggle menu"
         >
           <span
-            className={`block w-6 h-0.5 bg-white transform transition-all duration-300 ease-in-out ${
+            className={`block w-6 h-0.5 ${
+              isMenuOpen ? "bg-black" : "bg-white"
+            } transform transition-all duration-300 ease-in-out ${
               isMenuOpen ? "rotate-45 translate-y-1.5" : ""
             }`}
           ></span>
           <span
-            className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
+            className={`block w-6 h-0.5 ${
+              isMenuOpen ? "bg-black" : "bg-white"
+            } mt-1 transform transition-all duration-300 ease-in-out ${
               isMenuOpen ? "opacity-0" : ""
             }`}
           ></span>
           <span
-            className={`block w-6 h-0.5 bg-white mt-1 transform transition-all duration-300 ease-in-out ${
+            className={`block w-6 h-0.5 ${
+              isMenuOpen ? "bg-black" : "bg-white"
+            } mt-1 transform transition-all duration-300 ease-in-out ${
               isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
             }`}
           ></span>
@@ -101,27 +115,25 @@ function Header() {
       </div>
 
       {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
+      {/* {isMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={closeMenu}
         ></div>
-      )}
+      )} */}
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-full w-80 bg-[#001243] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        className={`lg:hidden fixed top-0 right-0 h-full w-full shadow-2xl z-40 bg-white transform transition-all duration-300 ease-in-out ${
+          isMenuOpen ? "opacity-100" : "opacity-0 hidden"
         }`}
       >
         {/* Close Button */}
         <div className="flex justify-between items-center p-4 pt-9">
-            <div className="flex gap-1 items-center">
-                <img src="/logo3.png" alt="logo" className="w-10 h-10"/>
-                <p className="font-bold text-3xl Livvic-Bold text-white">
-                  Famlink
-                </p>
-              </div>
+          <div className="flex gap-1 items-center">
+            <img src="/logo3.png" alt="logo" className="w-10 h-10" />
+            <p className="font-bold text-3xl Livvic-Bold text-primary">Famlink</p>
+          </div>
           <button
             onClick={closeMenu}
             className="w-8 h-8 flex items-center justify-center text-white rounded-full transition-colors duration-200"
@@ -152,7 +164,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
+                  isActive ? "text-black" : "text-gray-400 hover:text-gray-600"
                 }`
               }
             >
@@ -164,7 +176,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
+                  isActive ? "text-black" : "text-gray-400 hover:text-gray-600"
                 }`
               }
             >
@@ -176,7 +188,7 @@ function Header() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block Livvic-SemiBold text-xl py-2 px-4 rounded-lg transition-all duration-200 ${
-                  isActive ? "text-white" : "text-gray-700 hover:text-gray-600"
+                  isActive ? "text-black" : "text-gray-400 hover:text-gray-600"
                 }`
               }
             >
@@ -189,7 +201,7 @@ function Header() {
             <NavLink to="/login" onClick={closeMenu} className="block">
               <Button
                 btnText="Log in"
-                className="w-full text-white text-base py-3 justify-center border border-gray-300 transition-colors duration-200"
+                className="w-full text-base py-3 justify-center border border-gray-300 transition-colors duration-200"
               />
             </NavLink>
             <NavLink to="/joinNow" onClick={closeMenu} className="block">

@@ -22,7 +22,7 @@ export default function Footer() {
       } flex flex-wrap justify-evenly gap-12 z-40`}
     >
       <div>
-        <p className="Classico max-lg:text-center lg:text-3xl text-2xl font-bold mb-8">
+        <p className="Livvic max-lg:text-center lg:text-3xl text-2xl font-bold mb-8">
           Contacts
         </p>
         {/* <div className='flex gap-4 items-center'>
@@ -60,7 +60,7 @@ export default function Footer() {
       <div className="w-80 flex justify-center text-center">
         <div>
           <img className="mmy-0 mx-auto" src={logo} alt="logo" />
-          <p className=" my-8 Classico text-[18px] font-[400] leading-[25px]">
+          <p className=" my-8 Livvic text-[18px] font-[400] leading-[25px]">
             Connecting families with trusted caregivers and building a supportive community.
           </p>
           <div className="flex justify-center gap-8">
@@ -154,7 +154,7 @@ export default function Footer() {
         </div>
       </div>
       <div>
-        <p className="Classico lg:text-3xl text-2xl font-bold mb-8">
+        <p className="Livvic lg:text-3xl text-2xl font-bold mb-8">
           Subscribe
         </p>
         <p className="Quicksand text-lg leading-[25px] font-light">Subscribe to Our Newsletter</p>

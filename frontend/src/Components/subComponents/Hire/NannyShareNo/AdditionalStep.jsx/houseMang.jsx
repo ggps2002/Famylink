@@ -70,7 +70,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 2 && hireStepFormRef.current) {
@@ -92,7 +96,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 3 && hireStepFormRef.current) {
@@ -114,7 +122,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 4 && hireStepFormRef.current) {
@@ -136,7 +148,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 5 && hireStepFormRef.current) {
@@ -158,7 +174,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 6 && hireStepFormRef.current) {
@@ -180,7 +200,11 @@ export default function HouseManager() {
                 })
                 .catch((errorInfo) => {
                     // Handle validation failure
-                    fireToastMessage({ type: "error", message: errorInfo })
+                          fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
                 });
         }
         else if (step == 7) {
@@ -275,12 +299,12 @@ export default function HouseManager() {
             )
             case 7: return (
                 <>
-                    <p className='font-normal Classico uppercase px-3 offer-font text-center mb-5 width-form'>
+                    <p className='font-normal Livvic uppercase px-3 offer-font text-center mb-5 width-form'>
                         House Manager/Housekeeper
                     </p>
                     <Form className='flex justify-center' form={form} name="validateOnly" autoComplete="off">
                         <div>
-                            <p className='Classico text-xl mb-2 input-text line1-20'>Do you have any special requirements or preferences for the music instructor?</p>
+                            <p className='Livvic text-xl mb-2 input-text line1-20'>Do you have any special requirements or preferences for the music instructor?</p>
                             <Form.Item
                                 name={'anySpecialRequirements'}
                                 rules={[

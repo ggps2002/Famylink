@@ -21,7 +21,7 @@ const inventoryStats = [
 export default function InventoryNumbers() {
   return (
     <section className="rounded-xl">
-      <h2 className="font-2xl uppercase font-bold Classico mb-8 text-center">
+      <h2 className="font-2xl uppercase font-bold Livvic mb-8 text-center">
         Available Now
       </h2>
 

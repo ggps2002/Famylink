@@ -15,7 +15,7 @@ export default function Sec4({ btn, head, subHead }) {
                             to: { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
                         }}
                     >
-                        <p className='font-normal Classico uppercase px-3 offer-font mb-10'>{head}</p></AnimatedWrapper>
+                        <p className='font-normal Livvic uppercase px-3 offer-font mb-10'>{head}</p></AnimatedWrapper>
                 }
                 <img className='my-0 mx-auto' src={lineVer} alt="lineVer" />
                 <p className='home-sec2 pt-10 line1-20'>{subHead}</p>

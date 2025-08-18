@@ -205,7 +205,7 @@ export default function HouseManager() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"House Manager"}
+            head={"What type of house management experience do you have?"}
             data={step1Data}
             checkBox={true}
             subHead1={"What type of house management experience do you have?"}
@@ -217,7 +217,7 @@ export default function HouseManager() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"House Manager"}
+            head={"Are you willing to perform housekeeping duties?"}
             data={step2Data}
             checkBox={true}
             inputNot={true}
@@ -228,7 +228,7 @@ export default function HouseManager() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"House Manager"}
+            head={ "Do you have experience managing household budgets or finances?"}
             data={step3Data}
             inputNot={true}
             subHead1={
@@ -240,7 +240,7 @@ export default function HouseManager() {
         return (
           <HireStep4
             formRef={hireStepFormRef}
-            head={"House Manager"}
+            head={"What is your availability for house management roles?"}
             data={step4Data}
             checkBox={true}
             subHead1={"What is your availability for house management roles?"}

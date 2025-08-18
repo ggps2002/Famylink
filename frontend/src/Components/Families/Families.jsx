@@ -69,11 +69,11 @@ export default function Families() {
         <div className="bg-white px-4 mt-12 justify-between gap-12 items-center famil-sec3 py-6">
           <img src={img3} alt="img3" />
           <div>
-            <p className="Classico uppercase text-4xl mb-12">
+            <p className="Livvic uppercase text-4xl mb-12">
               SHARED CARE ARRANGEMENTS
             </p>
             <div className="mx-8 ">
-              <p className="Classico font-bold lg:text-3xl text-2xl ">
+              <p className="Livvic font-bold lg:text-3xl text-2xl ">
                 Smart matching for successful partnerships:
               </p>
               <p className="text-lg my-6 line1-20">
@@ -108,7 +108,7 @@ export default function Families() {
 
         <div className="bg-white px-12 py-12 mt-12 justify-center items-center text-center">
           <div>
-            <p className="Classico text-4xl ">
+            <p className="Livvic text-4xl ">
               Enhance Your Services With Additional Services
             </p>
             <p className="text-lg line1-20 mt-6 mx-auto add-width">
@@ -121,7 +121,7 @@ export default function Families() {
           <div className="flex flex-wrap justify-center gap-12 my-24">
             <div className="text-center w-80">
               <img className="my-0 mx-auto" src={ser1} alt="ser1" />
-              <p className="Classico text-xl font-bold mt-6 mb-3">
+              <p className="Livvic text-xl font-bold mt-6 mb-3">
                 Payroll Management
               </p>
               <p className="text-base">
@@ -130,7 +130,7 @@ export default function Families() {
             </div>
             <div className="text-center w-80">
               <img className="my-0 mx-auto" src={ser2} alt="ser2" />
-              <p className="Classico text-xl font-bold mt-6 mb-3">
+              <p className="Livvic text-xl font-bold mt-6 mb-3">
                 Background Checks
               </p>
               <p className="text-base">
@@ -140,7 +140,7 @@ export default function Families() {
             </div>
             <div className="text-center w-80">
               <img className="my-0 mx-auto" src={ser3} alt="ser3" />
-              <p className="Classico text-xl font-bold mt-6 mb-3">
+              <p className="Livvic text-xl font-bold mt-6 mb-3">
                 Job Contract Templates
               </p>
               <p className="text-base">
@@ -175,7 +175,7 @@ export default function Families() {
                   style={{
                     display: "inline-block", // Ensures the border matches the text width
                   }}
-                  className=" font-normal Classico uppercase px-3 family-font"
+                  className=" font-normal Livvic uppercase px-3 family-font"
                 >
                   What our families are saying
                 </p>

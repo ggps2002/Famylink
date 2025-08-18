@@ -329,6 +329,7 @@ export const step12Data = [
   { name: "Food allergies", val: "Food allergies" },
   { name: "Environmental allergies", val: "Environmental allergies" },
   { name: "Asthma Medication needs", val: "Asthma Medication needs" },
+   { name: "None", val: "None" },
 ];
 
 export const step13Data = [

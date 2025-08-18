@@ -62,8 +62,8 @@ const Card = ({ head, price, data, buy, nanny, showBuyButton, cancelAt }) => {
           createSubscriptionThunk({
             paymentMethodId: paymentMethod.id,
             priceId: nanny
-              ? "price_1Rjni4IeGVmhjMKGvJ0waDWK"
-              : "price_1Rjni4IeGVmhjMKGvJ0waDWK",
+              ? import.meta.env.VITE_STRIPE_NANNY_PREMIUM_PRICE_ID
+              : import.meta.env.VITE_STRIPE_FAMILY_PREMIUM_PRICE_ID,
           })
         );
 
@@ -287,7 +287,7 @@ export default function Pricing({ nanny }) {
     },
     {
       head: nanny ? "Premium" : "Family Plus",
-      price: nanny ? 5.99 : 9.99,
+      price: nanny ? 5.99 : 24.99,
       data: nanny
         ? [
             "Unlimited job applications",

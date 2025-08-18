@@ -238,7 +238,7 @@ export default function NannySharePreview({ border, head, btn, type }) {
                 borderBottom: !border && "16px solid #DEEBEB",
                 display: "inline-block",
               }}
-              className="px-3 font-normal uppercase Classico offer-font text-center lg:leading-[12px] leading-tight"
+              className="px-3 font-normal uppercase Livvic offer-font text-center lg:leading-[12px] leading-tight"
             >
               {head}
             </p>

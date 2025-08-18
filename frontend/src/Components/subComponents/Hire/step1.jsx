@@ -269,6 +269,7 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
                         const zip = e.target.value;
                         setZipCode(zip);
                         form.setFieldsValue({ zipCode: zip });
+                        dispatch(updateForm({ zipCode: zip }));
                       }}
                       onBlur={(e) => handleZipValidation(e.target.value.trim())}
                       className="px-4 pt-7 pb-2 border border-[#EEEEEE] rounded-[10px]"
@@ -305,7 +306,7 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
                       border: "1px solid #D6DDEB",
                     }}
                     value={location || ""}
-                    onPlaceSelected={(place) => {
+                    onPlaceSelected={async (place) => {
                       const address = place.formatted_address;
                       const components = place?.address_components || [];
 
@@ -314,20 +315,26 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
                       );
                       const zip = zipObj ? zipObj.long_name : "";
 
-                      if (!zip) {
-                        fireToastMessage({
-                          message:
-                            "Zip code is not available for the selected location. Please try another location.",
-                          type: "error",
-                        });
-                        setLocation("");
-                        setZipCode("");
-                        form.setFieldsValue({ location: "", zipCode: "" });
-                        return;
-                      }
+                      // if (!zip) {
+                      //   fireToastMessage({
+                      //     message:
+                      //       "Zip code is not available for the selected location. Please try another location.",
+                      //     type: "error",
+                      //   });
+                      //   setLocation("");
+                      //   setZipCode("");
+                      //   form.setFieldsValue({ location: "", zipCode: "" });
+                      //   return;
+                      // }
 
                       const lat = place?.geometry?.location?.lat();
                       const lng = place?.geometry?.location?.lng();
+
+                      const location = {
+                        type: "Point",
+                        coordinates: [lng, lat],
+                        format_location: address,
+                      };
 
                       if (lat && lng) {
                         setCoordinates({
@@ -337,13 +344,54 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
                         });
                       }
 
+                      if (!zip && lat && lng) {
+                        const geocodeRes = await fetch(
+                          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${
+                            import.meta.env.VITE_GOOGLE_KEY
+                          }`
+                        );
+                        const geocodeData = await geocodeRes.json();
+                        const altZip =
+                          geocodeData.results[0]?.address_components?.find(
+                            (c) => c.types.includes("postal_code")
+                          )?.long_name;
+
+                        if (altZip) {
+                          setZipCode(altZip);
+                          form.setFieldsValue({
+                            location: JSON.stringify(location),
+                            zipCode: altZip,
+                          });
+                          dispatch(
+                            updateForm({
+                              location: JSON.stringify(location),
+                              zipCode: altZip,
+                            })
+                          );
+                        } else {
+                          fireToastMessage({
+                            message:
+                              "No ZIP code found even with coordinates. Try again.",
+                            type: "error",
+                          });
+                          return;
+                        }
+                      }
+
                       setLocation(address);
                       setZipCode(zip);
 
                       form.setFieldsValue({
-                        location: address,
+                        location: JSON.stringify(location),
                         zipCode: zip,
                       });
+
+                      dispatch(
+                        updateForm({
+                          location: JSON.stringify(location),
+                          zipCode: zip,
+                        })
+                      );
 
                       setLoading(false);
                     }}
@@ -353,7 +401,7 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
                     }}
                     onBlur={() => setLoading(false)}
                     options={{
-                      types: ["address"],
+                      types: ["geocode"],
                       componentRestrictions: { country: "us" },
                     }}
                   />
@@ -371,7 +419,7 @@ export default function HireStep1({ formRef, head, comm, handleNext }) {
           <div className="flex flex-wrap justify-start gap-x-6">
             {comm && (
               <div className="flex flex-col">
-                <p className="mb-2 text-xl capitalize text-start Classico">
+                <p className="mb-2 text-xl capitalize text-start Livvic">
                   As an
                 </p>
                 <Form.Item

@@ -172,7 +172,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 2) {
@@ -242,7 +246,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 4) {
@@ -269,7 +277,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 5) {
@@ -300,7 +312,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 6) {
@@ -327,7 +343,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 7) {
@@ -358,7 +378,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 8) {
@@ -386,7 +410,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 9) {
@@ -411,7 +439,11 @@ export const PrivateEducatorJob = () => {
         })
         .catch(errorInfo => {
           // Handle validation failure
-          fireToastMessage({ type: "error", message: errorInfo })
+                fireToastMessage({
+            type: "error",
+            message:
+              errorInfo?.errorFields?.[0]?.errors?.[0] || "Validation failed",
+          });
         })
     }
     else if (currentStep == 10) {
