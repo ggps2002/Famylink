@@ -79,7 +79,6 @@ export const NannyJob = () => {
         { name: "CPR/First Aid Certified" },
         { name: "Early Childhood Education" },
         { name: "Special Needs Training" },
-        { name: "None" },
       ],
     },
 
@@ -90,7 +89,6 @@ export const NannyJob = () => {
         { name: "Owns a car" },
         { name: "Using caregiver's car" },
         { name: "Using family's car" },
-        { name: "None" },
       ],
     },
     {
@@ -103,7 +101,6 @@ export const NannyJob = () => {
         { name: "Pet care" },
         { name: "Homework assistance" },
         { name: "Swimming supervision" },
-        { name: "None" },
       ],
     },
   ];
@@ -114,7 +111,7 @@ export const NannyJob = () => {
       data: [
         { name: "Child-related only" },
         { name: "Child-related and general household tasks" },
-        { name: "None" },
+        { name: "None"}
       ],
     },
     {
@@ -122,7 +119,7 @@ export const NannyJob = () => {
       data: [
         { name: "For children only" },
         { name: "For children and parents" },
-        { name: "None" },
+        { name: "None"}
       ],
     },
 
@@ -131,7 +128,7 @@ export const NannyJob = () => {
       data: [
         { name: "Child-related only" },
         { name: "Child-related and household tasks" },
-        { name: "None" },
+        { name: "None"}
       ],
     },
     {
@@ -139,7 +136,7 @@ export const NannyJob = () => {
       data: [
         { name: "Transporting children only" },
         { name: "Transporting children and running household errands" },
-        { name: "None" },
+        { name: "None"}
       ],
     },
     {
@@ -149,7 +146,7 @@ export const NannyJob = () => {
           name: "Planning and supervising educational activities for children",
         },
         { name: "Tutoring or homework assistance" },
-        { name: "None" },
+        { name: "None"}
       ],
     },
   ];
@@ -309,6 +306,16 @@ export const NannyJob = () => {
                 values["languageSkills"].push(specificLanguage);
               }
             }
+
+            Object.keys(values).forEach((key) => {
+              if (Array.isArray(values[key]) && values[key].length === 0) {
+                if (key === "languageSkills") {
+                  values[key] = ["Not specified"];
+                } else {
+                  values[key] = "off";
+                }
+              }
+            });
 
             const fieldValue = values[field];
             return Array.isArray(fieldValue) && fieldValue.length === 0; // Only check if the field is an array and is empty
