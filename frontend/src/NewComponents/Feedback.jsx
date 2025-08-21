@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Send, MessageCircle, X, Star, Loader2 } from "lucide-react";
 import { api } from "../Config/api";
 import { fireToastMessage } from "../toastContainer";
@@ -11,6 +11,29 @@ function Feedback() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Listen for mobile menu state changes
+  useEffect(() => {
+    const checkMobileMenu = () => {
+      // Check if mobile menu is open by looking for overflow hidden on body
+      // This matches the logic in your Header component
+      const isMenuOpen = document.body.style.overflow === "hidden";
+      setIsMobileMenuOpen(isMenuOpen);
+    };
+
+    // Check initially
+    checkMobileMenu();
+
+    // Set up a mutation observer to watch for changes to body style
+    const observer = new MutationObserver(checkMobileMenu);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic pattern
@@ -60,10 +83,10 @@ function Feedback() {
   const isFormValid = feedback.trim() && category && email && !error; // make sure no email error
 
   return (
-    <div>
+    <div className="relative">
       {/* Backdrop Blur */}
       <div
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-all duration-300 ease-out ${
+        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-30 transition-all duration-300 ease-out ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setIsOpen(false)}
@@ -75,8 +98,8 @@ function Feedback() {
           setIsOpen(true);
           setSubmitted(false);
         }}
-        className={`fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transform transition-all duration-200 ease-out hover:scale-110 active:scale-95 z-50 ${
-          isOpen ? "opacity-0 scale-75" : "opacity-100 scale-100"
+        className={`fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transform transition-all duration-200 ease-out hover:scale-110 active:scale-95 z-40 ${
+          isOpen || isMobileMenuOpen ? "opacity-0 scale-75 pointer-events-none" : "opacity-100 scale-100"
         }`}
       >
         <MessageCircle size={24} className="mx-auto" />
@@ -84,7 +107,7 @@ function Feedback() {
 
       {/* Feedback Form Modal */}
       <div
-        className={`fixed bottom-6 right-6 w-96 bg-white rounded-2xl shadow-soft z-[100] transform transition-all duration-300 ease-out ${
+        className={`fixed bottom-6 right-6 w-96 bg-white rounded-2xl shadow-soft z-50 transform transition-all duration-300 ease-out ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-75 translate-y-8 pointer-events-none"
@@ -132,45 +155,7 @@ function Feedback() {
                     </div>
                   ))}
                 </div>
-                {/* <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none"
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select> */}
               </div>
-
-              {/* Star Rating */}
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rate your experience
-                </label>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      className="p-1 hover:scale-110 transition-transform duration-150"
-                    >
-                      <Star
-                        size={24}
-                        className={`${
-                          star <= rating
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300 hover:text-yellow-300"
-                        } transition-colors duration-200`}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div> */}
 
               <div className="relative">
                 <input
@@ -215,20 +200,6 @@ function Feedback() {
                   Your Message
                 </label>
               </div>
-
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Your feedback
-                </label>
-                <textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="Tell us what you think..."
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none resize-none"
-                  required
-                />
-              </div> */}
 
               {/* Submit Button */}
               <button

@@ -98,7 +98,7 @@ function JobPreview() {
             Close to Home.
           </h1>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 sm:mt-12 justify-center items-center">
+          <div className="flex flex-col w-full sm:flex-row gap-3 sm:gap-4 mt-8 sm:mt-12 justify-center items-center">
             <div className="relative">
               <Spin
                 spinning={loading}
@@ -114,7 +114,7 @@ function JobPreview() {
                   }}
                   onBlur={(e) => handleZipValidation(e.target.value.trim())}
                   value={zipCode}
-                  className="w-full sm:w-[300px] p-3 sm:p-4 pr-12 rounded-full border-2"
+                  className="w-[420px] sm:w-[300px] p-3 sm:p-4 pr-12 rounded-full border-2"
                   maxLength={10}
                 />
               </Spin>
@@ -137,7 +137,7 @@ function JobPreview() {
                   ? "Searching..."
                   : "Find Jobs"
               }
-              className="bg-[#AEC4FF] w-full sm:w-auto px-6 py-3 sm:py-4"
+              className="bg-[#AEC4FF] w-auto px-6 py-3 sm:py-4"
               action={handlePostJob}
               isLoading={isLoading && searchType === "jobs"}
               loadingBtnText="Searching..."

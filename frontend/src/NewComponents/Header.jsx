@@ -87,7 +87,7 @@ function Header() {
         {/* Hamburger Menu Button - Visible on mobile */}
         <button
           onClick={toggleMenu}
-          className="lg:hidden relative flex flex-col justify-center items-center w-8 h-8 focus:outline-none z-50"
+          className="lg:hidden relative flex flex-col justify-center items-center w-8 h-8 focus:outline-none z-[70]"
           aria-label="Toggle menu"
         >
           <span
@@ -114,17 +114,9 @@ function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      {/* {isMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={closeMenu}
-        ></div>
-      )} */}
-
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-full w-full shadow-2xl z-40 bg-white transform transition-all duration-300 ease-in-out ${
+        className={`lg:hidden fixed top-0 right-0 h-full w-full shadow-2xl z-[60] bg-white transform transition-all duration-300 ease-in-out ${
           isMenuOpen ? "opacity-100" : "opacity-0 hidden"
         }`}
       >
@@ -155,8 +147,8 @@ function Header() {
           </button>
         </div>
 
-        {/* Menu Content */}
-        <div className="px-6 py-4">
+        {/* Menu Content - Using flexbox with proper spacing */}
+        <div className="px-6 py-4 flex flex-col" style={{ height: 'calc(100vh - 90px)' }}>
           {/* Navigation Links */}
           <nav className="space-y-6 mb-8">
             <NavLink
@@ -196,8 +188,11 @@ function Header() {
             </NavLink>
           </nav>
 
-          {/* Action Buttons */}
-          <div className="space-y-4 border-t border-gray-200 pt-6">
+          {/* Spacer */}
+          <div className="flex-grow"></div>
+
+          {/* Action Buttons - At the bottom with safe spacing */}
+          <div className="space-y-4 border-t border-gray-200 pt-6 pb-6">
             <NavLink to="/login" onClick={closeMenu} className="block">
               <Button
                 btnText="Log in"
