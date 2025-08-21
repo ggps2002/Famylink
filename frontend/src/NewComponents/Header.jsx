@@ -148,7 +148,7 @@ function Header() {
         </div>
 
         {/* Menu Content - Using flexbox with proper spacing */}
-        <div className="px-6 py-4 flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
+        <div className="px-6 py-4 flex flex-col" style={{ height: 'calc(100vh - 160px)' }}>
           {/* Navigation Links */}
           <nav className="space-y-6 mb-8">
             <NavLink
